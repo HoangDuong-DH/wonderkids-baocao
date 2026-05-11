@@ -1,0 +1,6 @@
+_autoprint.html
+_gen_pdf.py
+*.tmp
+.DS_Store
+Thumbs.db
+node_modules/

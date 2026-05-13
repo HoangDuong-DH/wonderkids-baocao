@@ -223,7 +223,7 @@ body{
   letter-spacing:.04em;text-shadow:0 1px 0 rgba(0,0,0,.12);
 }
 .summary-merged .merged-body{
-  display:grid;grid-template-columns:240px 260px 1fr;gap:14px;
+  display:grid;grid-template-columns:220px 280px 1fr;gap:12px;
   padding:12px 16px;align-items:stretch;
 }
 .merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:center}
@@ -239,8 +239,8 @@ body{
 
 /* Info-row: horizontal layout với section title + % + level */
 .info-row{
-  display:flex;align-items:center;gap:10px;
-  padding:8px 11px;border-radius:9px;
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:9px;overflow:hidden;
 }
 .info-row.k1{background:#fff8ec;border:1.5px solid var(--c-yellow)}
 .info-row.k2{background:#fff3e0;border:1.5px solid var(--c-primary-2)}
@@ -257,15 +257,15 @@ body{
 .info-row.k1 .info-bullet{background:var(--c-yellow)}
 .info-row.k2 .info-bullet{background:var(--c-primary-2)}
 .info-row .info-section-name{
-  font:800 10.5px/1.2 var(--font-body);letter-spacing:.03em;
-  display:inline-block;max-width:90px;
+  font:800 10px/1.2 var(--font-body);letter-spacing:.02em;
+  display:inline-block;max-width:84px;
 }
 .info-row.k1 .info-section-name{color:#a07410}
 .info-row.k2 .info-section-name{color:var(--c-primary-2)}
 
 /* % block: big % + score */
 .info-row .info-pct-block{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;flex:0 0 auto}
-.info-row .info-pct{font:800 19px/1 var(--font-body)}
+.info-row .info-pct{font:800 18px/1 var(--font-body)}
 .info-row.k1 .info-pct{color:#a07410}
 .info-row.k2 .info-pct{color:var(--c-primary-2)}
 .info-row .info-score{font:600 9.5px var(--font-body);color:var(--c-muted);margin-top:2px}
@@ -277,9 +277,9 @@ body{
   text-transform:none;letter-spacing:0;
 }
 .info-row .level-select{
-  text-align:left;font:800 13px/1.1 var(--font-body);
+  text-align:left;font:800 12px/1.1 var(--font-body);
   color:var(--c-primary-2);background:transparent;border:0;outline:0;
-  cursor:pointer;padding:1px 16px 1px 2px;
+  cursor:pointer;padding:1px 14px 1px 2px;max-width:100%;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   background-repeat:no-repeat;background-position:right 2px center;
   appearance:none;-webkit-appearance:none;
@@ -1429,7 +1429,6 @@ body.print-preview .hdr .mascot svg{display:none !important}
             <span class="info-score" id="info-1-score">— / — điểm</span>
           </div>
           <div class="info-level-block">
-            <span class="level-lab-mini">Mức:</span>
             <select id="sum1-level" class="level-select" data-level="">
               <option value="">— Chọn —</option>
               <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
@@ -1448,7 +1447,6 @@ body.print-preview .hdr .mascot svg{display:none !important}
             <span class="info-score" id="info-2-score">— / — điểm</span>
           </div>
           <div class="info-level-block">
-            <span class="level-lab-mini">Mức:</span>
             <select id="sum2-level" class="level-select" data-level="">
               <option value="">— Chọn —</option>
               <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
@@ -2409,7 +2407,7 @@ function _scoreStrFromTable(tableId){
   const max=data.reduce((s,d)=>s+d.max,0);
   if(max<=0) return '';
   const fmt=x=>Number.isInteger(x)?x:(+x.toFixed(2));
-  return `${fmt(cur)} / ${fmt(max)} điểm`;
+  return `${fmt(cur)}/${fmt(max)} đ`;
 }
 
 function refreshSummary(){

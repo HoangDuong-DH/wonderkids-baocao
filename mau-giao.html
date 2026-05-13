@@ -440,6 +440,49 @@ body{
   .bg-shapes{display:none}
 }
 @page{size:A3 portrait;margin:6mm}
+
+/* ───── DYNAMIC GRADE BINDING ─────
+   s1-card + ability đồng bộ qua data-grade attribute */
+.s1-card[data-grade] .head .ico,
+.s1-card[data-grade] .grade,
+.s1-card[data-grade] .lbl,
+.s1-card[data-grade] .bar i{transition:all .25s ease}
+.s1-card[data-grade="S"] .head .ico{background:var(--g-S-bg);color:var(--g-S)}
+.s1-card[data-grade="A"] .head .ico{background:var(--g-A-bg);color:var(--g-A)}
+.s1-card[data-grade="B"] .head .ico{background:var(--g-B-bg);color:var(--g-B)}
+.s1-card[data-grade="C"] .head .ico{background:var(--g-C-bg);color:var(--g-C)}
+.s1-card[data-grade="L"] .head .ico{background:var(--g-L-bg);color:var(--g-L)}
+.s1-card[data-grade="S"] .grade,.s1-card[data-grade="S"] .lbl{color:var(--g-S)}
+.s1-card[data-grade="A"] .grade,.s1-card[data-grade="A"] .lbl{color:var(--g-A)}
+.s1-card[data-grade="B"] .grade,.s1-card[data-grade="B"] .lbl{color:var(--g-B)}
+.s1-card[data-grade="C"] .grade,.s1-card[data-grade="C"] .lbl{color:var(--g-C)}
+.s1-card[data-grade="L"] .grade,.s1-card[data-grade="L"] .lbl{color:var(--g-L)}
+.s1-card[data-grade="S"] .bar i{background:var(--g-S);width:95%}
+.s1-card[data-grade="A"] .bar i{background:var(--g-A);width:80%}
+.s1-card[data-grade="B"] .bar i{background:var(--g-B);width:65%}
+.s1-card[data-grade="C"] .bar i{background:var(--g-C);width:50%}
+.s1-card[data-grade="L"] .bar i{background:var(--g-L);width:25%}
+
+/* Click to cycle grade — hint cursor */
+.ability tbody td:last-child span{cursor:pointer;transition:transform .15s ease,filter .15s ease;user-select:none}
+.ability tbody td:last-child span:hover{transform:scale(1.18);filter:brightness(1.1)}
+
+/* Auto-comment button trong section 5 */
+.s6 .sec-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.auto-comment-btn-mg{
+  font:700 11px var(--font-body);letter-spacing:.02em;
+  background:linear-gradient(135deg,#fff3da,#ffd17a);
+  color:var(--orange-deep);border:1.5px solid var(--orange);
+  border-radius:14px;padding:5px 14px;cursor:pointer;margin-left:auto;
+  transition:transform .15s ease,box-shadow .15s ease,background .2s ease;
+}
+.auto-comment-btn-mg:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(240,133,38,.25);background:linear-gradient(135deg,#ffe6b8,#ffb86b)}
+.auto-comment-btn-mg:active{transform:translateY(0)}
+@media print{.auto-comment-btn-mg{display:none !important}}
+@keyframes mg-toast-out{
+  0%,70%{opacity:1;transform:translateX(-50%) translateY(0)}
+  100%{opacity:0;transform:translateX(-50%) translateY(-10px)}
+}
 </style>
 </head>
 <body>
@@ -744,7 +787,9 @@ body{
   </div>
   <!-- ─── SECTION 5: NHẬN XÉT & ĐỊNH HƯỚNG ─── -->
   <div class="s6">
-    <div class="sec-h"><span class="num">5</span>Nhận xét chung &amp; Định hướng</div>
+    <div class="sec-h"><span class="num">5</span>Nhận xét chung &amp; Định hướng
+      <button class="auto-comment-btn-mg" onclick="fillCommentsMG(true)" title="Sinh nhận xét và định hướng tự động từ kết quả đánh giá">🪄 Tự động nhận xét</button>
+    </div>
     <div class="nx-box">
       <div class="nx-block">
         <div class="nx-lbl">Nhận xét:</div>
@@ -897,6 +942,151 @@ function renderDonut(){
   info.innerHTML = rows;
 }
 renderDonut();
+
+/* ═══════════════════════════════════════════════════════════════
+   DYNAMIC DATA BINDING + AUTO-COMMENT (mau-giao)
+   - Mỗi ability table có 1 grade tổng = weighted avg của chi tiết
+   - S1-card đồng bộ theo data-grade attribute
+   - Click vào grade chip → cycle S→A→B→C→L→S
+   - Auto-comment sinh insightful comment cho phụ huynh
+   ═══════════════════════════════════════════════════════════════ */
+const __GROUP_MAP = [
+  {title:'Tư duy cơ bản',   abilityIdx:0,
+   suggestions:'tăng cường trò chơi tìm điểm khác biệt, ghi nhớ qua flashcard, rèn quan sát tỉ mỉ qua các hoạt động hằng ngày'},
+  {title:'Tư duy toán học', abilityIdx:1,
+   suggestions:'đếm đồ vật quen thuộc, xếp hình khối, đo lường đơn giản, nhận biết quy luật số và hình'},
+  {title:'Tư duy logic',    abilityIdx:2,
+   suggestions:'câu đố logic đơn giản, phân loại đồ vật theo nhiều thuộc tính, suy luận nguyên-nhân-kết-quả'},
+  {title:'Tư duy sáng tạo', abilityIdx:3,
+   suggestions:'vẽ tự do, kể chuyện sáng tạo, chơi đóng vai, làm thủ công từ vật liệu sẵn có ở nhà'},
+];
+const __GRADE_SCORE = {S:5, A:4, B:3, C:2, L:1};
+const __GRADE_NEXT = {S:'A',A:'B',B:'C',C:'L',L:'S'};
+const __GRADE_RADAR_PCT = {S:95,A:80,B:65,C:50,L:25};
+
+function _abilityGrade(abilityEl){
+  const grades = [...abilityEl.querySelectorAll('tbody td:last-child span')].map(s=>s.textContent.trim().toUpperCase());
+  if(!grades.length) return 'C';
+  const total = grades.reduce((acc,g)=>acc+(__GRADE_SCORE[g]||0), 0);
+  const avg = total / grades.length;
+  if(avg >= 4.5) return 'S';
+  if(avg >= 3.5) return 'A';
+  if(avg >= 2.5) return 'B';
+  if(avg >= 1.5) return 'C';
+  return 'L';
+}
+
+function _setS1Card(card, grade){
+  if(!card) return;
+  card.dataset.grade = grade;
+  const gEl = card.querySelector('.grade');
+  if(gEl) gEl.textContent = grade;
+  const lEl = card.querySelector('.lbl');
+  if(lEl) lEl.textContent = 'MỨC ' + grade;
+}
+
+function recomputeAllMG(){
+  const abilities = document.querySelectorAll('.ability');
+  const cards = document.querySelectorAll('.s1-card');
+  __GROUP_MAP.forEach((group, idx)=>{
+    const ab = abilities[group.abilityIdx];
+    if(!ab) return;
+    const grade = _abilityGrade(ab);
+    // Update ability group color class + grade-big label
+    ab.className = 'ability g'+grade;
+    const gradeBig = ab.querySelector('.grade-big');
+    if(gradeBig) gradeBig.textContent = grade;
+    const mval = ab.querySelector('.mval');
+    if(mval) mval.textContent = 'MỨC ' + grade;
+    // Sync s1-card
+    if(cards[idx]) _setS1Card(cards[idx], grade);
+  });
+  // Update radar + donut
+  if(typeof RADAR_DATA!=='undefined' && typeof renderRadar==='function'){
+    RADAR_DATA.child = [...abilities].map(ab=>__GRADE_RADAR_PCT[_abilityGrade(ab)] || 50);
+    renderRadar();
+  }
+  if(typeof renderDonut==='function') renderDonut();
+}
+
+// Click to cycle grade in ability tables — auto-recompute everything
+document.addEventListener('click', e=>{
+  const span = e.target.closest('.ability tbody td:last-child span');
+  if(!span) return;
+  const cur = span.textContent.trim().toUpperCase();
+  const next = __GRADE_NEXT[cur] || 'C';
+  span.textContent = next;
+  span.className = 'g'+next;
+  recomputeAllMG();
+});
+
+// Run once on load
+recomputeAllMG();
+
+/* ─── AUTO-COMMENT GENERATOR ─── */
+function autoCommentMG(){
+  const nameInputs = document.querySelectorAll('.info-field input.val');
+  const fullName = (nameInputs[0]?.value || 'bé').trim() || 'bé';
+  const abilities = document.querySelectorAll('.ability');
+  const groupGrades = __GROUP_MAP.map((g,i)=>({
+    title: g.title,
+    grade: _abilityGrade(abilities[i]),
+  }));
+  const allScores = groupGrades.map(g=>__GRADE_SCORE[g.grade]);
+  const avgScore = allScores.reduce((a,b)=>a+b,0)/allScores.length;
+  let stage = '';
+  if(avgScore >= 4.5) stage = 'rất xuất sắc';
+  else if(avgScore >= 3.5) stage = 'rất tốt';
+  else if(avgScore >= 2.5) stage = 'phát triển ổn định';
+  else if(avgScore >= 1.5) stage = 'đang xây dựng nền tảng';
+  else stage = 'cần được hỗ trợ thêm trong thời gian tới';
+  const strengths = groupGrades.filter(g=>['S','A','B'].includes(g.grade));
+  const weaknesses = groupGrades.filter(g=>['C','L'].includes(g.grade));
+  let html = '';
+  html += `<p>Bé <b>${fullName}</b> đang ở giai đoạn <b>${stage}</b> trong phát triển tư duy.</p>`;
+  if(strengths.length){
+    const list = strengths.map(g=>`<b>${g.title}</b> (mức ${g.grade})`).join(', ');
+    html += `<p><b>🌟 Điểm sáng:</b> Bé thể hiện tốt ở ${list}. Đây là nền tảng đáng khích lệ — phụ huynh có thể tiếp tục duy trì qua các hoạt động vui chơi đa dạng.</p>`;
+  }
+  if(weaknesses.length){
+    const list = weaknesses.map(g=>`<b>${g.title}</b> (mức ${g.grade})`).join(', ');
+    html += `<p><b>📌 Cần củng cố:</b> Bé chưa thực sự vững ở ${list}. Đây là cơ hội để phụ huynh đồng hành cùng bé qua các hoạt động thực tế hằng ngày.</p>`;
+  }
+  html += `<p><b>✨ Lời nhắn:</b> Mỗi đứa trẻ có nhịp phát triển riêng. Sau 1-3 tháng luyện tập đều đặn cùng phụ huynh và giáo viên, bé hoàn toàn có thể tiến bộ rõ rệt. Quan trọng nhất là giữ tinh thần thoải mái, vui chơi và khám phá cùng bé!</p>`;
+  return html;
+}
+
+function autoDirectionMG(){
+  const abilities = document.querySelectorAll('.ability');
+  const weakGroups = __GROUP_MAP.map((g,i)=>({...g, grade: _abilityGrade(abilities[i])}))
+                                 .filter(g=>['C','L'].includes(g.grade));
+  let items = '';
+  if(weakGroups.length){
+    weakGroups.forEach(g=>{
+      items += `<li><b>${g.title}:</b> ${g.suggestions}.</li>`;
+    });
+  } else {
+    items += `<li>Bé đang phát triển tốt ở mọi nhóm năng lực. Phụ huynh có thể tiếp tục đa dạng các hoạt động vui chơi để bé tiếp tục bứt phá.</li>`;
+  }
+  items += `<li><b>Duy trì thói quen học mà chơi:</b> dành 15-20 phút mỗi ngày cùng bé qua các trò chơi tư duy phù hợp lứa tuổi, không tạo áp lực thành tích.</li>`;
+  items += `<li><b>Khuyến khích trải nghiệm thực tế:</b> đưa bé tham gia hoạt động ngoài trời, thí nghiệm nhỏ, làm việc nhà đơn giản để bé học qua quan sát và thực hành.</li>`;
+  return items;
+}
+
+function fillCommentsMG(force){
+  const body = document.querySelector('.s6 .nx-body');
+  if(body){ body.innerHTML = autoCommentMG(); }
+  const list = document.querySelector('.s6 .nx-list');
+  if(list){ list.innerHTML = autoDirectionMG(); }
+  if(force){
+    // Toast confirm
+    const t = document.createElement('div');
+    t.textContent = '✨ Đã sinh nhận xét tự động';
+    t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#5fb74f;color:#fff;padding:10px 20px;border-radius:99px;font:600 13px/1 Be Vietnam Pro,sans-serif;box-shadow:0 8px 24px rgba(95,183,79,.3);z-index:1000;animation:mg-toast-out 2.5s forwards';
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 2500);
+  }
+}
 </script>
 </body>
 </html>

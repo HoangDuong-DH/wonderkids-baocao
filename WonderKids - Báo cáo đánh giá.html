@@ -3775,6 +3775,7 @@ function loadSampleCSV(){
       if(mx) mx.value=d[1]; if(cu) cu.value=d[2];
     });
     refreshSummary(); scheduleSave(); autoGrowAll();
+    if(typeof autoFillComments==='function'){ autoFillComments(true); }
     if(filled>0){ slog(`✓ Đã fill ${filled} mục vào form`,'ok'); toast(`✓ Tải CSV mẫu thành công (${filled} mục)`,'info'); }
     else{ slog('⚠ Không khớp template','warn'); toast('Không khớp template','warn'); }
   }catch(err){
@@ -4096,6 +4097,7 @@ async function importExcel(ev){
     let filled=0;
     rowsBatches.forEach(rows=>{ filled+=importWonderkids(rows); });
     refreshSummary(); scheduleSave(); autoGrowAll();
+    if(filled>0 && typeof autoFillComments==='function'){ autoFillComments(true); }
     if(filled>0){ slog(`✓ HOÀN TẤT — fill ${filled} mục`,'ok'); toast(`✓ Đã nhập ${filled} mục`,'info'); }
     else{ slog('⚠ Không khớp template','warn'); toast('Không khớp template WonderKids','warn'); }
   }catch(err){

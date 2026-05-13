@@ -3780,6 +3780,10 @@ function loadSampleCSV(){
       if(mx) mx.value=d[1]; if(cu) cu.value=d[2];
     });
     refreshSummary(); scheduleSave(); autoGrowAll();
+    // FORCE regen nhận xét sau khi import dữ liệu mới
+    // (lỗi cũ: textarea giữ nhận xét của dữ liệu cũ vì autoFill default chỉ
+    //  điền khi rỗng. Sau import = data MỚI thì phải override.)
+    if(typeof autoFillComments==='function'){ autoFillComments(true); }
     if(filled>0){ slog(`✓ Đã fill ${filled} mục vào form`,'ok'); toast(`✓ Tải CSV mẫu thành công (${filled} mục)`,'info'); }
     else{ slog('⚠ Không khớp template','warn'); toast('Không khớp template','warn'); }
   }catch(err){
@@ -4101,6 +4105,9 @@ async function importExcel(ev){
     let filled=0;
     rowsBatches.forEach(rows=>{ filled+=importWonderkids(rows); });
     refreshSummary(); scheduleSave(); autoGrowAll();
+    // FORCE regen nhận xét sau khi import dữ liệu mới — fix bug
+    // textarea giữ nhận xét của dữ liệu trước đó.
+    if(filled>0 && typeof autoFillComments==='function'){ autoFillComments(true); }
     if(filled>0){ slog(`✓ HOÀN TẤT — fill ${filled} mục`,'ok'); toast(`✓ Đã nhập ${filled} mục`,'info'); }
     else{ slog('⚠ Không khớp template','warn'); toast('Không khớp template WonderKids','warn'); }
   }catch(err){

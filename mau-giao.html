@@ -283,7 +283,7 @@ body{
 .ability tbody .gB{color:var(--g-B);font-weight:800;font-size:14px}
 
 /* ───── Right column: Section 3,4,5 ───── */
-.s3{
+.s3-DEPRECATED{
   background:#fff;border:2px solid var(--hair-soft);
   border-radius:16px;padding:14px;
   box-shadow:0 4px 0 #fcecc4;
@@ -323,7 +323,6 @@ body{
 .radar-chart{width:100%;height:260px}
 .radar-legend{display:flex;gap:18px;justify-content:center;margin-top:4px;font:600 11px/1 var(--font-body);color:var(--ink-soft)}
 .radar-legend .sw{display:inline-block;width:14px;height:3px;background:#f5b84a;border-radius:2px;margin-right:6px;vertical-align:middle}
-.radar-legend .sw.avg{background:transparent;border-top:2.5px dashed #1d4570}
 
 .donut-wrap{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
 .donut-chart{width:130px;height:130px}
@@ -708,43 +707,16 @@ body{
 
     <!-- RIGHT COLUMN -->
     <div>
-      <div class="sec-h"><span class="num">3</span>Đánh giá tổng quát</div>
-      <div class="s3">
-        <div class="legend2">
-          <span class="l"><span class="sw" style="background:#f5b84a"></span>Bé <span data-name>Bách</span></span>
-          <span class="l"><span class="sw" style="background:#1d4570"></span>Trung bình của tất cả HS</span>
-        </div>
-        <svg class="chart" id="bar-chart" viewBox="0 0 360 200"></svg>
-        <div class="cmp">
-          <table>
-            <thead><tr><th>Lĩnh vực</th><th>Mức của bé</th><th>Mức TB của HS cùng lứa</th></tr></thead>
-            <tbody>
-              <tr><td>Tư duy cơ bản</td><td><span class="gC">C</span></td><td><span class="gB">B</span></td></tr>
-              <tr><td>Tư duy toán học</td><td><span class="gC">C</span></td><td><span class="gB">B</span></td></tr>
-              <tr><td>Tư duy logic</td><td><span class="gC">C</span></td><td><span class="gB">B</span></td></tr>
-              <tr><td>Tư duy sáng tạo</td><td><span class="gL">L</span></td><td><span class="gC">C</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
+      <div class="sec-h"><span class="num">3</span>Hình dáng năng lực — Radar</div>
       <div class="s4">
-        <div class="ttl">
-          <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 19 7 17 17 7 17 5 7"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="7" x2="19" y2="17"/><line x1="19" y1="7" x2="5" y2="17"/></svg></span>
-          4. Hình dáng năng lực (Radar)
-        </div>
         <svg id="radar-chart" class="radar-chart" viewBox="-30 -10 380 320"></svg>
         <div class="radar-legend">
-          <span><span class="sw"></span>Bé <span data-name>Bách</span></span>
-          <span><span class="sw avg"></span>Trung bình của tất cả HS</span>
+          <span><span class="sw"></span>Năng lực của bé <span data-name>Bách</span></span>
         </div>
       </div>
 
+      <div class="sec-h"><span class="num">4</span>Phân bố mức độ chi tiết</div>
       <div class="s5">
-        <div class="ttl">
-          <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></span>
-          5. Phân bố mức độ các kỹ năng chi tiết
-        </div>
         <div class="donut-wrap">
           <svg id="donut-chart" class="donut-chart" viewBox="0 0 140 140"></svg>
           <div class="donut-info" id="donut-info"></div>
@@ -753,9 +725,9 @@ body{
     </div>
   </div>
 
-  <!-- ─── SECTION 6: NHẬN XÉT & ĐỊNH HƯỚNG ─── -->
+  <!-- ─── SECTION 5: NHẬN XÉT & ĐỊNH HƯỚNG ─── -->
   <div class="s6">
-    <div class="sec-h"><span class="num">6</span>Nhận xét chung &amp; Định hướng</div>
+    <div class="sec-h"><span class="num">5</span>Nhận xét chung &amp; Định hướng</div>
     <div class="nx-box">
       <div class="nx-block">
         <div class="nx-lbl">Nhận xét:</div>
@@ -794,53 +766,10 @@ body{
 </div>
 
 <script>
-/* ─── Bar chart ─── */
-const CHART = {
-  labels: ['Tư duy\ncơ bản','Tư duy\ntoán học','Tư duy\nlogic','Tư duy\nsáng tạo'],
-  child:  [55, 50, 50, 22],
-  avg:    [65, 65, 65, 48],
-};
-function renderChart(){
-  const svg=document.getElementById('bar-chart');
-  if(!svg) return;
-  const W=360,H=200, mL=30, mR=8, mT=12, mB=42;
-  const cw = (W-mL-mR);
-  const ch = (H-mT-mB);
-  const N = CHART.labels.length;
-  const groupW = cw/N;
-  const barW = (groupW-12)/2;
-  let html='';
-  // Y axis gridlines
-  for(let v=0; v<=100; v+=20){
-    const y = mT + ch*(1 - v/100);
-    html += `<line x1="${mL}" y1="${y}" x2="${W-mR}" y2="${y}" stroke="#f0dcb0" stroke-width="1" stroke-dasharray="${v===0?'':'2 3'}"/>`;
-    html += `<text x="${mL-6}" y="${y+3}" text-anchor="end" font-family="Be Vietnam Pro,sans-serif" font-weight="600" font-size="9" fill="#a89070">${v}</text>`;
-  }
-  // bars
-  for(let i=0;i<N;i++){
-    const gx = mL + i*groupW + 6;
-    const h1 = ch * (CHART.child[i]/100);
-    const h2 = ch * (CHART.avg[i]/100);
-    html += `<rect x="${gx}" y="${mT+ch-h1}" width="${barW}" height="${h1}" rx="3" fill="#f5b84a"/>`;
-    html += `<rect x="${gx+barW+4}" y="${mT+ch-h2}" width="${barW}" height="${h2}" rx="3" fill="#1d4570"/>`;
-    // value labels on top
-    html += `<text x="${gx+barW/2}" y="${mT+ch-h1-3}" text-anchor="middle" font-family="Be Vietnam Pro,sans-serif" font-weight="700" font-size="9" fill="#dd5a11">${CHART.child[i]}</text>`;
-    html += `<text x="${gx+barW+4+barW/2}" y="${mT+ch-h2-3}" text-anchor="middle" font-family="Be Vietnam Pro,sans-serif" font-weight="700" font-size="9" fill="#1d4570">${CHART.avg[i]}</text>`;
-    // label below
-    const lines = CHART.labels[i].split('\n');
-    lines.forEach((ln,k)=>{
-      html += `<text x="${gx+barW+2}" y="${mT+ch+14+k*11}" text-anchor="middle" font-family="Be Vietnam Pro,sans-serif" font-weight="600" font-size="10" fill="#7b6244">${ln}</text>`;
-    });
-  }
-  svg.innerHTML = html;
-}
-renderChart();
-
-/* ─── Radar chart ─── */
+/* ─── Radar chart ─── (bỏ bar chart so sánh + bỏ avg peer data) */
 const RADAR_DATA = {
   labels: ['Tư duy\ncơ bản','Tư duy\ntoán học','Tư duy\nlogic','Tư duy\nsáng tạo'],
   child:  [55, 50, 50, 22],
-  avg:    [65, 65, 65, 48],
 };
 function renderRadar(){
   const svg=document.getElementById('radar-chart');
@@ -868,12 +797,7 @@ function renderRadar(){
     const [x,y]=pt(i,100);
     html += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#f0dcb0" stroke-width="1"/>`;
   }
-  // average polygon (dashed navy)
-  {
-    const pts=RADAR_DATA.avg.map((v,i)=>pt(i,v).join(',')).join(' ');
-    html += `<polygon points="${pts}" fill="none" stroke="#1d4570" stroke-width="2" stroke-dasharray="6 4"/>`;
-  }
-  // child polygon (amber filled)
+  // child polygon (amber filled) — đã bỏ avg peer comparison
   {
     const pts=RADAR_DATA.child.map((v,i)=>pt(i,v).join(',')).join(' ');
     html += `<polygon points="${pts}" fill="#f5b84a" fill-opacity=".35" stroke="#f08526" stroke-width="2.6" stroke-linejoin="round"/>`;

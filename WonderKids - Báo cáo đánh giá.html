@@ -223,7 +223,7 @@ body{
   letter-spacing:.04em;text-shadow:0 1px 0 rgba(0,0,0,.12);
 }
 .summary-merged .merged-body{
-  display:grid;grid-template-columns:220px 300px 1fr;gap:14px;
+  display:grid;grid-template-columns:220px 220px 1fr;gap:14px;
   padding:12px 16px;align-items:stretch;
 }
 .merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:center}
@@ -235,58 +235,56 @@ body{
   text-align:center;margin-bottom:2px;letter-spacing:.02em;
 }
 .merged-radar-wrap .chart-svg{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0}
-.merged-radar-wrap .chart-svg svg{width:100%;max-height:270px;height:auto;display:block}
+.merged-radar-wrap .chart-svg svg{width:100%;max-height:320px;height:auto;display:block}
 
-/* Info-card: 2 cards STACKED vertically (full middle-col width each) */
+/* Info-card: 2 SMALL SQUARE cards side-by-side */
 .merged-info-stack{
-  display:flex;flex-direction:column;gap:10px;
-  justify-content:center;min-width:0;
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  align-content:center;justify-content:center;min-width:0;
 }
 .info-card{
-  display:flex;flex-direction:column;gap:6px;
-  padding:10px 14px;border-radius:11px;min-width:0;overflow:hidden;
-  position:relative;
+  display:flex;flex-direction:column;gap:3px;
+  padding:9px 10px;border-radius:10px;min-width:0;overflow:hidden;
+  position:relative;aspect-ratio:1 / 1;justify-content:space-between;
 }
 .info-card.k1{background:#fff8ec;border:1.5px solid var(--c-yellow)}
 .info-card.k2{background:#fff3e0;border:1.5px solid var(--c-primary-2)}
 
 .info-card .info-card-head{
-  display:flex;align-items:center;gap:7px;
-  border-bottom:1.5px dashed rgba(0,0,0,.08);
-  padding-bottom:6px;min-width:0;
+  display:flex;align-items:center;gap:5px;min-width:0;
 }
 .info-card .info-bullet{
-  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
 }
 .info-card.k1 .info-bullet{background:var(--c-yellow)}
 .info-card.k2 .info-bullet{background:var(--c-primary-2)}
 .info-card .info-section-name{
-  font:800 11.5px/1.2 var(--font-body);letter-spacing:.04em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;
+  font:800 10px/1.15 var(--font-body);letter-spacing:.03em;
+  flex:1;min-width:0;word-break:break-word;
 }
 .info-card.k1 .info-section-name{color:#a07410}
 .info-card.k2 .info-section-name{color:var(--c-primary-2)}
 
-/* Stat row: % big left, score middle, level right */
+/* Stat row: % big + score under it */
 .info-card .info-stat-row{
-  display:flex;align-items:baseline;gap:10px;min-width:0;
+  display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;
 }
 .info-card .info-pct{
-  font:800 26px/1 var(--font-body);flex-shrink:0;
+  font:800 26px/1 var(--font-body);
 }
 .info-card.k1 .info-pct{color:#a07410}
 .info-card.k2 .info-pct{color:var(--c-primary-2)}
 .info-card .info-score{
-  font:600 10px var(--font-body);color:var(--c-muted);
-  flex-shrink:0;
+  font:600 9px var(--font-body);color:var(--c-muted);
 }
 .info-card .info-level-block{
-  display:flex;align-items:center;margin-left:auto;min-width:0;max-width:140px;
+  display:flex;align-items:center;min-width:0;
+  padding-top:3px;border-top:1px dashed rgba(0,0,0,.08);
 }
 .info-card .level-select{
-  text-align:right;font:800 14px/1.15 var(--font-body);
+  text-align:left;font:800 12px/1.15 var(--font-body);
   color:var(--c-primary-2);background:transparent;border:0;outline:0;
-  cursor:pointer;padding:2px 16px 2px 4px;min-width:0;
+  cursor:pointer;padding:1px 14px 1px 0;width:100%;min-width:0;
   text-overflow:ellipsis;overflow:hidden;white-space:nowrap;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   background-repeat:no-repeat;background-position:right 2px center;
@@ -1020,22 +1018,22 @@ body.print-preview .quick-actions{display:none !important}
   .summary-merged{margin-top:4px !important;margin-bottom:0 !important}
   .summary-merged .merged-head{padding:5px 12px !important}
   .summary-merged .merged-head .seg-title{font-size:12.5px !important;letter-spacing:.03em !important}
-  .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:190px 235px 1fr !important;gap:12px !important;align-items:stretch !important}
+  .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:190px 180px 1fr !important;gap:12px !important;align-items:stretch !important}
   .merged-donut-wrap svg{width:190px !important;height:190px !important}
   .merged-legend{gap:10px !important;font-size:9px !important}
   .merged-legend .dot{width:7px !important;height:7px !important}
   .merged-radar-wrap .merged-radar-title{font-size:10px !important;margin-bottom:0 !important}
-  .merged-radar-wrap .chart-svg svg{max-height:240px !important}
-  /* Compact info-card: stacked vertically, full-width each, horizontal stat row inside */
-  .merged-info-stack{gap:9px !important}
-  .info-card{padding:8px 12px !important;border-radius:10px !important;gap:5px !important}
-  .info-card .info-card-head{padding-bottom:5px !important;gap:6px !important}
-  .info-card .info-bullet{width:8px !important;height:8px !important}
-  .info-card .info-section-name{font-size:10.5px !important;line-height:1.2 !important}
-  .info-card .info-stat-row{gap:9px !important}
-  .info-card .info-pct{font-size:22px !important}
-  .info-card .info-score{font-size:9.5px !important}
-  .info-card .level-select{font-size:12.5px !important;padding:1px 14px 1px 3px !important}
+  .merged-radar-wrap .chart-svg svg{max-height:280px !important}
+  /* Compact info-card: 2 small SQUARE cards side-by-side */
+  .merged-info-stack{gap:8px !important;grid-template-columns:1fr 1fr !important}
+  .info-card{padding:7px 8px !important;border-radius:9px !important;gap:2px !important;aspect-ratio:1 / 1 !important}
+  .info-card .info-card-head{gap:4px !important}
+  .info-card .info-bullet{width:6.5px !important;height:6.5px !important}
+  .info-card .info-section-name{font-size:9px !important;line-height:1.15 !important;letter-spacing:.02em !important}
+  .info-card .info-pct{font-size:21px !important}
+  .info-card .info-score{font-size:8.5px !important}
+  .info-card .info-level-block{padding-top:2px !important}
+  .info-card .level-select{font-size:10.5px !important;padding:0 12px 0 0 !important}
   .sumcard .level .lab{font-size:9.5px;padding:4px 12px}
   .sumcard .level select{font-size:10.5px;padding:4px 22px 4px 12px}
   .sumcard textarea,.sumcard .ta-print-mirror{
@@ -1436,12 +1434,12 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <div class="info-stat-row">
             <span class="info-pct" id="info-1-pct">—%</span>
             <span class="info-score" id="info-1-score">—/— đ</span>
-            <div class="info-level-block">
-              <select id="sum1-level" class="level-select" data-level="" title="Mức đánh giá">
-                <option value="">— Chọn —</option>
-                <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
-              </select>
-            </div>
+          </div>
+          <div class="info-level-block">
+            <select id="sum1-level" class="level-select" data-level="" title="Mức đánh giá">
+              <option value="">— Chọn —</option>
+              <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
+            </select>
           </div>
           <span class="level-stage" id="sum1-stage" style="display:none"></span>
           <textarea id="sum1-note" class="hidden-note" placeholder="Nhận xét…" style="display:none"></textarea>
@@ -1454,12 +1452,12 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <div class="info-stat-row">
             <span class="info-pct" id="info-2-pct">—%</span>
             <span class="info-score" id="info-2-score">—/— đ</span>
-            <div class="info-level-block">
-              <select id="sum2-level" class="level-select" data-level="" title="Mức đánh giá">
-                <option value="">— Chọn —</option>
-                <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
-              </select>
-            </div>
+          </div>
+          <div class="info-level-block">
+            <select id="sum2-level" class="level-select" data-level="" title="Mức đánh giá">
+              <option value="">— Chọn —</option>
+              <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
+            </select>
           </div>
           <span class="level-stage" id="sum2-stage" style="display:none"></span>
           <textarea id="sum2-note" class="hidden-note" placeholder="Nhận xét…" style="display:none"></textarea>

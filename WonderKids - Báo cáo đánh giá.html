@@ -3930,15 +3930,26 @@ const __LABEL_MIGRATION = {
 };
 function __runLabelMigration(){
   let changed = 0;
+  // 1) Map label cũ → label mới (theo __LABEL_MIGRATION)
   document.querySelectorAll('.tbl .label-cell').forEach(el=>{
     const v = (el.value||'').trim();
     if(__LABEL_MIGRATION[v]){ el.value=__LABEL_MIGRATION[v]; changed++; }
   });
-  // Fill desc-cell rỗng bằng default từ DEFAULT_DESCS
+  // 2) Fill label-cell RỖNG bằng DEFAULT_LABELS theo row index
+  //    (covers case: saved state có label rỗng do bug cũ hoặc reset)
+  if(typeof DEFAULT_LABELS!=='undefined'){
+    for(const [tid,labels] of Object.entries(DEFAULT_LABELS)){
+      document.querySelectorAll(`#${tid} tbody tr[data-row] .label-cell`).forEach((el,i)=>{
+        if(!(el.value||'').trim() && labels[i]){ el.value=labels[i]; changed++; }
+      });
+    }
+  }
+  // 3) Fill desc-cell RỖNG bằng DEFAULT_DESCS theo row index
+  //    Selector dùng .desc-cell (không kèm input/textarea) vì đã chuyển sang textarea
   if(typeof DEFAULT_DESCS!=='undefined'){
     for(const [tid,descs] of Object.entries(DEFAULT_DESCS)){
-      document.querySelectorAll(`#${tid} tbody tr[data-row] input.desc-cell`).forEach((inp,i)=>{
-        if(!(inp.value||'').trim() && descs[i]){ inp.value=descs[i]; changed++; }
+      document.querySelectorAll(`#${tid} tbody tr[data-row] .desc-cell`).forEach((el,i)=>{
+        if(!(el.value||'').trim() && descs[i]){ el.value=descs[i]; changed++; }
       });
     }
   }

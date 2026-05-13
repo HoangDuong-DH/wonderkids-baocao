@@ -2254,9 +2254,13 @@ function refreshQScore(){
   });
   host.innerHTML=html;
 }
-// Listener: gõ điểm → refresh
+// Listener: gõ điểm 10 câu tư duy → refresh qscore + sum2 (vì Tư duy info-card
+// dùng qscore 60đ làm quy chuẩn)
 document.addEventListener('input', e=>{
-  if(e.target.matches('[data-tu-max], [data-tu-cur]')) refreshQScore();
+  if(e.target.matches('[data-tu-max], [data-tu-cur]')){
+    refreshQScore();
+    refreshSummary();
+  }
 });
 
 // Parse 10-câu tư duy từ CSV rows (col 1 = Mục 1-10, col 2 = chuẩn, col 3 = đạt)
@@ -2680,10 +2684,13 @@ function refreshSummary(){
   const nl=recomputeTable(document.getElementById('t-nl'));
   const cd=recomputeTable(document.getElementById('t-cd'));
 
-  // weighted avg of section 1 (kt main signal)
-  const s1Pct = kt.pct ?? kq.pct ?? ss.pct;
-  // section 2 — nl main signal
-  const s2Pct = nl.pct ?? cd.pct;
+  // QUY CHUẨN:
+  //   Section 1 (KTCB) = t-kt (5 đơn vị, 20đ) + t-kq (bài toán có/không lời, 20đ) = 40đ
+  //   Section 2 (Tư duy) = qscore 10 câu = 60đ (KHÔNG dùng t-nl 192đ)
+  const ktcbTot = _ktcbTotals();
+  const tuduyTot = _tuduyTotals();
+  const s1Pct = ktcbTot.max>0 ? ktcbTot.pct : null;
+  const s2Pct = tuduyTot.max>0 ? tuduyTot.pct : null;
 
   // Level dropdown — auto-suggest nếu user chưa pick (phải declare l1/l2 TRƯỚC khi dùng)
   const l1=document.getElementById('sum1-level');
@@ -2697,9 +2704,9 @@ function refreshSummary(){
   const lv1=l1.value || (s1Pct!=null?pctToLevel(s1Pct):null);
   const lv2=l2.value || (s2Pct!=null?pctToLevel(s2Pct):null);
   renderNestedDonut('merged-donut', s1Pct, s2Pct, lv1, lv2);
-  // Fill 2 info panels: %, score — % màu DYNAMIC theo giá trị
+  // Fill 2 info panels: %, score (theo quy chuẩn 40 / 60) — % màu DYNAMIC theo giá trị
   const fmt=x=>Number.isInteger(x)?x:(+x.toFixed(2));
-  const _fillInfo=(idx, pct, tableId)=>{
+  const _fillInfo=(idx, pct, totals)=>{
     const card=document.getElementById(`sumcard-${idx}`);
     const pctEl=document.getElementById(`info-${idx}-pct`);
     const scoreEl=document.getElementById(`info-${idx}-score`);
@@ -2709,20 +2716,16 @@ function refreshSummary(){
       pctEl.style.color = col || '';
     }
     if(card){
-      // Accent stripe trái theo % (CSS var)
       card.style.setProperty('--accent', col || 'transparent');
     }
     if(scoreEl){
-      const data=_tblData(tableId);
-      if(data.length){
-        const cur=data.reduce((s,d)=>s+d.cur,0);
-        const max=data.reduce((s,d)=>s+d.max,0);
-        scoreEl.textContent = max>0 ? `${fmt(cur)}/${fmt(max)} đ` : '— đ';
-      } else scoreEl.textContent = '—/— đ';
+      scoreEl.textContent = totals.max>0
+        ? `${fmt(totals.cur)}/${fmt(totals.max)} đ`
+        : '—/— đ';
     }
   };
-  _fillInfo(1, s1Pct, 't-kt');
-  _fillInfo(2, s2Pct, 't-nl');
+  _fillInfo(1, s1Pct, ktcbTot);
+  _fillInfo(2, s2Pct, tuduyTot);
   // Stage caption đã bỏ — info-row chỉ hiển thị %, score, level (gọn hơn)
 
   // Charts: Radar năng lực + Cluster Bars + Q-Score + Q-Matrix (đã bỏ bar chart KTCB)
@@ -2799,18 +2802,45 @@ function _topBottom(tableId, topN=2, botN=2){
   };
 }
 
-function autoCommentKTCB(){
-  const data = _tblData('t-kt').filter(d=>d.max>0);
-  if(!data.length) return '';
+/* QUY CHUẨN CHẤM ĐIỂM:
+   - KTCB (Kiến thức cơ bản) = t-kt (5 đơn vị, 20đ) + t-kq (bài toán có/không lời, 20đ) = 40đ
+   - Tư duy toán học = qscore (10 câu, 5+5+5+5+5+5+5+7+7+11 = 60đ)
+   - Tổng test = 100đ */
+function _qscoreData(){
+  const data = [];
+  for(let i=1; i<=10; i++){
+    const mx = parseFloat(document.querySelector(`[data-tu-max="${i}"]`)?.value) || 0;
+    const cu = parseFloat(document.querySelector(`[data-tu-cur="${i}"]`)?.value) || 0;
+    if(mx>0) data.push({lbl:`câu ${i}`, cur:cu, max:mx, pct:cu/mx, idx:i});
+  }
+  return data;
+}
+function _ktcbTotals(){
+  const kt = _tblData('t-kt').filter(d=>d.max>0);
+  const kq = _tblData('t-kq').filter(d=>d.max>0);
+  const all = [...kt, ...kq];
+  const cur = all.reduce((s,d)=>s+d.cur,0);
+  const max = all.reduce((s,d)=>s+d.max,0);
+  return {cur, max, pct: max>0 ? cur/max : 0};
+}
+function _tuduyTotals(){
+  const data = _qscoreData();
   const cur = data.reduce((s,d)=>s+d.cur,0);
   const max = data.reduce((s,d)=>s+d.max,0);
-  const pct = max>0 ? cur/max : 0;
-  const level = pctToLevel(pct);
+  return {cur, max, pct: max>0 ? cur/max : 0, data};
+}
+
+function autoCommentKTCB(){
+  // Tổng chấm theo CHUẨN: t-kt + t-kq = 40 điểm
+  const tot = _ktcbTotals();
+  if(tot.max===0) return '';
+  const level = pctToLevel(tot.pct);
+  // Top/bottom CATEGORIES dùng t-kt (5 đơn vị) để phân tích chi tiết
   const {top, bottom, lowest} = _topBottom('t-kt', 2, 2);
   const ability = 'nắm vững các khái niệm cơ bản';
   const diff = _diffPattern('t-ss');
   const kq = _kqWordComment();
-  let txt = `Học viên đạt ${_fmtInt(cur)}/${_fmtInt(max)} điểm, tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.`;
+  let txt = `Học viên đạt ${_fmtInt(tot.cur)}/${_fmtInt(tot.max)} điểm, tương đương ${Math.round(tot.pct*100)}%, thuộc mức ${level}.`;
   if(top) txt += ` Con có điểm mạnh ở ${top}, cho thấy khả năng ${ability} khá tốt.`;
   if(bottom) txt += ` Tuy nhiên, con cần củng cố thêm ${bottom}${lowest && bottom!==lowest ? `, đặc biệt là ${lowest}`:''}.`;
   if(diff.comment) txt += ` Xét theo độ khó, con ${diff.comment}.`;
@@ -2820,16 +2850,15 @@ function autoCommentKTCB(){
 }
 
 function autoCommentTuDuy(){
-  const data = _tblData('t-nl').filter(d=>d.max>0);
-  if(!data.length) return '';
-  const cur = data.reduce((s,d)=>s+d.cur,0);
-  const max = data.reduce((s,d)=>s+d.max,0);
-  const pct = max>0 ? cur/max : 0;
-  const level = pctToLevel(pct);
+  // Tổng chấm theo CHUẨN: qscore 10 câu = 60 điểm (KHÔNG dùng t-nl 192)
+  const tot = _tuduyTotals();
+  if(tot.max===0) return '';
+  const level = pctToLevel(tot.pct);
+  // Top/bottom CATEGORIES dùng t-nl (6 lĩnh vực) để phân tích chi tiết theo năng lực
   const {top, bottom, lowest} = _topBottom('t-nl', 2, 2);
   const ability = 'tư duy logic và phân tích';
   const diff = _diffPattern('t-cd');
-  let txt = `Học viên đạt ${_fmtInt(cur)}/${_fmtInt(max)} điểm, tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.`;
+  let txt = `Học viên đạt ${_fmtInt(tot.cur)}/${_fmtInt(tot.max)} điểm, tương đương ${Math.round(tot.pct*100)}%, thuộc mức ${level}.`;
   if(top) txt += ` Con có điểm mạnh ở ${top}, cho thấy khả năng ${ability} khá tốt.`;
   if(bottom) txt += ` Tuy nhiên, con cần củng cố thêm ${bottom}${lowest && bottom!==lowest ? `, đặc biệt là ${lowest}`:''}.`;
   if(diff.comment) txt += ` Xét theo độ khó, con ${diff.comment}.`;
@@ -2838,25 +2867,26 @@ function autoCommentTuDuy(){
 }
 
 function autoCommentChung(){
-  const ktData = _tblData('t-kt').filter(d=>d.max>0);
-  const nlData = _tblData('t-nl').filter(d=>d.max>0);
-  if(!ktData.length && !nlData.length) return '';
-  const totalCur = [...ktData,...nlData].reduce((s,d)=>s+d.cur,0);
-  const totalMax = [...ktData,...nlData].reduce((s,d)=>s+d.max,0);
+  // Tổng = KTCB (40đ) + Tư duy (60đ) = 100đ
+  const ktcb = _ktcbTotals();
+  const tuduy = _tuduyTotals();
+  if(ktcb.max===0 && tuduy.max===0) return '';
+  const totalCur = ktcb.cur + tuduy.cur;
+  const totalMax = ktcb.max + tuduy.max;
   const pct = totalMax>0 ? totalCur/totalMax : 0;
   const level = pctToLevel(pct);
-  // So sánh tỷ trọng KTCB vs Tư duy
-  const ktPct = ktData.length ? ktData.reduce((s,d)=>s+d.cur,0)/ktData.reduce((s,d)=>s+d.max,0) : null;
-  const nlPct = nlData.length ? nlData.reduce((s,d)=>s+d.cur,0)/nlData.reduce((s,d)=>s+d.max,0) : null;
-  const strongPart = (ktPct!=null && nlPct!=null && ktPct>nlPct) ? 'kiến thức cơ bản' : 'tư duy toán học';
-  // Top/bottom hợp nhất từ cả 2 bảng
-  const all = [...ktData, ...nlData].sort((a,b)=>b.pct-a.pct);
-  const top = all.slice(0,2).map(d=>d.lbl).join(', ');
-  const bottom = all.slice(-2).reverse().map(d=>d.lbl).join(', ');
-  const lowest = all.length ? all[all.length-1].lbl : '';
+  // Phần nào mạnh hơn — dựa trên % chứ không phải điểm tuyệt đối
+  const strongPart = (ktcb.pct > tuduy.pct) ? 'kiến thức cơ bản' : 'tư duy toán học';
+  // Top/bottom từ t-kt + t-nl (categories descriptive, không cộng điểm)
+  const allCats = [..._tblData('t-kt'), ..._tblData('t-nl')].filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
+  const top = allCats.slice(0,2).map(d=>d.lbl).join(', ');
+  const bottom = allCats.slice(-2).reverse().map(d=>d.lbl).join(', ');
+  const lowest = allCats.length ? allCats[allCats.length-1].lbl : '';
   const diff = _diffPattern('t-ss');
   const kq = _kqWordComment();
-  let txt = `Học viên đạt ${_fmtInt(totalCur)}/${_fmtInt(totalMax)} điểm, tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.\n\n`;
+  let txt = `Học viên đạt ${_fmtInt(totalCur)}/${_fmtInt(totalMax)} điểm `
+         + `(KTCB ${_fmtInt(ktcb.cur)}/${_fmtInt(ktcb.max)} + Tư duy ${_fmtInt(tuduy.cur)}/${_fmtInt(tuduy.max)}), `
+         + `tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.\n\n`;
   txt += `Con thể hiện nền tảng ${strongPart} tốt hơn`;
   if(top) txt += `, đặc biệt ở các kỹ năng ${top}`;
   txt += '.';

@@ -1725,32 +1725,32 @@ body.print-preview .hdr .mascot svg{display:none !important}
         </tr></thead>
         <tbody id="t-nl-body">
           <tr data-row>
-            <td class="left"><textarea class="label-cell" rows="1">Tư duy giải quyết vấn đề</textarea></td>
+            <td class="left"><textarea class="label-cell" rows="1">Giải quyết vấn đề</textarea></td>
             <td class="left"><textarea class="desc-cell" rows="1">Áp dụng kiến thức để giải quyết bài toán mới</textarea></td>
             <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
           <tr class="zebra" data-row>
-            <td class="left"><textarea class="label-cell" rows="1">Tư duy logic và quan sát</textarea></td>
+            <td class="left"><textarea class="label-cell" rows="1">Logic và quan sát</textarea></td>
             <td class="left"><textarea class="desc-cell" rows="1">Tìm ra mối quan hệ, bản chất qua trực quan</textarea></td>
             <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
           <tr data-row>
-            <td class="left"><textarea class="label-cell" rows="1">Tư duy phân tích và phân loại</textarea></td>
+            <td class="left"><textarea class="label-cell" rows="1">Phân tích và phân loại</textarea></td>
             <td class="left"><textarea class="desc-cell" rows="1">Thu thập, phân loại thông tin để giải quyết vấn đề</textarea></td>
             <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
           <tr class="zebra" data-row>
-            <td class="left"><textarea class="label-cell" rows="1">Tư duy số và ký hiệu</textarea></td>
+            <td class="left"><textarea class="label-cell" rows="1">Số và ký hiệu</textarea></td>
             <td class="left"><textarea class="desc-cell" rows="1">Vận dụng khái niệm, ký hiệu toán học</textarea></td>
             <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
           <tr data-row>
-            <td class="left"><textarea class="label-cell" rows="1">Tư duy không gian và hình học</textarea></td>
+            <td class="left"><textarea class="label-cell" rows="1">Không gian và hình học</textarea></td>
             <td class="left"><textarea class="desc-cell" rows="1">Giải quyết bài toán hình học phẳng và không gian</textarea></td>
             <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
           <tr class="zebra" data-row>
-            <td class="left"><textarea class="label-cell" rows="1">Tư duy suy luận toán học</textarea></td>
+            <td class="left"><textarea class="label-cell" rows="1">Suy luận toán học</textarea></td>
             <td class="left"><textarea class="desc-cell" rows="1">Sử dụng quy nạp, diễn dịch</textarea></td>
             <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
@@ -3085,7 +3085,7 @@ function resetForm(){
 const DEFAULT_LABELS={
   't-kt':['Các số đến 9','Phép cộng & phép trừ','Phân loại','Đo lường','Các kiến thức toán tư duy khác'],
   't-kq':['Bài toán có lời văn','Bài toán cơ bản'],
-  't-nl':['Tư duy giải quyết vấn đề','Tư duy logic và quan sát','Tư duy phân tích và phân loại','Tư duy số và ký hiệu','Tư duy không gian và hình học','Tư duy suy luận toán học'],
+  't-nl':['Giải quyết vấn đề','Logic và quan sát','Phân tích và phân loại','Số và ký hiệu','Không gian và hình học','Suy luận toán học'],
 };
 const DEFAULT_DESCS={
   't-nl':['Áp dụng kiến thức để giải quyết bài toán mới','Tìm ra mối quan hệ, bản chất qua trực quan','Thu thập, phân loại thông tin để giải quyết vấn đề','Vận dụng khái niệm, ký hiệu toán học','Giải quyết bài toán hình học phẳng và không gian','Sử dụng quy nạp, diễn dịch'],
@@ -3127,14 +3127,14 @@ function loadSample(){
     ['Bài toán cơ bản',7,5],
   ]);
   // So sánh cấp độ — keep blank
-  // Năng lực tư duy (6 lĩnh vực, label mới)
+  // Năng lực tư duy (6 lĩnh vực, label mới — bỏ prefix "Tư duy")
   fillRows('t-nl',[
-    ['Tư duy giải quyết vấn đề',30,0],
-    ['Tư duy logic và quan sát',25,1.67],
-    ['Tư duy phân tích và phân loại',35,1.67],
-    ['Tư duy số và ký hiệu',30,1.67],
-    ['Tư duy không gian và hình học',25,0],
-    ['Tư duy suy luận toán học',20,0],
+    ['Giải quyết vấn đề',30,0],
+    ['Logic và quan sát',25,1.67],
+    ['Phân tích và phân loại',35,1.67],
+    ['Số và ký hiệu',30,1.67],
+    ['Không gian và hình học',25,0],
+    ['Suy luận toán học',20,0],
   ]);
   // Restore desc-cell sau khi fillRows (vì fillRows chỉ touch label-cell + data inputs)
   RESTORE_LABELS();
@@ -3825,24 +3825,29 @@ const __migratedFromV2 = migrateV2();
 setupAutoGrowFields();
 _disableBrowserAutocomplete(); // áp dụng lại trên các textarea mới
 
-// 3) Migration label cũ → label mới (t-kt + t-nl)
+// 3) Migration label cũ → label mới (t-kt + t-nl). Bỏ prefix "Tư duy " ở t-nl.
 const __LABEL_MIGRATION = {
   // t-kt cũ
   'Các dạng toán tư duy mở rộng':'Các kiến thức toán tư duy khác',
   'Các hình dạng khác nhau':'Các kiến thức toán tư duy khác',
-  // t-nl cũ → Tư duy ... mới (theo thứ tự dòng)
-  'Khả năng hiểu toán':'Tư duy giải quyết vấn đề',
-  'Hiểu toán':'Tư duy giải quyết vấn đề',
-  'Quan sát trực quan':'Tư duy logic và quan sát',
-  'Khả năng quan sát trực quan':'Tư duy logic và quan sát',
-  'Tổng hợp thông tin':'Tư duy phân tích và phân loại',
-  'Khả năng tổng hợp thông tin':'Tư duy phân tích và phân loại',
-  'Dự đoán toán học':'Tư duy số và ký hiệu',
-  'Khả năng dự đoán toán học':'Tư duy số và ký hiệu',
-  'Nhận thức không gian':'Tư duy không gian và hình học',
-  'Khả năng nhận thức không gian':'Tư duy không gian và hình học',
-  'Suy luận toán học':'Tư duy suy luận toán học',
-  'Khả năng suy luận toán học':'Tư duy suy luận toán học',
+  // t-nl: cả phiên bản gốc, phiên bản "Khả năng ...", và phiên bản "Tư duy ..." trước → short form mới
+  'Khả năng hiểu toán':'Giải quyết vấn đề',
+  'Hiểu toán':'Giải quyết vấn đề',
+  'Tư duy giải quyết vấn đề':'Giải quyết vấn đề',
+  'Quan sát trực quan':'Logic và quan sát',
+  'Khả năng quan sát trực quan':'Logic và quan sát',
+  'Tư duy logic và quan sát':'Logic và quan sát',
+  'Tổng hợp thông tin':'Phân tích và phân loại',
+  'Khả năng tổng hợp thông tin':'Phân tích và phân loại',
+  'Tư duy phân tích và phân loại':'Phân tích và phân loại',
+  'Dự đoán toán học':'Số và ký hiệu',
+  'Khả năng dự đoán toán học':'Số và ký hiệu',
+  'Tư duy số và ký hiệu':'Số và ký hiệu',
+  'Nhận thức không gian':'Không gian và hình học',
+  'Khả năng nhận thức không gian':'Không gian và hình học',
+  'Tư duy không gian và hình học':'Không gian và hình học',
+  'Khả năng suy luận toán học':'Suy luận toán học',
+  'Tư duy suy luận toán học':'Suy luận toán học',
 };
 function __runLabelMigration(){
   let changed = 0;

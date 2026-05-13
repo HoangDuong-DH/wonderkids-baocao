@@ -1128,12 +1128,15 @@ body.print-preview .quick-actions{display:none !important}
     padding:4px 7px !important;background:rgba(255,255,255,.45) !important;
     border:1px dashed rgba(0,0,0,.18) !important;border-radius:6px !important;
   }
-  /* Insight row: qscore + cluster bên trái song song với radar bên phải */
-  .s2-insight-row{display:grid !important;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) !important;gap:10px !important;margin:5px 0 !important;align-items:stretch !important}
-  .s2-insight-left{display:flex !important;flex-direction:column !important;gap:7px !important;min-width:0 !important}
-  .s2-radar{margin:0 !important;padding:6px 9px 4px !important;border-radius:8px !important}
-  .s2-radar .chart-title{font-size:10px !important;margin-bottom:1px !important}
-  .s2-radar .chart-svg svg{max-height:210px !important}
+  /* Insight row: STACK vertically trong print → qscore có thể fit ở cuối trang 1,
+     cluster + radar trôi xuống trang 2 → ko để khoảng trắng giữa section 1 và 2 */
+  .s2-insight-row{display:block !important;margin:3px 0 0 !important}
+  .s2-insight-left{display:contents !important}  /* unwrap children → qscore và cluster thành sibling trực tiếp */
+  .s2-insight-left .qscore-wrap{margin:0 0 6px !important}
+  .s2-insight-left .cluster-bars{margin:0 0 6px !important}
+  .s2-radar{margin:0 !important;padding:6px 10px 4px !important;border-radius:8px !important;max-width:none !important}
+  .s2-radar .chart-title{font-size:10.5px !important;margin-bottom:1px !important}
+  .s2-radar .chart-svg svg{max-width:480px !important;max-height:240px !important;margin:0 auto}
   .sumcard .level .lab{font-size:9.5px;padding:4px 12px}
   .sumcard .level select{font-size:10.5px;padding:4px 22px 4px 12px}
   .sumcard textarea,.sumcard .ta-print-mirror{

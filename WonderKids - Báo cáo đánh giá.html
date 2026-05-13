@@ -2900,58 +2900,88 @@ function _diffLabelOf(s){
   return '';
 }
 
+// Tone theo % của top item — tránh nói 'khá tốt' khi điểm thấp
+function _toneFor(p){
+  if(p>=0.85) return 'rất tốt';
+  if(p>=0.65) return 'khá tốt';
+  if(p>=0.50) return 'tương đối ổn';
+  return 'chưa thực sự rõ rệt';
+}
+// Tone cho difficulty top item
+function _diffToneFor(p){
+  if(p>=0.85) return 'rất tốt';
+  if(p>=0.65) return 'khá tốt';
+  if(p>=0.50) return 'ở mức tạm ổn';
+  return 'còn hạn chế';
+}
+
 function autoCommentKTCB(){
   // Tổng theo CHUẨN: t-kt = 40 điểm
   const tot = _ktcbTotals();
   if(tot.max===0) return '';
   const level = pctToLevel(tot.pct);
-  // Top + bottom unit từ t-kt (sorted theo %)
   const sorted = _sortedByPct('t-kt');
   if(!sorted.length) return '';
   const topItem = sorted[0];
   const bottomItem = sorted[sorted.length-1];
-  const topAbility    = __KTCB_UNIT_ABILITY[_norm(topItem.lbl)]    || 'tiếp thu các đơn vị kiến thức cơ bản';
-  const bottomImpact  = __KTCB_UNIT_IMPACT[_norm(bottomItem.lbl)]  || 'ảnh hưởng đến nền tảng kiến thức cơ bản';
+  const topAbility   = __KTCB_UNIT_ABILITY[_norm(topItem.lbl)]    || 'tiếp thu các đơn vị kiến thức cơ bản';
+  const bottomImpact = __KTCB_UNIT_IMPACT[_norm(bottomItem.lbl)]  || 'ảnh hưởng đến nền tảng kiến thức cơ bản';
   // Strong/weak difficulty từ t-ss
   const ssData = _tblData('t-ss').filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
-  let strongDiff = '', weakDiffDesc = '';
-  if(ssData.length){
-    strongDiff = _diffLabelOf(ssData[0].lbl);
-    const weakLbl = _diffLabelOf(ssData[ssData.length-1].lbl);
-    weakDiffDesc = __KTCB_DIFFICULTY[weakLbl] || '';
-  }
-  // Bài toán có lời / không lời
+  const strongDiff = ssData.length ? ssData[0] : null;
+  const weakDiff   = ssData.length ? ssData[ssData.length-1] : null;
+  // Bài toán có lời / cơ bản
   const kqData = _tblData('t-kq').filter(d=>d.max>0);
-  let kqText = '';
-  if(kqData.length){
-    const colVan = kqData.find(d=>/có lời/i.test(d.lbl));
-    const coBan  = kqData.find(d=>/cơ bản|không/i.test(d.lbl)) || (colVan ? kqData.find(d=>d!==colVan) : null);
-    if(colVan && coBan){
-      if(colVan.pct >= coBan.pct){
-        kqText = 'làm tốt bài toán có lời văn — có khả năng chuyển dữ kiện để thực hiện phép toán';
-      } else {
-        kqText = 'làm tốt bài toán cơ bản — cần rèn thêm kỹ năng đọc hiểu đề và chuyển dữ liệu thành phép toán';
-      }
-    } else if(colVan){
-      kqText = colVan.pct>=0.5
-        ? 'làm tốt bài toán có lời văn — có khả năng chuyển dữ kiện để thực hiện phép toán'
-        : 'cần rèn thêm kỹ năng đọc hiểu đề và chuyển dữ liệu thành phép toán';
-    }
-  }
+  const colVan = kqData.find(d=>/có lời/i.test(d.lbl));
+  const coBan  = kqData.find(d=>/cơ bản|không/i.test(d.lbl)) || (colVan ? kqData.find(d=>d!==colVan) : null);
 
   let txt = `Học viên đạt ${_fmtInt(tot.cur)}/${_fmtInt(tot.max)} điểm, tương đương ${Math.round(tot.pct*100)}%, thuộc mức ${level}.`;
-  txt += ` Con có điểm mạnh ở ${topItem.lbl}, cho thấy khả năng ${topAbility} khá tốt.`;
-  if(topItem !== bottomItem){
-    txt += ` Tuy nhiên, con cần củng cố thêm ${bottomItem.lbl}, điều này ${bottomImpact}.`;
+
+  // ── Top item: chỉ gọi 'điểm mạnh' khi top >= 65%. <50% → không gọi 'điểm mạnh'.
+  if(topItem.pct >= 0.65){
+    txt += ` Con có điểm mạnh ở ${topItem.lbl}, cho thấy khả năng ${topAbility} ${_toneFor(topItem.pct)}.`;
+  } else if(topItem.pct >= 0.50){
+    txt += ` Trong các đơn vị KTCB, ${topItem.lbl} là nội dung con nắm tương đối khá nhất, khả năng ${topAbility} đang ở mức tạm ổn.`;
+  } else {
+    txt += ` Hiện tại các đơn vị KTCB đều ở mức cần cải thiện, ${topItem.lbl} là phần con tiếp cận khá nhất nhưng vẫn cần luyện thêm.`;
   }
+
+  // ── Bottom item: chỉ nói 'cần củng cố' khi bot < 65% VÀ gap với top >= 15% (tránh nói khi tất cả đều tốt)
+  if(topItem !== bottomItem && bottomItem.pct < 0.65 && (topItem.pct - bottomItem.pct) >= 0.15){
+    txt += ` Tuy nhiên, ${bottomItem.lbl} còn yếu — điều này ${bottomImpact}.`;
+  } else if(topItem !== bottomItem && bottomItem.pct >= 0.80){
+    txt += ` Các đơn vị còn lại đều ở mức tốt — con đã xây được nền tảng KTCB vững.`;
+  }
+
+  // ── Difficulty: chỉ khen 'tốt' khi strong >= 65%
   if(strongDiff){
-    txt += ` Con có khả năng giải quyết tốt các bài toán ở mức độ ${strongDiff}.`;
+    const dl = _diffLabelOf(strongDiff.lbl);
+    if(strongDiff.pct >= 0.65){
+      txt += ` Xét theo cấp độ, con xử lý ${_diffToneFor(strongDiff.pct)} các bài ở mức ${dl}.`;
+    } else if(strongDiff.pct >= 0.50){
+      txt += ` Xét theo cấp độ, con xử lý các bài ở mức ${dl} tạm ổn — chưa thực sự vững.`;
+    } else {
+      txt += ` Xét theo cấp độ, con còn chật vật ngay cả ở mức ${dl}, cần xây nền tảng vững hơn.`;
+    }
   }
-  if(weakDiffDesc){
-    txt += ` Xét theo cấp độ giải quyết, con cần củng cố thêm với ${weakDiffDesc}.`;
+  // Weak diff: chỉ nói khi weak < 50% (thực sự yếu) VÀ khác strong diff
+  if(weakDiff && strongDiff !== weakDiff && weakDiff.pct < 0.50){
+    const wl = _diffLabelOf(weakDiff.lbl);
+    const desc = __KTCB_DIFFICULTY[wl] || '';
+    if(desc) txt += ` Cần ưu tiên rèn thêm với ${desc}.`;
   }
-  if(kqText){
-    txt += ` Đồng thời, con ${kqText}.`;
+
+  // ── Bài toán có lời: phrase mượt, không paradox
+  if(colVan && coBan){
+    if(colVan.pct >= 0.65 && coBan.pct >= 0.65){
+      txt += ` Con xử lý tốt cả bài toán có lời văn lẫn bài toán cơ bản — đã có khả năng chuyển dữ kiện sang phép toán.`;
+    } else if(colVan.pct >= coBan.pct && colVan.pct >= 0.50){
+      txt += ` Con xử lý tốt hơn với bài toán có lời văn — đã có khả năng đọc hiểu đề và chuyển dữ kiện thành phép toán.`;
+    } else if(coBan.pct >= colVan.pct && coBan.pct >= 0.50){
+      txt += ` Con làm bài toán cơ bản tốt hơn, nhưng còn yếu ở bài toán có lời văn — cần rèn thêm kỹ năng đọc hiểu đề và chuyển dữ kiện thành phép toán.`;
+    } else {
+      txt += ` Kết quả bài toán có lời văn (${Math.round(colVan.pct*100)}%) và bài toán cơ bản (${Math.round(coBan.pct*100)}%) đều còn thấp — cần rèn cả kỹ năng đọc hiểu lẫn tính toán trực tiếp.`;
+    }
   }
   return txt;
 }
@@ -2961,32 +2991,60 @@ function autoCommentTuDuy(){
   const tot = _tuduyTotals();
   if(tot.max===0) return '';
   const level = pctToLevel(tot.pct);
-  // Top + bottom nhóm tư duy từ t-nl
   const sorted = _sortedByPct('t-nl');
   if(!sorted.length) return '';
   const topItem = sorted[0];
   const bottomItem = sorted[sorted.length-1];
   const topAbility    = __TUDUY_GROUP_ABILITY[_norm(topItem.lbl)]    || 'tư duy logic và phân tích';
   const bottomAbility = __TUDUY_GROUP_ABILITY[_norm(bottomItem.lbl)] || 'tư duy logic và phân tích';
-  // Strong/weak difficulty từ t-cd
   const cdData = _tblData('t-cd').filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
-  let strongDiff = '', weakDiffDesc = '';
-  if(cdData.length){
-    strongDiff = _diffLabelOf(cdData[0].lbl);
-    const weakLbl = _diffLabelOf(cdData[cdData.length-1].lbl);
-    weakDiffDesc = __TUDUY_DIFFICULTY[weakLbl] || '';
-  }
+  const strongDiff = cdData.length ? cdData[0] : null;
+  const weakDiff   = cdData.length ? cdData[cdData.length-1] : null;
 
   let txt = `Học viên đạt ${_fmtInt(tot.cur)}/${_fmtInt(tot.max)} điểm, tương đương ${Math.round(tot.pct*100)}%, thuộc mức ${level}.`;
-  txt += ` Con có điểm mạnh ở ${topItem.lbl}, cho thấy khả năng ${topAbility} khá tốt.`;
-  if(topItem !== bottomItem){
-    txt += ` Tuy nhiên, con cần củng cố thêm ${bottomItem.lbl}, điều này thể hiện ${bottomAbility}.`;
+
+  // ── Top nhóm tư duy: tone theo pct
+  if(topItem.pct >= 0.65){
+    txt += ` Con có thế mạnh ở nhóm ${topItem.lbl} — khả năng ${topAbility} ${_toneFor(topItem.pct)}.`;
+  } else if(topItem.pct >= 0.50){
+    txt += ` Trong các nhóm tư duy, ${topItem.lbl} là phần con làm khá nhất, khả năng ${topAbility} đang dần hình thành.`;
+  } else {
+    txt += ` Hiện tại các nhóm tư duy của con đều cần luyện thêm; ${topItem.lbl} là nhóm con xử lý khá nhất nhưng chưa thực sự vững.`;
   }
+
+  // ── Bottom: chỉ nói khi <65% VÀ gap đáng kể
+  if(topItem !== bottomItem && bottomItem.pct < 0.65 && (topItem.pct - bottomItem.pct) >= 0.10){
+    txt += ` Ngược lại, ${bottomItem.lbl} còn yếu — con cần rèn thêm khả năng ${bottomAbility}.`;
+  } else if(topItem !== bottomItem && bottomItem.pct >= 0.80){
+    txt += ` Các nhóm tư duy còn lại cũng ở mức tốt — con phát triển khá đồng đều.`;
+  }
+
+  // ── Difficulty Tư duy: phrase chuẩn theo top diff
   if(strongDiff){
-    txt += ` Xét theo độ khó, con đang xử lý tốt nhất các bài ở mức ${strongDiff}.`;
+    const dl = _diffLabelOf(strongDiff.lbl);
+    // Nếu CẢ 3 cấp độ đều >= 80% → all-around strong, không cần "thử thách thêm"
+    const allStrong = cdData.length === 3 && cdData.every(d => d.pct >= 0.80);
+    if(allStrong){
+      txt += ` Xét theo độ khó, con xử lý tốt cả 3 cấp độ (dễ, trung bình và khó) — đã hình thành khả năng tư duy logic và sáng tạo toàn diện.`;
+    } else if(strongDiff.pct >= 0.65){
+      txt += ` Xét theo độ khó, con xử lý ${_diffToneFor(strongDiff.pct)} các bài ở mức ${dl}`;
+      if(dl === 'khó'){
+        txt += ` — đã hình thành khả năng tư duy logic và sáng tạo ở mức độ cao.`;
+      } else if(dl === 'trung bình'){
+        txt += ` — đang phát triển khả năng tư duy logic và sáng tạo ở mức độ khá, cần thử thách thêm với bài khó.`;
+      } else {
+        txt += ` — đã nắm vững nền tảng, cần thử thách thêm với bài trung bình và khó.`;
+      }
+    } else if(strongDiff.pct >= 0.50){
+      txt += ` Xét theo độ khó, con xử lý các bài ở mức ${dl} tạm ổn nhưng chưa thực sự vững.`;
+    } else {
+      txt += ` Xét theo độ khó, con còn chật vật ngay với bài mức ${dl} — cần xây nền tảng tư duy logic từ cơ bản.`;
+    }
   }
-  if(weakDiffDesc){
-    txt += ` Điều này cho thấy con đang phát triển ${weakDiffDesc}.`;
+  // Weak diff: chỉ nói khi weak < 50%
+  if(weakDiff && strongDiff !== weakDiff && weakDiff.pct < 0.50){
+    const wl = _diffLabelOf(weakDiff.lbl);
+    txt += ` Đặc biệt với bài mức ${wl}, con cần được hỗ trợ và luyện tập thêm.`;
   }
   return txt;
 }

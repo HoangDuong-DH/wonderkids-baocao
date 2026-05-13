@@ -1895,17 +1895,14 @@ function renderRadarChart(containerId, tableId, chartType){
     const a=ang(i); outerPts+=`${cx+Math.cos(a)*R},${cy+Math.sin(a)*R} `;
   }
   svg+=`<polygon points="${outerPts.trim()}" fill="#fffaf0" stroke="#e8c896" stroke-width="1"/>`;
-  // grid rings (dashed) — mỗi ring nhãn theo % THỰC TẾ
+  // grid rings (dashed) — không gắn nhãn % (đã có scale text ở header → tránh đè data label)
   [0.25,0.5,0.75].forEach(t=>{
     let pts='';
     for(let i=0;i<n;i++){
       const a=ang(i); pts+=`${cx+Math.cos(a)*R*t},${cy+Math.sin(a)*R*t} `;
     }
     svg+=`<polygon points="${pts.trim()}" fill="none" stroke="#e8c896" stroke-width="0.7" stroke-dasharray="2.5,2.5"/>`;
-    svg+=`<text x="${cx+5}" y="${cy-R*t-3}" font-size="8.5" fill="#a4886a" font-weight="700">${Math.round(t*sc.axisMax*100)}%</text>`;
   });
-  // Ring ngoài cùng: label %
-  svg+=`<text x="${cx+5}" y="${cy-R-3}" font-size="8.5" fill="#a4886a" font-weight="700">${Math.round(sc.axisMax*100)}%</text>`;
   // axes
   for(let i=0;i<n;i++){
     const a=ang(i);
@@ -1924,24 +1921,25 @@ function renderRadarChart(containerId, tableId, chartType){
     const x=cx+Math.cos(a)*R*t, y=cy+Math.sin(a)*R*t;
     svg+=`<circle cx="${x}" cy="${y}" r="4.5" fill="#fff" stroke="${_chartColor(data[i].pct)}" stroke-width="2.5"/>`;
   }
-  // Axis labels (2-line wrap) + % thực tế + Đạt/Chuẩn nhỏ bên dưới
+  // Axis labels: tên (1-2 dòng) + 1 dòng combined "47% · 16/30" gọn
   for(let i=0;i<n;i++){
     const a=ang(i);
     const lx=cx+Math.cos(a)*(R+26), ly=cy+Math.sin(a)*(R+26);
     const anchor = Math.abs(Math.cos(a))<0.25 ? 'middle' : (Math.cos(a)<0?'end':'start');
     const lines=_wrapLbl(data[i].lbl, 16);
     const lineH=11;
-    // điều chỉnh y cho label trên/dưới
     const isTop = Math.sin(a) < -0.3;
-    const startY = isTop ? ly - (lines.length-1)*lineH : ly;
+    // tổng số dòng = name lines + 1 (combined stat line)
+    const totalLines = lines.length + 1;
+    const startY = isTop ? ly - (totalLines-1)*lineH : ly;
     lines.forEach((line,j)=>{
       svg+=`<text x="${lx}" y="${startY+j*lineH}" text-anchor="${anchor}" font-size="10.5" font-weight="700" fill="#3a2a1a">${_esc(line)}</text>`;
     });
-    // % thực tế (rõ, màu theo mức)
-    const pctY = startY + lines.length*lineH + 1;
-    svg+=`<text x="${lx}" y="${pctY}" text-anchor="${anchor}" font-size="10.5" fill="${_chartColor(data[i].pct)}" font-weight="800">${Math.round(data[i].pct*100)}%</text>`;
-    // Đạt/Chuẩn nhỏ
-    svg+=`<text x="${lx}" y="${pctY+10}" text-anchor="${anchor}" font-size="8.5" fill="#a4886a" font-weight="600">${fmt(data[i].cur)}/${fmt(data[i].max)}</text>`;
+    // Combined: "47% · 16/30" — % màu đậm + score xám nhỏ inline
+    const statY = startY + lines.length*lineH + 1;
+    const pctTxt = Math.round(data[i].pct*100)+'%';
+    const scoreTxt = `${fmt(data[i].cur)}/${fmt(data[i].max)}`;
+    svg+=`<text x="${lx}" y="${statY}" text-anchor="${anchor}" font-size="10" font-weight="800" fill="${_chartColor(data[i].pct)}">${pctTxt}<tspan dx="3" font-size="8.5" font-weight="600" fill="#a4886a">· ${scoreTxt}</tspan></text>`;
   }
   svg+='</svg>';
   let html='';

@@ -244,11 +244,19 @@ body{
 }
 .info-card{
   display:flex;flex-direction:column;gap:3px;
-  padding:9px 10px;border-radius:10px;min-width:0;overflow:hidden;
+  padding:9px 10px 9px 13px;border-radius:10px;min-width:0;overflow:hidden;
   position:relative;aspect-ratio:1 / 1;justify-content:space-between;
+  transition:transform .18s ease, box-shadow .18s ease;
+  --accent:transparent;
 }
+.info-card::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--accent);transition:background .25s ease;
+}
+.info-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(233,78,27,.08)}
 .info-card.k1{background:#fff8ec;border:1.5px solid var(--c-yellow)}
 .info-card.k2{background:#fff3e0;border:1.5px solid var(--c-primary-2)}
+.info-card .info-pct{transition:color .25s ease}
 
 .info-card .info-card-head{
   display:flex;align-items:center;gap:5px;min-width:0;
@@ -1019,6 +1027,9 @@ body.print-preview .quick-actions{display:none !important}
   .summary-merged .merged-head{padding:5px 12px !important}
   .summary-merged .merged-head .seg-title{font-size:12.5px !important;letter-spacing:.03em !important}
   .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:190px 105px 1fr !important;gap:12px !important;align-items:stretch !important}
+  .info-card,.info-card::before,.info-card .info-pct{transition:none !important}
+  .info-card:hover{transform:none !important;box-shadow:none !important}
+  .merged-donut circle{transition:none !important}
   .merged-donut-wrap svg{width:190px !important;height:190px !important}
   .merged-legend{gap:10px !important;font-size:9px !important}
   .merged-legend .dot{width:7px !important;height:7px !important}
@@ -2376,6 +2387,9 @@ function renderNestedDonut(id, pct1, pct2, level1, level2){
   const mkC=(attrs)=>{ const c=document.createElementNS(ns,'circle'); for(const k in attrs) c.setAttribute(k,attrs[k]); return c; };
   const mkT=(attrs,text)=>{ const t=document.createElementNS(ns,'text'); for(const k in attrs) t.setAttribute(k,attrs[k]); t.textContent=text; return t; };
   const cx=90, cy=90;
+  // animation chỉ chạy lần đầu mỗi session
+  const animate = !el.dataset.rendered;
+  el.dataset.rendered = '1';
   // Outer ring = KTCB
   const R1=70, SW1=14;
   const C1=2*Math.PI*R1;
@@ -2383,7 +2397,10 @@ function renderNestedDonut(id, pct1, pct2, level1, level2){
   const col1 = _levelColor(level1) || _chartColor(pct1||0) || '#e6a82a';
   el.appendChild(mkC({cx,cy,r:R1,fill:'none',stroke:col1,'stroke-opacity':'0.18','stroke-width':SW1}));
   if(pct1!=null){
-    el.appendChild(mkC({cx,cy,r:R1,fill:'none',stroke:col1,'stroke-width':SW1,'stroke-dasharray':C1.toFixed(2),'stroke-dashoffset':off1.toFixed(2),transform:`rotate(-90 ${cx} ${cy})`,'stroke-linecap':'round'}));
+    const arc1=mkC({cx,cy,r:R1,fill:'none',stroke:col1,'stroke-width':SW1,'stroke-dasharray':C1.toFixed(2),'stroke-dashoffset':off1.toFixed(2),transform:`rotate(-90 ${cx} ${cy})`,'stroke-linecap':'round'});
+    arc1.style.transition='stroke-dashoffset .9s cubic-bezier(.4,.0,.2,1), stroke .25s ease';
+    if(animate){ arc1.setAttribute('stroke-dashoffset', C1.toFixed(2)); requestAnimationFrame(()=>arc1.setAttribute('stroke-dashoffset', off1.toFixed(2))); }
+    el.appendChild(arc1);
   }
   // Inner ring = Tư duy
   const R2=45, SW2=14;
@@ -2392,7 +2409,10 @@ function renderNestedDonut(id, pct1, pct2, level1, level2){
   const col2 = _levelColor(level2) || _chartColor(pct2||0) || '#e94e1b';
   el.appendChild(mkC({cx,cy,r:R2,fill:'none',stroke:col2,'stroke-opacity':'0.18','stroke-width':SW2}));
   if(pct2!=null){
-    el.appendChild(mkC({cx,cy,r:R2,fill:'none',stroke:col2,'stroke-width':SW2,'stroke-dasharray':C2.toFixed(2),'stroke-dashoffset':off2.toFixed(2),transform:`rotate(-90 ${cx} ${cy})`,'stroke-linecap':'round'}));
+    const arc2=mkC({cx,cy,r:R2,fill:'none',stroke:col2,'stroke-width':SW2,'stroke-dasharray':C2.toFixed(2),'stroke-dashoffset':off2.toFixed(2),transform:`rotate(-90 ${cx} ${cy})`,'stroke-linecap':'round'});
+    arc2.style.transition='stroke-dashoffset .9s cubic-bezier(.4,.0,.2,1) .15s, stroke .25s ease';
+    if(animate){ arc2.setAttribute('stroke-dashoffset', C2.toFixed(2)); requestAnimationFrame(()=>arc2.setAttribute('stroke-dashoffset', off2.toFixed(2))); }
+    el.appendChild(arc2);
   }
   // Center: số % trung bình duy nhất, căn giữa
   const hasP1 = pct1!=null, hasP2 = pct2!=null;
@@ -2451,19 +2471,28 @@ function refreshSummary(){
   const lv1=l1.value || (s1Pct!=null?pctToLevel(s1Pct):null);
   const lv2=l2.value || (s2Pct!=null?pctToLevel(s2Pct):null);
   renderNestedDonut('merged-donut', s1Pct, s2Pct, lv1, lv2);
-  // Fill 2 info panels: %, score
+  // Fill 2 info panels: %, score — % màu DYNAMIC theo giá trị
   const fmt=x=>Number.isInteger(x)?x:(+x.toFixed(2));
   const _fillInfo=(idx, pct, tableId)=>{
+    const card=document.getElementById(`sumcard-${idx}`);
     const pctEl=document.getElementById(`info-${idx}-pct`);
     const scoreEl=document.getElementById(`info-${idx}-score`);
-    if(pctEl) pctEl.textContent = pct!=null ? Math.round(pct*100)+'%' : '—%';
+    const col=pct!=null ? _chartColor(pct) : null;
+    if(pctEl){
+      pctEl.textContent = pct!=null ? Math.round(pct*100)+'%' : '—%';
+      pctEl.style.color = col || '';
+    }
+    if(card){
+      // Accent stripe trái theo % (CSS var)
+      card.style.setProperty('--accent', col || 'transparent');
+    }
     if(scoreEl){
       const data=_tblData(tableId);
       if(data.length){
         const cur=data.reduce((s,d)=>s+d.cur,0);
         const max=data.reduce((s,d)=>s+d.max,0);
-        scoreEl.textContent = max>0 ? `${fmt(cur)} / ${fmt(max)} điểm` : '— điểm';
-      } else scoreEl.textContent = '— / — điểm';
+        scoreEl.textContent = max>0 ? `${fmt(cur)}/${fmt(max)} đ` : '— đ';
+      } else scoreEl.textContent = '—/— đ';
     }
   };
   _fillInfo(1, s1Pct, 't-kt');

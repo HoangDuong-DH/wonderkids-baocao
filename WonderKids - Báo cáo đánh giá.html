@@ -3187,9 +3187,9 @@ function autoCommentChung(){
     1. Củng cố Kiến thức cơ bản: ... [nhóm yếu] ...
     2. Rèn luyện tư duy logic và suy luận: ..." */
 function autoCommentDinhHuong(){
-  // Item 1 (KTCB): yếu chỉ lấy từ t-kt (đơn vị kiến thức cơ bản)
+  // Item 1 (KTCB): chỉ lấy TOP 2 đơn vị yếu nhất từ t-kt
   const ktWeak = _tblData('t-kt').filter(d=>d.max>0).sort((a,b)=>a.pct-b.pct);
-  const weakKT = ktWeak.slice(0, 3).map(d=>d.lbl).join(', ') || '(các đơn vị kiến thức cơ bản còn yếu)';
+  const weakKT = ktWeak.slice(0, 2).map(d=>d.lbl).join(', ') || '(các đơn vị kiến thức cơ bản còn yếu)';
   // Item 2 (Tư duy): yếu lấy từ t-nl (6 nhóm tư duy)
   const nlWeak = _tblData('t-nl').filter(d=>d.max>0).sort((a,b)=>a.pct-b.pct);
   const weakTD = nlWeak.slice(0, 3).map(d=>d.lbl).join(', ') || '(các nhóm tư duy còn yếu)';

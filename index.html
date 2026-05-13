@@ -534,7 +534,9 @@ body{
   margin:8px 0 4px;text-align:center;word-break:break-word}
 
 /* ───────── SECTION 2 ───────── */
-.s2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;position:relative}
+.s2{display:grid;grid-template-columns:1.8fr 1fr;gap:14px;align-items:start;position:relative}
+.tbl input.desc-cell{font-weight:500;color:var(--c-ink-soft);font-style:italic;text-align:left;font-size:11.5px}
+.tbl .label-cell{font-weight:700}
 .s2 .deco-lamp{position:absolute;right:-70px;top:-50px;pointer-events:none;width:80px;opacity:.75;z-index:0}
 .s2 > div{position:relative;z-index:1}
 
@@ -1281,7 +1283,8 @@ body.print-preview .quick-actions{display:none !important}
   /* === GIỮ LAYOUT grid/flex (browser đôi khi unset on print) === */
   .summary{display:grid !important;grid-template-columns:1fr 1fr !important;gap:8px !important}
   .s1{display:grid !important;grid-template-columns:1.35fr 1fr !important;gap:8px !important}
-  .s2{display:grid !important;grid-template-columns:1fr 1fr !important;gap:8px !important}
+  .s2{display:grid !important;grid-template-columns:1.8fr 1fr !important;gap:8px !important}
+  .tbl input.desc-cell{font-size:9.5px !important;line-height:1.3 !important;font-style:italic;color:var(--c-ink-soft) !important;padding:1px 4px !important}
   .s3{display:grid !important;grid-template-columns:1fr 1.05fr !important;gap:8px !important}
   .s3.single{grid-template-columns:1fr !important}
   .charts{display:grid !important;grid-template-columns:1.15fr 1fr !important;gap:8px !important}
@@ -1696,16 +1699,46 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <div>
       <div class="subcap">THEO LĨNH VỰC</div>
       <table class="tbl" id="t-nl" data-sum-group="nl">
-        <thead><tr><th class="left" style="text-align:left">Năng lực</th><th style="width:50px">Chuẩn</th><th style="width:50px">Đạt</th><th style="width:60px">Tỷ lệ</th></tr></thead>
+        <thead><tr>
+          <th class="left" style="text-align:left;width:150px">Định danh khái niệm</th>
+          <th class="left" style="text-align:left">Nội dung đánh giá</th>
+          <th style="width:50px">Chuẩn</th>
+          <th style="width:50px">Đạt</th>
+          <th style="width:60px">Tỷ lệ</th>
+        </tr></thead>
         <tbody id="t-nl-body">
-          <tr data-row><td class="left"><input class="label-cell" value="Khả năng hiểu toán"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
-          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Quan sát trực quan"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
-          <tr data-row><td class="left"><input class="label-cell" value="Tổng hợp thông tin"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
-          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Dự đoán toán học"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
-          <tr data-row><td class="left"><input class="label-cell" value="Nhận thức không gian"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
-          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Suy luận toán học"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr data-row>
+            <td class="left"><input class="label-cell" value="Tư duy giải quyết vấn đề"></td>
+            <td class="left"><input class="desc-cell" value="Áp dụng kiến thức để giải quyết bài toán mới"></td>
+            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+          </tr>
+          <tr class="zebra" data-row>
+            <td class="left"><input class="label-cell" value="Tư duy logic và quan sát"></td>
+            <td class="left"><input class="desc-cell" value="Tìm ra mối quan hệ, bản chất qua trực quan"></td>
+            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+          </tr>
+          <tr data-row>
+            <td class="left"><input class="label-cell" value="Tư duy phân tích và phân loại"></td>
+            <td class="left"><input class="desc-cell" value="Thu thập, phân loại thông tin để giải quyết vấn đề"></td>
+            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+          </tr>
+          <tr class="zebra" data-row>
+            <td class="left"><input class="label-cell" value="Tư duy số và ký hiệu"></td>
+            <td class="left"><input class="desc-cell" value="Vận dụng khái niệm, ký hiệu toán học"></td>
+            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+          </tr>
+          <tr data-row>
+            <td class="left"><input class="label-cell" value="Tư duy không gian và hình học"></td>
+            <td class="left"><input class="desc-cell" value="Giải quyết bài toán hình học phẳng và không gian"></td>
+            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+          </tr>
+          <tr class="zebra" data-row>
+            <td class="left"><input class="label-cell" value="Tư duy suy luận toán học"></td>
+            <td class="left"><input class="desc-cell" value="Sử dụng quy nạp, diễn dịch"></td>
+            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+          </tr>
         </tbody>
-        <tfoot><tr class="total"><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td></tr></tfoot>
+        <tfoot><tr class="total"><td class="left" style="text-align:left">TỔNG</td><td></td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td></tr></tfoot>
       </table>
       <div class="row-ctrls"><button onclick="addRow('t-nl')">+ Thêm dòng</button></div>
     </div>

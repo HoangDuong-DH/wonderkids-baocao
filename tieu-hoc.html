@@ -1439,6 +1439,11 @@ body.print-preview .hdr .mascot svg{display:none !important}
 </div>
 
 <div class="toolbar">
+  <a href="index.html" title="Quay về trang chọn báo cáo" style="text-decoration:none;color:inherit;font:600 12.5px/1 var(--font-body);padding:8px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Trang chính
+  </a>
+  <span class="sep"></span>
   <label for="xlsx-input" class="tb-btn" title="Nhập CSV (khuyên dùng — nhanh, không cần mạng) hoặc XLSX" style="appearance:none;border:0;background:transparent;color:var(--c-ink);font:600 12.5px/1 var(--font-body);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     Nhập CSV / Excel
@@ -3775,6 +3780,9 @@ function loadSampleCSV(){
       if(mx) mx.value=d[1]; if(cu) cu.value=d[2];
     });
     refreshSummary(); scheduleSave(); autoGrowAll();
+    // FORCE regen nhận xét sau khi import dữ liệu mới
+    // (lỗi cũ: textarea giữ nhận xét của dữ liệu cũ vì autoFill default chỉ
+    //  điền khi rỗng. Sau import = data MỚI thì phải override.)
     if(typeof autoFillComments==='function'){ autoFillComments(true); }
     if(filled>0){ slog(`✓ Đã fill ${filled} mục vào form`,'ok'); toast(`✓ Tải CSV mẫu thành công (${filled} mục)`,'info'); }
     else{ slog('⚠ Không khớp template','warn'); toast('Không khớp template','warn'); }
@@ -4097,6 +4105,8 @@ async function importExcel(ev){
     let filled=0;
     rowsBatches.forEach(rows=>{ filled+=importWonderkids(rows); });
     refreshSummary(); scheduleSave(); autoGrowAll();
+    // FORCE regen nhận xét sau khi import dữ liệu mới — fix bug
+    // textarea giữ nhận xét của dữ liệu trước đó.
     if(filled>0 && typeof autoFillComments==='function'){ autoFillComments(true); }
     if(filled>0){ slog(`✓ HOÀN TẤT — fill ${filled} mục`,'ok'); toast(`✓ Đã nhập ${filled} mục`,'info'); }
     else{ slog('⚠ Không khớp template','warn'); toast('Không khớp template WonderKids','warn'); }

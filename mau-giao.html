@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>WonderKids — Báo cáo đánh giá năng lực tư duy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fef0c8;
+  --bg-2:#fde6a6;
+  --paper:#fffbf0;
+  --card:#ffffff;
+  --ink:#3a2a14;
+  --ink-soft:#7b6244;
+  --ink-mute:#a89070;
+  --hair:#f0dcb0;
+  --hair-soft:#fae8c5;
+
+  --amber:#f5b84a;
+  --amber-deep:#e89818;
+  --orange:#f08526;
+  --orange-2:#ef7212;
+  --orange-deep:#dd5a11;
+  --tomato:#df5728;
+
+  --leaf:#5fb74f;
+  --leaf-soft:#e1f1d9;
+  --sky:#3ea1d3;
+  --sky-soft:#dcecf6;
+  --navy:#1d4570;
+  --rose:#e9709a;
+  --rose-soft:#fce0eb;
+  --plum:#9879cf;
+
+  /* grade scale */
+  --g-S:#5fb74f; --g-S-bg:#e1f1d9;
+  --g-A:#3ea1d3; --g-A-bg:#dcecf6;
+  --g-B:#f5b84a; --g-B-bg:#fdebc2;
+  --g-C:#f08526; --g-C-bg:#fbdcc1;
+  --g-L:#df5728; --g-L-bg:#fbcfba;
+
+  --font-display:'Quicksand','Be Vietnam Pro',system-ui,sans-serif;
+  --font-body:'Be Vietnam Pro',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:var(--font-body);color:var(--ink);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{
+  background:
+    radial-gradient(circle 600px at 0% 0%, #fff0bd 0%, transparent 50%),
+    radial-gradient(circle 500px at 100% 0%, #ffe2a6 0%, transparent 55%),
+    radial-gradient(circle 500px at 50% 100%, #ffe9c7 0%, transparent 55%),
+    #fce8b8;
+  min-height:100vh;padding:24px 0 60px;
+}
+
+/* Toolbar */
+.toolbar{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;z-index:50;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  padding:5px;border-radius:999px;
+  box-shadow:0 10px 30px rgba(120,60,10,.14),0 1px 0 rgba(255,255,255,.7) inset;
+  border:1px solid rgba(243,129,31,.18);
+}
+.toolbar button{appearance:none;border:0;background:transparent;color:var(--ink);
+  font:600 12.5px/1 var(--font-body);padding:8px 16px;border-radius:999px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;transition:all .15s ease}
+.toolbar button:hover{background:#fff3da;color:var(--orange-deep)}
+.toolbar button.primary{background:var(--orange);color:#fff}
+.toolbar button.primary:hover{background:var(--orange-deep)}
+
+/* Page */
+.page{
+  width:1200px;margin:60px auto 0;
+  background:var(--paper);
+  border-radius:32px;overflow:hidden;
+  box-shadow:0 50px 120px -40px rgba(160,90,20,.32),0 6px 20px rgba(160,90,20,.08);
+  position:relative;
+}
+.bg-shapes{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-shapes svg{position:absolute}
+.bg-c1{top:30px;left:30px;opacity:.55}
+.bg-c2{top:6%;right:200px;opacity:.4}
+.bg-c3{top:24%;left:-12px;opacity:.45}
+.bg-c4{top:50%;right:0;opacity:.4}
+.bg-c5{bottom:140px;left:0;opacity:.5}
+.bg-c6{bottom:230px;right:0;opacity:.5}
+.page > *:not(.bg-shapes){position:relative;z-index:1}
+
+/* ───── HEADER ───── */
+.hdr{
+  display:grid;grid-template-columns:200px 1fr 200px;
+  align-items:center;gap:24px;padding:30px 44px 22px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  width:60px;height:60px;background:var(--orange);border-radius:16px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  box-shadow:0 4px 0 rgba(180,80,20,.18);
+}
+.brand-lbl .name{display:block;font:700 19px/1 var(--font-display);color:var(--orange-deep);letter-spacing:.06em}
+.brand-lbl .tag{display:block;font:500 9.5px/1.4 var(--font-body);color:var(--ink-soft);margin-top:5px}
+
+.hdr-title{text-align:center}
+.hdr-title h1{
+  margin:0;font:700 60px/1 var(--font-display);color:var(--navy);
+  letter-spacing:.02em;
+}
+.hdr-title h2{
+  margin:8px 0 0;font:700 26px/1 var(--font-display);color:var(--orange-deep);
+  letter-spacing:.02em;
+}
+.hdr-title .pill{
+  display:inline-block;margin-top:14px;
+  background:linear-gradient(90deg,var(--amber) 0%, var(--orange) 100%);
+  color:#fff;padding:8px 22px;border-radius:999px;
+  font:700 12px/1 var(--font-body);letter-spacing:.06em;text-transform:uppercase;
+  box-shadow:0 3px 0 rgba(180,80,20,.18);
+}
+.mascot{width:160px;height:140px;display:flex;align-items:center;justify-content:center}
+
+/* ───── INFO CARD ───── */
+.info{
+  margin:0 44px;
+  background:#fff;border-radius:18px;
+  display:grid;grid-template-columns:110px 1fr 1fr;gap:24px 34px;
+  padding:16px 24px;align-items:center;
+  border:2px solid var(--hair-soft);
+  box-shadow:0 5px 0 #fcecc4;
+}
+.info .avatar{
+  width:96px;height:96px;border-radius:50%;grid-row:span 3;
+  background:linear-gradient(180deg,#fdebbd 0%, #fbd58a 100%);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  box-shadow:inset 0 0 0 4px #fff;
+}
+.info .avatar svg{width:88%;height:88%}
+.info-field{display:flex;align-items:center;gap:10px;min-width:0}
+.info-field .ic{
+  width:30px;height:30px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:#fde6a0;color:var(--orange);
+}
+.info-field .lbl{font:700 11px/1 var(--font-body);color:var(--ink-soft);letter-spacing:.08em;white-space:nowrap;flex-shrink:0;min-width:78px}
+.info-field .val{
+  flex:1;min-width:0;
+  font:700 14px/1.2 var(--font-display);color:var(--ink);
+  border:0;outline:0;background:transparent;
+  border-bottom:1.5px solid var(--hair);padding:4px 0;
+}
+.info-field .val:focus{border-bottom-color:var(--orange)}
+
+/* ───── SECTION HEAD ───── */
+.sec{padding:22px 44px 0;position:relative}
+.sec:last-of-type{padding-bottom:22px}
+.sec-h{
+  display:inline-flex;align-items:center;gap:10px;padding:9px 16px;
+  background:linear-gradient(90deg,#ffe5ad 0%, #fcd685 100%);
+  border:2px solid #f3c66e;border-radius:12px;
+  font:700 14px/1 var(--font-display);color:var(--orange-deep);
+  letter-spacing:.02em;margin-bottom:14px;
+  box-shadow:0 3px 0 #ebbb5a;
+}
+.sec-h .num{
+  background:var(--orange-deep);color:#fff;
+  width:24px;height:24px;border-radius:6px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font:800 13px/1 var(--font-display);
+}
+
+/* ───── SECTION 1 OVERVIEW ───── */
+.s1-desc{font:500 13.5px/1.55 var(--font-body);color:var(--ink-soft);margin:0 0 14px;max-width:900px}
+.s1-desc b{color:var(--ink);font-weight:700}
+.s1-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.s1-card{
+  background:#fff;border:2px solid var(--hair-soft);
+  border-radius:16px;padding:16px 14px;text-align:center;
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+  box-shadow:0 4px 0 #fcecc4;
+}
+.s1-card .head{display:flex;align-items:center;gap:10px;width:100%;justify-content:flex-start}
+.s1-card .head .ico{
+  width:38px;height:38px;border-radius:11px;
+  background:var(--g-C-bg);color:var(--g-C);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.s1-card.l4 .head .ico{background:var(--g-L-bg);color:var(--g-L)}
+.s1-card .head .ttl{
+  font:700 13px/1.15 var(--font-display);color:var(--ink);text-align:left;
+}
+.s1-card .head .ttl small{display:block;font:600 10px/1 var(--font-body);color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.s1-card .grade{
+  font:700 60px/1 var(--font-display);
+}
+.s1-card.c1 .grade,.s1-card.c2 .grade,.s1-card.c3 .grade{color:var(--g-C)}
+.s1-card.l4 .grade{color:var(--g-L)}
+.s1-card .lbl{
+  font:700 12.5px/1 var(--font-display);letter-spacing:.04em;
+}
+.s1-card.c1 .lbl,.s1-card.c2 .lbl,.s1-card.c3 .lbl{color:var(--g-C)}
+.s1-card.l4 .lbl{color:var(--g-L)}
+.s1-card .bar{
+  width:100%;height:8px;border-radius:99px;background:#f3e7c5;overflow:hidden;
+}
+.s1-card .bar i{display:block;height:100%;border-radius:99px}
+.s1-card.c1 .bar i,.s1-card.c2 .bar i,.s1-card.c3 .bar i{background:var(--g-C);width:50%}
+.s1-card.l4 .bar i{background:var(--g-L);width:20%}
+
+.legend{
+  display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:center;
+  margin-top:14px;font:600 11.5px/1 var(--font-body);color:var(--ink-soft);
+}
+.legend .it{display:inline-flex;align-items:center;gap:8px}
+.legend .dot{width:10px;height:10px;border-radius:50%;}
+.legend .dot.s{background:var(--g-S)}
+.legend .dot.a{background:var(--g-A)}
+.legend .dot.b{background:var(--g-B)}
+.legend .dot.c{background:var(--g-C)}
+.legend .dot.l{background:var(--g-L)}
+
+/* ───── MAIN 2-COL ───── */
+/* ─── VIZ ROW: Radar + Donut song song ở TOP, abilities full-width bên dưới ─── */
+.viz-row{
+  display:grid;grid-template-columns:1.3fr 1fr;gap:18px;
+  padding:0 44px;margin-bottom:22px;align-items:stretch;
+}
+.viz-box{display:flex;flex-direction:column}
+.viz-box .sec-h{margin-bottom:8px}
+.viz-box .s4,.viz-box .s5{
+  flex:1;background:#fff;border:2px solid var(--hair-soft);
+  border-radius:16px;padding:14px 18px;box-shadow:0 4px 0 #fcecc4;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.detail-section{padding:0 44px;margin-bottom:22px}
+.detail-section .sec-h{margin-bottom:10px}
+.s2-full{display:flex;flex-direction:column;gap:14px}
+
+.main-2{
+  display:grid;grid-template-columns:1.4fr 1fr;gap:18px;
+  padding:0 44px;margin-top:22px;
+}
+
+/* Section 2 — detailed ability breakdown */
+.s2{display:flex;flex-direction:column;gap:14px}
+.ability{
+  background:#fff;border:2px solid var(--hair-soft);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 4px 0 #fcecc4;
+  display:grid;grid-template-columns:160px 1fr;
+}
+.ability .left{
+  background:#fff7e2;padding:14px 14px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  border-right:2px solid var(--hair-soft);
+}
+.ability .left .ico{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;background:var(--orange);
+}
+.ability .left .ttl{
+  font:700 13px/1.15 var(--font-display);color:var(--ink);margin-top:3px;
+}
+.ability .left .ttl small{display:block;font:600 9.5px/1 var(--font-body);color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.ability .left .mlbl{font:600 9.5px/1 var(--font-body);color:var(--ink-mute);letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
+.ability .left .mval{font:700 11.5px/1 var(--font-display);letter-spacing:.04em}
+.ability .left .grade-big{
+  font:700 38px/1 var(--font-display);margin-top:2px;
+}
+.ability.gC .left .grade-big,.ability.gC .left .mval{color:var(--g-C)}
+.ability.gL .left .grade-big,.ability.gL .left .mval{color:var(--g-L)}
+.ability.gB .left .grade-big,.ability.gB .left .mval{color:var(--g-B)}
+.ability .left .ico.eye{background:var(--orange)}
+.ability .left .ico.calc{background:var(--orange)}
+.ability .left .ico.brain{background:var(--orange)}
+.ability .left .ico.bulb{background:var(--g-L)}
+
+.ability table{width:100%;border-collapse:separate;border-spacing:0;font:500 11.5px/1.4 var(--font-body)}
+.ability thead th{
+  background:#fff3d2;color:var(--orange-deep);
+  font:700 10px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;
+  padding:8px 10px;text-align:left;
+  border-bottom:1.5px solid var(--hair);
+}
+.ability thead th:last-child{text-align:center}
+.ability tbody td{
+  padding:8px 10px;border-bottom:1px solid #f5e9c8;color:var(--ink-soft);
+  vertical-align:top;
+}
+.ability tbody td:first-child{font:700 11.5px/1.3 var(--font-display);color:var(--ink);width:115px}
+.ability tbody td:last-child{text-align:center;width:55px}
+.ability tbody tr:last-child td{border-bottom:0}
+.ability tbody .gC{color:var(--g-C);font-weight:800;font-size:14px}
+.ability tbody .gL{color:var(--g-L);font-weight:800;font-size:14px}
+.ability tbody .gB{color:var(--g-B);font-weight:800;font-size:14px}
+
+/* ───── Right column: Section 3,4,5 ───── */
+.s3-DEPRECATED{
+  background:#fff;border:2px solid var(--hair-soft);
+  border-radius:16px;padding:14px;
+  box-shadow:0 4px 0 #fcecc4;
+}
+.s3 .legend2{display:flex;gap:18px;margin-bottom:10px;font:600 11px/1 var(--font-body);color:var(--ink-soft)}
+.s3 .legend2 .l{display:inline-flex;align-items:center;gap:6px}
+.s3 .legend2 .sw{width:14px;height:14px;border-radius:3px}
+.s3 .chart{width:100%;height:200px}
+.s3 .cmp{margin-top:10px;border-top:1.5px solid var(--hair-soft);padding-top:8px}
+.s3 .cmp table{width:100%;border-collapse:collapse;font:500 11.5px/1.3 var(--font-body)}
+.s3 .cmp th{
+  font:700 10px/1 var(--font-body);color:var(--ink-mute);
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:6px 4px;text-align:left;border-bottom:1px solid var(--hair-soft);
+}
+.s3 .cmp th:not(:first-child){text-align:center}
+.s3 .cmp td{padding:7px 4px;border-bottom:1px dashed #f0e2bf}
+.s3 .cmp td:first-child{font:600 12px/1 var(--font-body);color:var(--ink)}
+.s3 .cmp td:not(:first-child){text-align:center;font:700 13px/1 var(--font-display)}
+.s3 .cmp .gC{color:var(--g-C)} .s3 .cmp .gL{color:var(--g-L)} .s3 .cmp .gB{color:var(--g-B)}
+.s3 .cmp tbody tr:last-child td{border-bottom:0}
+
+.s4,.s5{
+  background:#fff;border:2px solid var(--hair-soft);
+  border-radius:16px;padding:14px 16px;margin-top:14px;
+  box-shadow:0 4px 0 #fcecc4;
+}
+.s4 .ttl, .s5 .ttl{
+  display:flex;align-items:center;gap:10px;
+  font:700 13.5px/1 var(--font-display);margin-bottom:10px;
+  color:var(--orange-deep);
+}
+.s4 .ttl .ico, .s5 .ttl .ico{
+  width:24px;height:24px;border-radius:7px;background:#fde6a0;color:var(--orange-deep);
+  display:flex;align-items:center;justify-content:center;
+}
+.radar-chart{width:100%;height:260px}
+.radar-legend{display:flex;gap:18px;justify-content:center;margin-top:4px;font:600 11px/1 var(--font-body);color:var(--ink-soft)}
+.radar-legend .sw{display:inline-block;width:14px;height:3px;background:#f5b84a;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+.donut-wrap{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+.donut-chart{width:130px;height:130px}
+.donut-info{display:flex;flex-direction:column;gap:6px}
+.donut-row{display:grid;grid-template-columns:60px 1fr 32px;align-items:center;gap:8px;font:500 11.5px/1 var(--font-body)}
+.donut-row .pill{padding:3px 10px;border-radius:99px;font:700 10.5px/1 var(--font-display);text-align:center;color:#fff}
+.donut-row .bar{height:8px;border-radius:99px;background:#f3e7c5;overflow:hidden}
+.donut-row .bar i{display:block;height:100%;border-radius:99px}
+.donut-row .ct{font:700 11.5px/1 var(--font-display);color:var(--ink);text-align:right}
+.donut-row.S .pill,.donut-row.S .bar i{background:var(--g-S)}
+.donut-row.A .pill,.donut-row.A .bar i{background:var(--g-A)}
+.donut-row.B .pill,.donut-row.B .bar i{background:var(--g-B)}
+.donut-row.C .pill,.donut-row.C .bar i{background:var(--g-C)}
+.donut-row.L .pill,.donut-row.L .bar i{background:var(--g-L)}
+
+/* ───── Section 6 — Nhận xét & Định hướng ───── */
+.s6{padding:0 44px;margin-top:22px;position:relative}
+.s6 .nx-box{
+  background:#fff;border:2px solid var(--hair-soft);
+  border-radius:16px;padding:16px 22px 18px;
+  box-shadow:0 4px 0 #fcecc4;
+  display:flex;flex-direction:column;gap:14px;
+}
+.s6 .nx-block{}
+.s6 .nx-lbl{
+  display:inline-block;font:700 12.5px/1 var(--font-display);
+  color:var(--orange-deep);background:#fde6a0;
+  padding:5px 12px;border-radius:8px;margin-bottom:8px;
+  letter-spacing:.02em;
+}
+.s6 .nx-body{font:500 13px/1.65 var(--font-body);color:var(--ink);outline:none}
+.s6 .nx-body p{margin:0 0 8px}
+.s6 .nx-body p:last-child{margin-bottom:0}
+.s6 .nx-body b{color:var(--orange-deep);font-weight:700}
+.s6 .nx-list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.s6 .nx-list li{font:500 13px/1.6 var(--font-body);color:var(--ink);outline:none}
+.s6 .nx-list li::marker{color:var(--orange-deep);font-weight:800}
+.s6 .nx-list b{color:var(--orange-deep);font-weight:700}
+
+/* ───── Section 7 — Directions ───── */
+.s7{padding:0 44px;margin-top:22px;position:relative}
+.s7-row{display:grid;grid-template-columns:1fr 1fr 200px;gap:18px;align-items:stretch}
+.s7 .card{
+  background:#fff;border:2px solid var(--hair-soft);
+  border-radius:16px;padding:14px 18px;
+  box-shadow:0 4px 0 #fcecc4;
+}
+.s7 .card.lop{background:#f1faff;border-color:#cfe5f3;box-shadow:0 4px 0 #ddecf6}
+.s7 .card.nha{background:#fdf1e6;border-color:#fbd5b1;box-shadow:0 4px 0 #fbdcc1}
+.s7 .card h4{
+  margin:0 0 9px;font:700 13.5px/1 var(--font-display);display:flex;align-items:center;gap:9px;
+}
+.s7 .card.lop h4{color:var(--sky)}
+.s7 .card.nha h4{color:var(--orange-deep)}
+.s7 .card h4 .ico{
+  width:26px;height:26px;border-radius:50%;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.s7 .card.lop h4 .ico{background:var(--sky)}
+.s7 .card.nha h4 .ico{background:var(--orange)}
+.s7 .card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.s7 .card li{
+  display:flex;gap:8px;align-items:flex-start;
+  font:500 12px/1.5 var(--font-body);color:var(--ink);
+}
+.s7 .card li .b{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:7px;
+}
+.s7 .card.lop li .b{background:var(--sky)}
+.s7 .card.nha li .b{background:var(--orange)}
+.s7 .scene{display:flex;align-items:flex-end;justify-content:center}
+
+/* ───── Footer bar ───── */
+.foot-bar{
+  margin:22px 0 0;padding:12px 44px;
+  background:linear-gradient(90deg,#ffe5ad 0%, #fcd685 100%);
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:22px;align-items:center;
+  font:600 12px/1.3 var(--font-body);color:var(--ink);
+  border-top:2px solid #f3c66e;
+}
+.foot-bar .msg{font:500 11.5px/1.45 var(--font-body);color:var(--ink-soft);grid-column:span 1}
+.foot-bar .msg b{color:var(--orange-deep);font:700 12.5px/1.3 var(--font-display)}
+.foot-bar .item{display:flex;align-items:center;gap:8px;font:600 12px/1 var(--font-body)}
+.foot-bar .item .ico{
+  width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+}
+.foot-bar .item.p .ico{background:#fff;color:var(--orange-deep)}
+.foot-bar .item.w .ico{background:#fff;color:var(--sky)}
+.foot-bar .item.f .ico{background:#fff;color:#1877f2}
+.foot-bar .wm{
+  background:var(--orange-deep);color:#fff;padding:9px 18px;border-radius:10px;
+  font:700 14px/1 var(--font-display);letter-spacing:.12em;
+}
+
+@media print{
+  body{background:#fff;padding:0}
+  .toolbar{display:none}
+  .page{margin:0;border-radius:0;box-shadow:none;width:100%}
+  .bg-shapes{display:none}
+}
+@page{size:A3 portrait;margin:6mm}
+
+/* ───── DYNAMIC GRADE BINDING ─────
+   s1-card + ability đồng bộ qua data-grade attribute */
+.s1-card[data-grade] .head .ico,
+.s1-card[data-grade] .grade,
+.s1-card[data-grade] .lbl,
+.s1-card[data-grade] .bar i{transition:all .25s ease}
+.s1-card[data-grade="S"] .head .ico{background:var(--g-S-bg);color:var(--g-S)}
+.s1-card[data-grade="A"] .head .ico{background:var(--g-A-bg);color:var(--g-A)}
+.s1-card[data-grade="B"] .head .ico{background:var(--g-B-bg);color:var(--g-B)}
+.s1-card[data-grade="C"] .head .ico{background:var(--g-C-bg);color:var(--g-C)}
+.s1-card[data-grade="L"] .head .ico{background:var(--g-L-bg);color:var(--g-L)}
+.s1-card[data-grade="S"] .grade,.s1-card[data-grade="S"] .lbl{color:var(--g-S)}
+.s1-card[data-grade="A"] .grade,.s1-card[data-grade="A"] .lbl{color:var(--g-A)}
+.s1-card[data-grade="B"] .grade,.s1-card[data-grade="B"] .lbl{color:var(--g-B)}
+.s1-card[data-grade="C"] .grade,.s1-card[data-grade="C"] .lbl{color:var(--g-C)}
+.s1-card[data-grade="L"] .grade,.s1-card[data-grade="L"] .lbl{color:var(--g-L)}
+.s1-card[data-grade="S"] .bar i{background:var(--g-S);width:95%}
+.s1-card[data-grade="A"] .bar i{background:var(--g-A);width:80%}
+.s1-card[data-grade="B"] .bar i{background:var(--g-B);width:65%}
+.s1-card[data-grade="C"] .bar i{background:var(--g-C);width:50%}
+.s1-card[data-grade="L"] .bar i{background:var(--g-L);width:25%}
+
+/* Click to cycle grade — hint cursor */
+.ability tbody td:last-child span{cursor:pointer;transition:transform .15s ease,filter .15s ease;user-select:none}
+.ability tbody td:last-child span:hover{transform:scale(1.18);filter:brightness(1.1)}
+
+/* Auto-comment button trong section 5 */
+.s6 .sec-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.auto-comment-btn-mg{
+  font:700 11px var(--font-body);letter-spacing:.02em;
+  background:linear-gradient(135deg,#fff3da,#ffd17a);
+  color:var(--orange-deep);border:1.5px solid var(--orange);
+  border-radius:14px;padding:5px 14px;cursor:pointer;margin-left:auto;
+  transition:transform .15s ease,box-shadow .15s ease,background .2s ease;
+}
+.auto-comment-btn-mg:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(240,133,38,.25);background:linear-gradient(135deg,#ffe6b8,#ffb86b)}
+.auto-comment-btn-mg:active{transform:translateY(0)}
+@media print{.auto-comment-btn-mg{display:none !important}}
+@keyframes mg-toast-out{
+  0%,70%{opacity:1;transform:translateX(-50%) translateY(0)}
+  100%{opacity:0;transform:translateX(-50%) translateY(-10px)}
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a href="index.html" title="Quay về trang chọn báo cáo" style="text-decoration:none;color:inherit;font:600 12.5px/1 var(--font-body);padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.7);display:inline-flex;align-items:center;gap:6px;margin-right:8px;border:1px solid rgba(0,0,0,.08);transition:all .15s ease">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Trang chính
+  </a>
+  <button onclick="window.print()" class="primary">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    In / Xuất PDF
+  </button>
+</div>
+
+<div class="page" data-screen-label="Báo cáo năng lực tư duy">
+
+  <!-- bg decorations -->
+  <div class="bg-shapes">
+    <svg class="bg-c1" width="60" height="40" viewBox="0 0 60 40"><g fill="#fff3c7"><ellipse cx="30" cy="22" rx="26" ry="10"/><ellipse cx="18" cy="16" rx="14" ry="9"/><ellipse cx="42" cy="16" rx="16" ry="9"/></g></svg>
+    <svg class="bg-c2" width="42" height="42" viewBox="0 0 42 42"><path d="M21 5 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z" fill="#f5b84a"/></svg>
+    <svg class="bg-c3" width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="13" fill="none" stroke="#f5b84a" stroke-width="3" stroke-dasharray="4 5"/></svg>
+    <svg class="bg-c4" width="48" height="48" viewBox="0 0 48 48"><path d="M24 7 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z" fill="#f08526"/></svg>
+    <svg class="bg-c5" width="60" height="40" viewBox="0 0 60 40"><g fill="#fff3c7"><ellipse cx="30" cy="22" rx="26" ry="10"/><ellipse cx="18" cy="16" rx="14" ry="9"/></g></svg>
+    <svg class="bg-c6" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="none" stroke="#f08526" stroke-width="2.5" stroke-dasharray="3 4"/></svg>
+  </div>
+
+  <!-- ─── HEADER ─── -->
+  <div class="hdr">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg width="38" height="38" viewBox="0 0 32 32" fill="none">
+          <path d="M4 7 L9 25 L14 13 L18 25 L23 7" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M26 22 q2 -1 0 -3 q-3 -2 -1 -5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="brand-lbl">
+        <span class="name">WONDERKIDS</span>
+        <span class="tag">Tư duy tốt – Tương lai tươi sáng</span>
+      </div>
+    </div>
+
+    <div class="hdr-title">
+      <h1>BÁO CÁO</h1>
+      <h2>ĐÁNH GIÁ NĂNG LỰC TƯ DUY</h2>
+      <div class="pill">Kỳ đánh giá · <span contenteditable="true">Đầu kỳ năm học 2024 – 2025</span></div>
+    </div>
+
+    <div class="mascot">
+      <!-- friendly deer with magnifier -->
+      <svg width="160" height="140" viewBox="0 0 180 160" fill="none">
+        <path d="M14 36 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5z" fill="#f5b84a"/>
+        <path d="M165 14 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#f5b84a"/>
+        <g fill="#a3551f">
+          <path d="M62 32 q-5 -16 -16 -16 q4 8 2 14 q-6 -2 -10 4 q8 0 12 6 q1 4 5 4z"/>
+          <path d="M118 32 q5 -16 16 -16 q-4 8 -2 14 q6 -2 10 4 q-8 0 -12 6 q-1 4 -5 4z"/>
+        </g>
+        <ellipse cx="56" cy="48" rx="11" ry="15" fill="#cf7c34" transform="rotate(-22 56 48)"/>
+        <ellipse cx="124" cy="48" rx="11" ry="15" fill="#cf7c34" transform="rotate(22 124 48)"/>
+        <ellipse cx="58" cy="50" rx="5.5" ry="10" fill="#f8c486" transform="rotate(-22 58 50)"/>
+        <ellipse cx="122" cy="50" rx="5.5" ry="10" fill="#f8c486" transform="rotate(22 122 50)"/>
+        <!-- body sweater -->
+        <path d="M48 155 q0 -32 22 -42 l8 -4 h24 l8 4 q22 10 22 42 z" fill="#dd5a11"/>
+        <circle cx="90" cy="135" r="13" fill="#fff"/>
+        <path d="M81 130 l3.5 12 4.5 -7 4.5 7 3.5 -12" stroke="#dd5a11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <!-- head -->
+        <ellipse cx="90" cy="84" rx="46" ry="42" fill="#d4823c"/>
+        <ellipse cx="90" cy="96" rx="32" ry="26" fill="#f8c486"/>
+        <circle cx="74" cy="66" r="3" fill="#fff6e3"/>
+        <circle cx="106" cy="66" r="3" fill="#fff6e3"/>
+        <circle cx="90" cy="60" r="2.4" fill="#fff6e3"/>
+        <!-- happy left eye -->
+        <path d="M72 84 q5 5 11 0" stroke="#3a2a14" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- right eye open (with magnifier) -->
+        <circle cx="110" cy="84" r="5.5" fill="#3a2a14"/>
+        <circle cx="112" cy="82" r="2" fill="#fff"/>
+        <ellipse cx="90" cy="100" rx="4" ry="3" fill="#3a2a14"/>
+        <path d="M86 108 q4 5 8 0" stroke="#3a2a14" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="68" cy="98" r="5" fill="#f08a4f" opacity=".55"/>
+        <circle cx="112" cy="98" r="5" fill="#f08a4f" opacity=".55"/>
+        <!-- magnifier in front of right eye -->
+        <path d="M132 100 q12 -4 18 -16" stroke="#d4823c" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <circle cx="146" cy="80" r="22" fill="#f08526" stroke="#3a2a14" stroke-width="2.5"/>
+        <circle cx="146" cy="80" r="16" fill="#fde6c8" opacity=".6"/>
+        <path d="M163 96 l14 14" stroke="#3a2a14" stroke-width="5.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ─── INFO ─── -->
+  <div class="info">
+    <div class="avatar">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="54" r="30" fill="#fdd9a0"/>
+        <path d="M18 52 Q20 20 50 20 Q80 20 82 52 Q72 40 62 42 Q50 38 38 42 Q28 40 18 52z" fill="#6b3f1f"/>
+        <ellipse cx="21" cy="56" rx="3.5" ry="5" fill="#fdd9a0"/>
+        <ellipse cx="79" cy="56" rx="3.5" ry="5" fill="#fdd9a0"/>
+        <ellipse cx="40" cy="56" rx="2.8" ry="3.5" fill="#2a2117"/>
+        <ellipse cx="60" cy="56" rx="2.8" ry="3.5" fill="#2a2117"/>
+        <circle cx="41.5" cy="55" r="1" fill="#fff"/>
+        <circle cx="61.5" cy="55" r="1" fill="#fff"/>
+        <circle cx="32" cy="64" r="4" fill="#f29a6b" opacity=".55"/>
+        <circle cx="68" cy="64" r="4" fill="#f29a6b" opacity=".55"/>
+        <path d="M42 68 Q50 75 58 68" stroke="#2a2117" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M14 100 Q14 84 28 80 Q40 86 50 86 Q60 86 72 80 Q86 84 86 100 z" fill="#3ea1d3"/>
+        <path d="M40 86 Q50 92 60 86" stroke="#2d7ea8" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="info-field">
+      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
+      <span class="lbl">Họ và tên</span>
+      <input class="val" value="Phạm Hoàng Bách">
+    </div>
+    <div class="info-field">
+      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 7v11h-6v-7H9v7H3V10z"/></svg></span>
+      <span class="lbl">Lớp</span>
+      <input class="val" value="Trung tâm – Phố Huế">
+    </div>
+    <div class="info-field">
+      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="8" r="5"/><path d="M9 14 v6 M15 14 v6 M9 18 h6"/></svg></span>
+      <span class="lbl">Giới tính</span>
+      <input class="val" value="Nam">
+    </div>
+    <div class="info-field">
+      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+      <span class="lbl">Ngày đánh giá</span>
+      <input class="val" value="23/02/2025">
+    </div>
+    <div class="info-field">
+      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a6 6 0 0 1 6 6c0 4-6 14-6 14S6 12 6 8a6 6 0 0 1 6-6z"/></svg></span>
+      <span class="lbl">Độ tuổi</span>
+      <input class="val" value="4 tuổi">
+    </div>
+    <div class="info-field">
+      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
+      <span class="lbl">Giáo viên</span>
+      <input class="val" placeholder="—">
+    </div>
+  </div>
+
+  <!-- ─── SECTION 1 ─── -->
+  <div class="sec">
+    <div class="sec-h"><span class="num">1</span>Tổng quan năng lực tư duy</div>
+    <p class="s1-desc" contenteditable="true">Bé đang ở mức <b>đang phát triển</b> ở các năng lực tư duy. Bé có điểm mạnh hơn ở phần <b>kiểu mẫu và dữ liệu</b>.</p>
+
+    <div class="s1-cards">
+      <div class="s1-card c1">
+        <div class="head">
+          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span>
+          <span class="ttl"><small>Năng lực 01</small>Tư duy cơ bản</span>
+        </div>
+        <span class="grade">C</span>
+        <span class="lbl">MỨC C</span>
+        <span class="bar"><i></i></span>
+      </div>
+      <div class="s1-card c2">
+        <div class="head">
+          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h4"/></svg></span>
+          <span class="ttl"><small>Năng lực 02</small>Tư duy toán học</span>
+        </div>
+        <span class="grade">C</span>
+        <span class="lbl">MỨC C</span>
+        <span class="bar"><i></i></span>
+      </div>
+      <div class="s1-card c3">
+        <div class="head">
+          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 4 7 7c-2 0-4 2-4 4 0 2 1 3 2 4-1 1-1 3 0 4 0 2 2 4 4 4 0 1 1 2 3 2s3-1 3-2c2 0 4-2 4-4 1-1 1-3 0-4 1-1 2-2 2-4 0-2-2-4-4-4 0-3-2-5-5-5z"/></svg></span>
+          <span class="ttl"><small>Năng lực 03</small>Tư duy logic</span>
+        </div>
+        <span class="grade">C</span>
+        <span class="lbl">MỨC C</span>
+        <span class="bar"><i></i></span>
+      </div>
+      <div class="s1-card l4">
+        <div class="head">
+          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
+          <span class="ttl"><small>Năng lực 04</small>Tư duy sáng tạo</span>
+        </div>
+        <span class="grade">L</span>
+        <span class="lbl">MỨC L</span>
+        <span class="bar"><i></i></span>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="it"><span class="dot s"></span>Vượt trội (S)</span>
+      <span class="it"><span class="dot a"></span>Rất tốt (A)</span>
+      <span class="it"><span class="dot b"></span>Tốt (B)</span>
+      <span class="it"><span class="dot c"></span>Trung bình (C)</span>
+      <span class="it"><span class="dot l"></span>Cần hỗ trợ (L)</span>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 2: VISUALIZATION (Radar + Donut song song) ─── -->
+  <div class="viz-row">
+    <div class="viz-box">
+      <div class="sec-h"><span class="num">2</span>Hình dáng năng lực — Radar</div>
+      <div class="s4">
+        <svg id="radar-chart" class="radar-chart" viewBox="-30 -10 380 320"></svg>
+        <div class="radar-legend">
+          <span><span class="sw"></span>Năng lực của bé <span data-name>Bách</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="viz-box">
+      <div class="sec-h"><span class="num">3</span>Phân bố mức độ chi tiết</div>
+      <div class="s5">
+        <div class="donut-wrap">
+          <svg id="donut-chart" class="donut-chart" viewBox="0 0 140 140"></svg>
+          <div class="donut-info" id="donut-info"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 4: CHI TIẾT NĂNG LỰC (full-width) ─── -->
+  <div class="detail-section">
+    <div class="sec-h"><span class="num">4</span>Kết quả đánh giá chi tiết</div>
+    <div class="s2-full">
+      <div class="s2">
+        <!-- TƯ DUY CƠ BẢN -->
+        <div class="ability gC">
+          <div class="left">
+            <span class="ico eye"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span>
+            <span class="ttl"><small>Nhóm 01</small>Tư duy cơ bản</span>
+            <span class="mlbl">Mức đánh giá</span>
+            <span class="mval">MỨC C</span>
+            <span class="grade-big">C</span>
+          </div>
+          <table>
+            <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
+            <tbody>
+              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC">C</span></td></tr>
+              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC">C</span></td></tr>
+              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">C</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TƯ DUY TOÁN HỌC -->
+        <div class="ability gC">
+          <div class="left">
+            <span class="ico calc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h4"/></svg></span>
+            <span class="ttl"><small>Nhóm 02</small>Tư duy toán học</span>
+            <span class="mlbl">Mức đánh giá</span>
+            <span class="mval">MỨC C</span>
+            <span class="grade-big">C</span>
+          </div>
+          <table>
+            <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
+            <tbody>
+              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL">L</span></td></tr>
+              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL">L</span></td></tr>
+              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC">C</span></td></tr>
+              <tr><td>Kiểu mẫu</td><td contenteditable="true">Khả năng nhận diện và dự đoán mối quan hệ mang tính quy luật của đồ vật.</td><td><span class="gB">B</span></td></tr>
+              <tr><td>Dữ liệu</td><td contenteditable="true">Khả năng thu thập các nguồn lực khác nhau và sắp xếp theo đặc điểm của chúng.</td><td><span class="gB">B</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TƯ DUY LOGIC -->
+        <div class="ability gC">
+          <div class="left">
+            <span class="ico brain"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 4 7 7c-2 0-4 2-4 4 0 2 1 3 2 4-1 1-1 3 0 4 0 2 2 4 4 4 0 1 1 2 3 2s3-1 3-2c2 0 4-2 4-4 1-1 1-3 0-4 1-1 2-2 2-4 0-2-2-4-4-4 0-3-2-5-5-5z"/></svg></span>
+            <span class="ttl"><small>Nhóm 03</small>Tư duy logic</span>
+            <span class="mlbl">Mức đánh giá</span>
+            <span class="mval">MỨC C</span>
+            <span class="grade-big">C</span>
+          </div>
+          <table>
+            <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
+            <tbody>
+              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC">C</span></td></tr>
+              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL">L</span></td></tr>
+              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC">C</span></td></tr>
+              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">C</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TƯ DUY SÁNG TẠO -->
+        <div class="ability gL">
+          <div class="left">
+            <span class="ico bulb"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
+            <span class="ttl"><small>Nhóm 04</small>Tư duy sáng tạo</span>
+            <span class="mlbl">Mức đánh giá</span>
+            <span class="mval">MỨC L</span>
+            <span class="grade-big">L</span>
+          </div>
+          <table>
+            <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
+            <tbody>
+              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL">L</span></td></tr>
+              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL">L</span></td></tr>
+              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL">L</span></td></tr>
+              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">L</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ─── SECTION 5: NHẬN XÉT & ĐỊNH HƯỚNG ─── -->
+  <div class="s6">
+    <div class="sec-h"><span class="num">5</span>Nhận xét chung &amp; Định hướng
+      <button class="auto-comment-btn-mg" onclick="fillCommentsMG(true)" title="Sinh nhận xét và định hướng tự động từ kết quả đánh giá">🪄 Tự động nhận xét</button>
+    </div>
+    <div class="nx-box">
+      <div class="nx-block">
+        <div class="nx-lbl">Nhận xét:</div>
+        <div class="nx-body" contenteditable="true"><p>Bé <b>Phạm Hoàng Bách</b> đang ở giai đoạn xây dựng nền tảng tư duy. Bé thể hiện <b>khả năng quan sát, ghi nhớ và chú ý ổn định</b>, đặc biệt có điểm sáng ở phần <b>kiểu mẫu và dữ liệu</b> của tư duy toán học.</p><p>Bé cần được hỗ trợ thêm về <b>số và tính toán cơ bản, hình học không gian</b> cùng các năng lực ứng dụng – sáng tạo. Khi được rèn luyện đều đặn qua hoạt động trực quan và trò chơi, bé hoàn toàn có thể tiến bộ rõ rệt trong 1 – 3 tháng tới.</p></div>
+      </div>
+      <div class="nx-block">
+        <div class="nx-lbl">Định hướng chung:</div>
+        <ol class="nx-list">
+          <li contenteditable="true"><b>Củng cố nền tảng kiến thức cơ bản:</b> tập trung vào các kỹ năng nền tảng như <b>Phép cộng &amp; phép trừ, Giải quyết vấn đề, Suy luận toán học</b> và rèn luyện qua các bài tập/học cụ trực quan để giúp con nắm vững các khái niệm cơ bản.</li>
+          <li contenteditable="true"><b>Phát triển tư duy toán học:</b> con cần rèn luyện thêm khả năng suy luận logic, giải quyết các bài toán nhiều bước và phát triển khả năng giải thích chi tiết trong quá trình giải quyết.</li>
+          <li contenteditable="true"><b>Khuyến khích sáng tạo và biểu đạt:</b> tạo không gian để bé đề xuất nhiều ý tưởng, kể chuyện, vẽ, sáng chế từ vật liệu sẵn có và động viên các góc nhìn khác biệt.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 7 removed (merged into section 6) ─── -->
+
+  <!-- ─── FOOTER ─── -->
+  <div class="foot-bar">
+    <div class="msg"><b>Cảm ơn Quý phụ huynh</b><br>đã tin tưởng đồng hành cùng WonderKids!</div>
+    <div class="item p">
+      <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16.5v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 3.2 2H6.2a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7 9.7a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg></span>
+      1900 9999 80
+    </div>
+    <div class="item w">
+      <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span>
+      wonderkids.edu.vn
+    </div>
+    <div class="item f">
+      <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9V15h-2.5v-3h2.5V9.7c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 3h-2.3v6.9A10 10 0 0 0 22 12z"/></svg></span>
+      /wonderkids.edu.vn
+    </div>
+    <span class="wm">WONDERKIDS</span>
+  </div>
+</div>
+
+<script>
+/* ─── Radar chart ─── (bỏ bar chart so sánh + bỏ avg peer data) */
+const RADAR_DATA = {
+  labels: ['Tư duy\ncơ bản','Tư duy\ntoán học','Tư duy\nlogic','Tư duy\nsáng tạo'],
+  child:  [55, 50, 50, 22],
+};
+function renderRadar(){
+  const svg=document.getElementById('radar-chart');
+  if(!svg) return;
+  const cx=160, cy=150, R=110;
+  const N=RADAR_DATA.labels.length;
+  const ang=i=> -Math.PI/2 + i*(2*Math.PI/N);
+  const pt=(i,v)=>{
+    const r=R*(v/100);
+    return [cx+r*Math.cos(ang(i)), cy+r*Math.sin(ang(i))];
+  };
+  let html='';
+  // bg pentagon (square actually since N=4)
+  const ringFill=[];
+  for(let i=0;i<N;i++){ const [x,y]=pt(i,100); ringFill.push(`${x},${y}`);}
+  html += `<polygon points="${ringFill.join(' ')}" fill="#fff7e2" stroke="none"/>`;
+  // rings
+  for(let k=1;k<=4;k++){
+    const pts=[];
+    for(let i=0;i<N;i++){ const [x,y]=pt(i, k*25); pts.push(`${x},${y}`); }
+    html += `<polygon points="${pts.join(' ')}" fill="none" stroke="#f0dcb0" stroke-width="1" stroke-dasharray="${k===4?'':'3 3'}"/>`;
+  }
+  // axes
+  for(let i=0;i<N;i++){
+    const [x,y]=pt(i,100);
+    html += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#f0dcb0" stroke-width="1"/>`;
+  }
+  // child polygon (amber filled) — đã bỏ avg peer comparison
+  {
+    const pts=RADAR_DATA.child.map((v,i)=>pt(i,v).join(',')).join(' ');
+    html += `<polygon points="${pts}" fill="#f5b84a" fill-opacity=".35" stroke="#f08526" stroke-width="2.6" stroke-linejoin="round"/>`;
+    RADAR_DATA.child.forEach((v,i)=>{
+      const [x,y]=pt(i,v);
+      html += `<circle cx="${x}" cy="${y}" r="5" fill="#f08526" stroke="#fff" stroke-width="2"/>`;
+    });
+  }
+  // labels + value
+  for(let i=0;i<N;i++){
+    const [lx,ly]=pt(i, 135);
+    const lines = RADAR_DATA.labels[i].split('\n');
+    let anchor='middle';
+    if(i===1) anchor='start';
+    if(i===3) anchor='end';
+    const lh=12;
+    let yOff = ly - (lines.length*lh/2);
+    lines.forEach((ln,k)=>{
+      html += `<text x="${lx}" y="${yOff + (k+1)*lh}" text-anchor="${anchor}" font-family="Be Vietnam Pro,sans-serif" font-weight="${k===0?'600':'700'}" font-size="${k===0?'9.5':'11'}" letter-spacing=".04em" fill="#7b6244">${ln.toUpperCase()}</text>`;
+    });
+    // % under label
+    const cyPos = yOff + lines.length*lh + 13;
+    html += `<text x="${lx}" y="${cyPos}" text-anchor="${anchor}" font-family="Quicksand,sans-serif" font-weight="700" font-size="13" fill="#f08526">${RADAR_DATA.child[i]}%</text>`;
+  }
+  svg.innerHTML = html;
+}
+renderRadar();
+
+/* ─── Donut: distribution of detail-skill levels ─── */
+function renderDonut(){
+  const svg=document.getElementById('donut-chart');
+  const info=document.getElementById('donut-info');
+  if(!svg||!info) return;
+  // count grades from .ability tables
+  const counts={S:0,A:0,B:0,C:0,L:0};
+  document.querySelectorAll('.ability tbody td:last-child span').forEach(s=>{
+    const g=s.textContent.trim().toUpperCase();
+    if(counts[g]!=null) counts[g]++;
+  });
+  const total = Object.values(counts).reduce((a,b)=>a+b,0)||1;
+  const colors={S:'#5fb74f',A:'#3ea1d3',B:'#f5b84a',C:'#f08526',L:'#df5728'};
+  const labels={S:'Vượt trội',A:'Rất tốt',B:'Tốt',C:'Trung bình',L:'Cần hỗ trợ'};
+
+  // donut
+  const cx=70,cy=70,rOuter=58,rInner=36;
+  let cumulative=0;
+  let html='';
+  // bg ring
+  html += `<circle cx="${cx}" cy="${cy}" r="${(rOuter+rInner)/2}" fill="none" stroke="#fff7e2" stroke-width="${rOuter-rInner}"/>`;
+  for(const g of ['S','A','B','C','L']){
+    const c=counts[g]; if(!c) continue;
+    const frac=c/total;
+    const startAng = cumulative*2*Math.PI - Math.PI/2;
+    const endAng = (cumulative+frac)*2*Math.PI - Math.PI/2;
+    cumulative += frac;
+    const x1=cx+rOuter*Math.cos(startAng), y1=cy+rOuter*Math.sin(startAng);
+    const x2=cx+rOuter*Math.cos(endAng), y2=cy+rOuter*Math.sin(endAng);
+    const x3=cx+rInner*Math.cos(endAng), y3=cy+rInner*Math.sin(endAng);
+    const x4=cx+rInner*Math.cos(startAng), y4=cy+rInner*Math.sin(startAng);
+    const large=frac>0.5?1:0;
+    html += `<path d="M ${x1} ${y1} A ${rOuter} ${rOuter} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${rInner} ${rInner} 0 ${large} 0 ${x4} ${y4} Z" fill="${colors[g]}"/>`;
+  }
+  // center text
+  html += `<text x="${cx}" y="${cy-2}" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#3a2a14">${total}</text>`;
+  html += `<text x="${cx}" y="${cy+14}" text-anchor="middle" font-family="Be Vietnam Pro,sans-serif" font-weight="600" font-size="9" fill="#7b6244" letter-spacing=".08em">KỸ NĂNG</text>`;
+  svg.innerHTML = html;
+
+  // info rows
+  let rows='';
+  for(const g of ['S','A','B','C','L']){
+    const c=counts[g];
+    const pct = total>0 ? (c/total*100) : 0;
+    rows += `
+      <div class="donut-row ${g}">
+        <span class="pill">${g} · ${labels[g]}</span>
+        <span class="bar"><i style="width:${pct}%"></i></span>
+        <span class="ct">${c}</span>
+      </div>`;
+  }
+  info.innerHTML = rows;
+}
+renderDonut();
+
+/* ═══════════════════════════════════════════════════════════════
+   DYNAMIC DATA BINDING + AUTO-COMMENT (mau-giao)
+   - Mỗi ability table có 1 grade tổng = weighted avg của chi tiết
+   - S1-card đồng bộ theo data-grade attribute
+   - Click vào grade chip → cycle S→A→B→C→L→S
+   - Auto-comment sinh insightful comment cho phụ huynh
+   ═══════════════════════════════════════════════════════════════ */
+const __GROUP_MAP = [
+  {title:'Tư duy cơ bản',   abilityIdx:0,
+   suggestions:'tăng cường trò chơi tìm điểm khác biệt, ghi nhớ qua flashcard, rèn quan sát tỉ mỉ qua các hoạt động hằng ngày'},
+  {title:'Tư duy toán học', abilityIdx:1,
+   suggestions:'đếm đồ vật quen thuộc, xếp hình khối, đo lường đơn giản, nhận biết quy luật số và hình'},
+  {title:'Tư duy logic',    abilityIdx:2,
+   suggestions:'câu đố logic đơn giản, phân loại đồ vật theo nhiều thuộc tính, suy luận nguyên-nhân-kết-quả'},
+  {title:'Tư duy sáng tạo', abilityIdx:3,
+   suggestions:'vẽ tự do, kể chuyện sáng tạo, chơi đóng vai, làm thủ công từ vật liệu sẵn có ở nhà'},
+];
+const __GRADE_SCORE = {S:5, A:4, B:3, C:2, L:1};
+const __GRADE_NEXT = {S:'A',A:'B',B:'C',C:'L',L:'S'};
+const __GRADE_RADAR_PCT = {S:95,A:80,B:65,C:50,L:25};
+
+function _abilityGrade(abilityEl){
+  const grades = [...abilityEl.querySelectorAll('tbody td:last-child span')].map(s=>s.textContent.trim().toUpperCase());
+  if(!grades.length) return 'C';
+  const total = grades.reduce((acc,g)=>acc+(__GRADE_SCORE[g]||0), 0);
+  const avg = total / grades.length;
+  if(avg >= 4.5) return 'S';
+  if(avg >= 3.5) return 'A';
+  if(avg >= 2.5) return 'B';
+  if(avg >= 1.5) return 'C';
+  return 'L';
+}
+
+function _setS1Card(card, grade){
+  if(!card) return;
+  card.dataset.grade = grade;
+  const gEl = card.querySelector('.grade');
+  if(gEl) gEl.textContent = grade;
+  const lEl = card.querySelector('.lbl');
+  if(lEl) lEl.textContent = 'MỨC ' + grade;
+}
+
+function recomputeAllMG(){
+  const abilities = document.querySelectorAll('.ability');
+  const cards = document.querySelectorAll('.s1-card');
+  __GROUP_MAP.forEach((group, idx)=>{
+    const ab = abilities[group.abilityIdx];
+    if(!ab) return;
+    const grade = _abilityGrade(ab);
+    // Update ability group color class + grade-big label
+    ab.className = 'ability g'+grade;
+    const gradeBig = ab.querySelector('.grade-big');
+    if(gradeBig) gradeBig.textContent = grade;
+    const mval = ab.querySelector('.mval');
+    if(mval) mval.textContent = 'MỨC ' + grade;
+    // Sync s1-card
+    if(cards[idx]) _setS1Card(cards[idx], grade);
+  });
+  // Update radar + donut
+  if(typeof RADAR_DATA!=='undefined' && typeof renderRadar==='function'){
+    RADAR_DATA.child = [...abilities].map(ab=>__GRADE_RADAR_PCT[_abilityGrade(ab)] || 50);
+    renderRadar();
+  }
+  if(typeof renderDonut==='function') renderDonut();
+}
+
+// Click to cycle grade in ability tables — auto-recompute everything
+document.addEventListener('click', e=>{
+  const span = e.target.closest('.ability tbody td:last-child span');
+  if(!span) return;
+  const cur = span.textContent.trim().toUpperCase();
+  const next = __GRADE_NEXT[cur] || 'C';
+  span.textContent = next;
+  span.className = 'g'+next;
+  recomputeAllMG();
+});
+
+// Run once on load
+recomputeAllMG();
+
+/* ─── AUTO-COMMENT GENERATOR ─── */
+function autoCommentMG(){
+  const nameInputs = document.querySelectorAll('.info-field input.val');
+  const fullName = (nameInputs[0]?.value || 'bé').trim() || 'bé';
+  const abilities = document.querySelectorAll('.ability');
+  const groupGrades = __GROUP_MAP.map((g,i)=>({
+    title: g.title,
+    grade: _abilityGrade(abilities[i]),
+  }));
+  const allScores = groupGrades.map(g=>__GRADE_SCORE[g.grade]);
+  const avgScore = allScores.reduce((a,b)=>a+b,0)/allScores.length;
+  let stage = '';
+  if(avgScore >= 4.5) stage = 'rất xuất sắc';
+  else if(avgScore >= 3.5) stage = 'rất tốt';
+  else if(avgScore >= 2.5) stage = 'phát triển ổn định';
+  else if(avgScore >= 1.5) stage = 'đang xây dựng nền tảng';
+  else stage = 'cần được hỗ trợ thêm trong thời gian tới';
+  const strengths = groupGrades.filter(g=>['S','A','B'].includes(g.grade));
+  const weaknesses = groupGrades.filter(g=>['C','L'].includes(g.grade));
+  let html = '';
+  html += `<p>Bé <b>${fullName}</b> đang ở giai đoạn <b>${stage}</b> trong phát triển tư duy.</p>`;
+  if(strengths.length){
+    const list = strengths.map(g=>`<b>${g.title}</b> (mức ${g.grade})`).join(', ');
+    html += `<p><b>🌟 Điểm sáng:</b> Bé thể hiện tốt ở ${list}. Đây là nền tảng đáng khích lệ — phụ huynh có thể tiếp tục duy trì qua các hoạt động vui chơi đa dạng.</p>`;
+  }
+  if(weaknesses.length){
+    const list = weaknesses.map(g=>`<b>${g.title}</b> (mức ${g.grade})`).join(', ');
+    html += `<p><b>📌 Cần củng cố:</b> Bé chưa thực sự vững ở ${list}. Đây là cơ hội để phụ huynh đồng hành cùng bé qua các hoạt động thực tế hằng ngày.</p>`;
+  }
+  html += `<p><b>✨ Lời nhắn:</b> Mỗi đứa trẻ có nhịp phát triển riêng. Sau 1-3 tháng luyện tập đều đặn cùng phụ huynh và giáo viên, bé hoàn toàn có thể tiến bộ rõ rệt. Quan trọng nhất là giữ tinh thần thoải mái, vui chơi và khám phá cùng bé!</p>`;
+  return html;
+}
+
+function autoDirectionMG(){
+  const abilities = document.querySelectorAll('.ability');
+  const weakGroups = __GROUP_MAP.map((g,i)=>({...g, grade: _abilityGrade(abilities[i])}))
+                                 .filter(g=>['C','L'].includes(g.grade));
+  let items = '';
+  if(weakGroups.length){
+    weakGroups.forEach(g=>{
+      items += `<li><b>${g.title}:</b> ${g.suggestions}.</li>`;
+    });
+  } else {
+    items += `<li>Bé đang phát triển tốt ở mọi nhóm năng lực. Phụ huynh có thể tiếp tục đa dạng các hoạt động vui chơi để bé tiếp tục bứt phá.</li>`;
+  }
+  items += `<li><b>Duy trì thói quen học mà chơi:</b> dành 15-20 phút mỗi ngày cùng bé qua các trò chơi tư duy phù hợp lứa tuổi, không tạo áp lực thành tích.</li>`;
+  items += `<li><b>Khuyến khích trải nghiệm thực tế:</b> đưa bé tham gia hoạt động ngoài trời, thí nghiệm nhỏ, làm việc nhà đơn giản để bé học qua quan sát và thực hành.</li>`;
+  return items;
+}
+
+function fillCommentsMG(force){
+  const body = document.querySelector('.s6 .nx-body');
+  if(body){ body.innerHTML = autoCommentMG(); }
+  const list = document.querySelector('.s6 .nx-list');
+  if(list){ list.innerHTML = autoDirectionMG(); }
+  if(force){
+    // Toast confirm
+    const t = document.createElement('div');
+    t.textContent = '✨ Đã sinh nhận xét tự động';
+    t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#5fb74f;color:#fff;padding:10px 20px;border-radius:99px;font:600 13px/1 Be Vietnam Pro,sans-serif;box-shadow:0 8px 24px rgba(95,183,79,.3);z-index:1000;animation:mg-toast-out 2.5s forwards';
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 2500);
+  }
+}
+</script>
+</body>
+</html>

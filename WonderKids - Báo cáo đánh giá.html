@@ -1237,8 +1237,8 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <div class="field"><label>HỌ VÀ TÊN:</label><input class="input" id="f-name"></div>
     <div class="field"><label>NGÀY KT:</label><input class="input" id="f-test-date" placeholder="dd/mm/yyyy"><button type="button" class="today-btn" data-today="f-test-date" title="Điền hôm nay">Hôm nay</button></div>
     <div class="field"><label>GIÁO VIÊN:</label><input class="input" id="f-teacher"></div>
-    <div class="field"><label>LỚP:</label><input class="input" id="f-class"></div>
-    <div class="field"><label>ĐỘ TUỔI:</label><input class="input" id="f-age"></div>
+    <div class="field"><label>NĂM SINH:</label><input class="input" id="f-class"></div>
+    <div class="field"><label>CẤP ĐỘ LỚP:</label><input class="input" id="f-age"></div>
     <div class="field"><label>NGÀY BÁO CÁO:</label><input class="input" id="f-report-date" placeholder="dd/mm/yyyy"><button type="button" class="today-btn" data-today="f-report-date" title="Điền hôm nay">Hôm nay</button></div>
   </div>
 
@@ -2616,6 +2616,9 @@ function loadSampleCSV(){
     const rows=parseCSV(__SAMPLE_CSV);
     slog(`✓ Parsed ${rows.length} dòng từ CSV nhúng`,'ok');
     const filled=importWonderkids(rows);
+    // Override sample fields cho khớp label mới (NĂM SINH / CẤP ĐỘ LỚP)
+    const fClass=document.getElementById('f-class'); if(fClass) fClass.value='2016-05-28';
+    const fAge=document.getElementById('f-age'); if(fAge) fAge.value='Lớp 1';
     // Fill t-ss (SO SÁNH CẤP ĐỘ KTCB) theo PDF gốc: Khó 1/4, TB 7/10, Dễ 4/6
     const tssData=[['Dễ',6,4],['Trung bình',10,7],['Khó',4,1]];
     const tssRows=document.querySelectorAll('#t-ss tbody tr[data-row]');
@@ -2773,10 +2776,12 @@ function importWonderkids(rows){
   // ── Header info
   const nameA=_findAnchor(rows, /^(họ và tên|họ tên|tên)$/);
   if(nameA) setVal('f-name', (rows[nameA.r]||[])[nameA.c+1]);
-  const lopA=_findAnchor(rows, /^lớp$/);
-  if(lopA) setVal('f-class', (rows[lopA.r]||[])[lopA.c+1]);
-  const ageA=_findAnchor(rows, /^(năm sinh|độ tuổi|tuổi)$/);
-  if(ageA) setVal('f-age', (rows[ageA.r]||[])[ageA.c+1]);
+  // f-class label = "NĂM SINH" → lấy giá trị Năm sinh từ CSV
+  const ysA=_findAnchor(rows, /^(năm sinh|năm sanh)$/);
+  if(ysA) setVal('f-class', (rows[ysA.r]||[])[ysA.c+1]);
+  // f-age label = "CẤP ĐỘ LỚP" → lấy giá trị Lớp / Cấp độ từ CSV
+  const lopA=_findAnchor(rows, /^(lớp|cấp độ lớp|cấp độ|độ tuổi|tuổi)$/);
+  if(lopA) setVal('f-age', (rows[lopA.r]||[])[lopA.c+1]);
   const gvA=_findAnchor(rows, /^(giáo viên|gv)$/);
   if(gvA) setVal('f-teacher', (rows[gvA.r]||[])[gvA.c+1]);
   const dtA=_findAnchor(rows, /ngày (kiểm tra|kt|test|đánh giá)/);

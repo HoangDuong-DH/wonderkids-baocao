@@ -223,11 +223,11 @@ body{
   letter-spacing:.04em;text-shadow:0 1px 0 rgba(0,0,0,.12);
 }
 .summary-merged .merged-body{
-  display:grid;grid-template-columns:180px 1fr 290px;gap:14px;
+  display:grid;grid-template-columns:240px 260px 1fr;gap:14px;
   padding:12px 16px;align-items:stretch;
 }
 .merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:center}
-.merged-donut-wrap svg{width:170px;height:170px;display:block}
+.merged-donut-wrap svg{width:220px;height:220px;display:block}
 .merged-info-stack{display:flex;flex-direction:column;gap:10px;justify-content:center}
 .merged-radar-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .merged-radar-wrap .merged-radar-title{
@@ -235,48 +235,48 @@ body{
   text-align:center;margin-bottom:2px;letter-spacing:.02em;
 }
 .merged-radar-wrap .chart-svg{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0}
-.merged-radar-wrap .chart-svg svg{width:100%;max-height:240px;height:auto;display:block}
+.merged-radar-wrap .chart-svg svg{width:100%;max-height:270px;height:auto;display:block}
 
 /* Info-row: horizontal layout với section title + % + level */
 .info-row{
-  display:grid;grid-template-columns:auto auto 1fr;gap:6px 14px;
-  align-items:center;padding:8px 14px;border-radius:10px;
+  display:grid;grid-template-columns:auto auto 1fr;gap:4px 10px;
+  align-items:center;padding:7px 11px;border-radius:9px;
 }
 .info-row.k1{background:#fff8ec;border:1.5px solid var(--c-yellow)}
 .info-row.k2{background:#fff3e0;border:1.5px solid var(--c-primary-2)}
 
 /* Title block: bullet dot + section name */
 .info-row .info-title-block{
-  display:flex;align-items:center;gap:7px;
+  display:flex;align-items:center;gap:6px;
   grid-row:1 / span 2;border-right:1.5px dashed rgba(0,0,0,.08);
-  padding-right:12px;min-width:130px;
+  padding-right:9px;min-width:108px;
 }
 .info-row .info-bullet{
-  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  width:9px;height:9px;border-radius:50%;flex-shrink:0;
 }
 .info-row.k1 .info-bullet{background:var(--c-yellow)}
 .info-row.k2 .info-bullet{background:var(--c-primary-2)}
 .info-row .info-section-name{
-  font:800 11px/1.2 var(--font-body);letter-spacing:.03em;
+  font:800 10.5px/1.2 var(--font-body);letter-spacing:.03em;
 }
 .info-row.k1 .info-section-name{color:#a07410}
 .info-row.k2 .info-section-name{color:var(--c-primary-2)}
 
 /* % block: big % + score */
 .info-row .info-pct-block{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
-.info-row .info-pct{font:800 22px/1 var(--font-body)}
+.info-row .info-pct{font:800 19px/1 var(--font-body)}
 .info-row.k1 .info-pct{color:#a07410}
 .info-row.k2 .info-pct{color:var(--c-primary-2)}
-.info-row .info-score{font:600 10px var(--font-body);color:var(--c-muted);margin-top:3px}
+.info-row .info-score{font:600 9.5px var(--font-body);color:var(--c-muted);margin-top:2px}
 
 /* Level block: inline 'Mức:' + dropdown */
-.info-row .info-level-block{display:flex;align-items:center;gap:6px}
+.info-row .info-level-block{display:flex;align-items:center;gap:5px}
 .info-row .level-lab-mini{
-  font:700 10px var(--font-body);color:var(--c-muted);
+  font:700 9.5px var(--font-body);color:var(--c-muted);
   text-transform:none;letter-spacing:0;
 }
 .info-row .level-select{
-  text-align:left;font:800 14px/1.1 var(--font-body);
+  text-align:left;font:800 13px/1.1 var(--font-body);
   color:var(--c-primary-2);background:transparent;border:0;outline:0;
   cursor:pointer;padding:1px 16px 1px 2px;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
@@ -1011,21 +1011,21 @@ body.print-preview .quick-actions{display:none !important}
   .summary-merged{margin-top:4px !important;margin-bottom:0 !important}
   .summary-merged .merged-head{padding:5px 12px !important}
   .summary-merged .merged-head .seg-title{font-size:12.5px !important;letter-spacing:.03em !important}
-  .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:155px 1fr 250px !important;gap:12px !important;align-items:stretch !important}
-  .merged-donut-wrap svg{width:150px !important;height:150px !important}
+  .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:200px 215px 1fr !important;gap:12px !important;align-items:stretch !important}
+  .merged-donut-wrap svg{width:190px !important;height:190px !important}
   .merged-legend{gap:10px !important;font-size:9px !important}
   .merged-legend .dot{width:7px !important;height:7px !important}
   .merged-radar-wrap .merged-radar-title{font-size:10px !important;margin-bottom:0 !important}
-  .merged-radar-wrap .chart-svg svg{max-height:210px !important}
+  .merged-radar-wrap .chart-svg svg{max-height:240px !important}
   /* Compact info-row với section title */
-  .info-row{padding:7px 12px !important;gap:5px 12px !important}
-  .info-row .info-title-block{padding-right:10px !important;min-width:115px !important}
-  .info-row .info-bullet{width:8px !important;height:8px !important}
-  .info-row .info-section-name{font-size:10px !important}
-  .info-row .info-pct{font-size:19px !important}
-  .info-row .info-score{font-size:9px !important;margin-top:2px !important}
-  .info-row .level-lab-mini{font-size:9px !important}
-  .info-row .level-select{font-size:13px !important;padding:1px 14px 1px 2px !important}
+  .info-row{padding:6px 9px !important;gap:3px 8px !important;border-radius:8px !important}
+  .info-row .info-title-block{padding-right:7px !important;min-width:90px !important;gap:5px !important}
+  .info-row .info-bullet{width:7px !important;height:7px !important}
+  .info-row .info-section-name{font-size:9.5px !important;line-height:1.15 !important}
+  .info-row .info-pct{font-size:16px !important}
+  .info-row .info-score{font-size:8.5px !important;margin-top:1px !important}
+  .info-row .level-lab-mini{font-size:8.5px !important}
+  .info-row .level-select{font-size:11.5px !important;padding:0 12px 0 1px !important}
   .sumcard .level .lab{font-size:9.5px;padding:4px 12px}
   .sumcard .level select{font-size:10.5px;padding:4px 22px 4px 12px}
   .sumcard textarea,.sumcard .ta-print-mirror{

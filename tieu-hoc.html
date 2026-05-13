@@ -292,8 +292,8 @@ body{
 .info-card.k1 .info-bullet{background:var(--c-yellow)}
 .info-card.k2 .info-bullet{background:var(--c-primary-2)}
 .info-card .info-section-name{
-  font:800 11px/1.2 var(--font-body);letter-spacing:.04em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;
+  font:800 11px/1.25 var(--font-body);letter-spacing:.04em;
+  white-space:normal;word-break:keep-all;overflow-wrap:break-word;flex:1;min-width:0;
 }
 .info-card.k1 .info-section-name{color:#a07410}
 .info-card.k2 .info-section-name{color:var(--c-primary-2)}
@@ -1817,17 +1817,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="heart">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="#e94e1b"><path d="M12 21s-7-4.5-9.5-9.5C.6 7.4 3.4 3 7.5 3c2 0 3.5 1 4.5 2.5C13 4 14.5 3 16.5 3 20.6 3 23.4 7.4 21.5 11.5 19 16.5 12 21 12 21z"/></svg>
-    </div>
-    <div class="msg">
-      <b>Cảm ơn Quý phụ huynh đã đồng hành cùng Wonderkids!</b><br>
-      Mang đến môi trường học tập truyền cảm hứng cho trẻ.
-    </div>
-    <div class="brand">WONDERKIDS</div>
-  </div>
+  <!-- FOOTER removed -->
   <!-- Build version chỉ hiện trên màn hình (ẩn khi in), để so sánh nhanh giữa 2 máy -->
   <div id="build-info" title="Build version — dùng để so sánh giữa các máy, nếu khác nhau là có cache cũ"></div>
 </div>

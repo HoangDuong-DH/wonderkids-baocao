@@ -239,17 +239,17 @@ body{
 
 /* Info-row: horizontal layout với section title + % + level */
 .info-row{
-  display:grid;grid-template-columns:auto auto 1fr;gap:4px 10px;
-  align-items:center;padding:7px 11px;border-radius:9px;
+  display:flex;align-items:center;gap:10px;
+  padding:8px 11px;border-radius:9px;
 }
 .info-row.k1{background:#fff8ec;border:1.5px solid var(--c-yellow)}
 .info-row.k2{background:#fff3e0;border:1.5px solid var(--c-primary-2)}
 
 /* Title block: bullet dot + section name */
 .info-row .info-title-block{
-  display:flex;align-items:center;gap:6px;
-  grid-row:1 / span 2;border-right:1.5px dashed rgba(0,0,0,.08);
-  padding-right:9px;min-width:108px;
+  display:flex;align-items:center;gap:6px;flex:0 0 auto;
+  border-right:1.5px dashed rgba(0,0,0,.08);
+  padding-right:9px;min-width:0;
 }
 .info-row .info-bullet{
   width:9px;height:9px;border-radius:50%;flex-shrink:0;
@@ -258,19 +258,20 @@ body{
 .info-row.k2 .info-bullet{background:var(--c-primary-2)}
 .info-row .info-section-name{
   font:800 10.5px/1.2 var(--font-body);letter-spacing:.03em;
+  display:inline-block;max-width:90px;
 }
 .info-row.k1 .info-section-name{color:#a07410}
 .info-row.k2 .info-section-name{color:var(--c-primary-2)}
 
 /* % block: big % + score */
-.info-row .info-pct-block{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
+.info-row .info-pct-block{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;flex:0 0 auto}
 .info-row .info-pct{font:800 19px/1 var(--font-body)}
 .info-row.k1 .info-pct{color:#a07410}
 .info-row.k2 .info-pct{color:var(--c-primary-2)}
 .info-row .info-score{font:600 9.5px var(--font-body);color:var(--c-muted);margin-top:2px}
 
 /* Level block: inline 'Mức:' + dropdown */
-.info-row .info-level-block{display:flex;align-items:center;gap:5px}
+.info-row .info-level-block{display:flex;align-items:center;gap:5px;flex:0 0 auto;margin-left:auto;white-space:nowrap}
 .info-row .level-lab-mini{
   font:700 9.5px var(--font-body);color:var(--c-muted);
   text-transform:none;letter-spacing:0;

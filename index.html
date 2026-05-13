@@ -1306,10 +1306,12 @@ body.print-preview .quick-actions{display:none !important}
   }
   .sumcard, .summary-merged, .callout,
   .qmatrix-wrap, .qscore-wrap, .cluster-bars, .vis-row,
-  .chart-box, .s2-radar, .s2-insight-row, .level-scale, .insight-panel,
+  .chart-box, .s2-radar, .level-scale, .insight-panel,
   .tbl, table, tr{
     break-inside:avoid !important;page-break-inside:avoid !important;
   }
+  /* .s2-insight-row tự nó được phép split — children đã có break-inside:avoid riêng */
+  .s2-insight-row{break-inside:auto !important;page-break-inside:auto !important}
   /* Heading PHẢI đi cùng content kế tiếp — không để mồ côi ở cuối trang */
   .sec-h{break-after:avoid !important;page-break-after:avoid !important;break-inside:avoid}
   .subcap{break-after:avoid !important;page-break-after:avoid !important}

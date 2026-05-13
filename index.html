@@ -2424,7 +2424,8 @@ document.addEventListener('input', e=>{
 function parseQMatrix(rows){
   for(let r=0;r<rows.length;r++){
     const row=rows[r]||[];
-    if(_norm(row[0])==='mục' && /đơn vị|đap an|đáp án/.test(_norm(row[1]))){
+    // Accept 'mục' OR 'câu' as col 0 header (different CMS templates use different terms)
+    if(/^(mục|câu)$/.test(_norm(row[0])) && /đơn vị|đap an|đáp án/.test(_norm(row[1]))){
       const out=[];
       for(let i=r+1;i<rows.length && out.length<20;i++){
         const dRow=rows[i]||[];
@@ -3476,21 +3477,30 @@ function importWonderkids(rows){
     if(td.length){ count+=fillQScore(td); }
   }catch(e){ console.error('[import tuduy]',e); }
 
-  // ── Header info
+  // ── Header info — đọc giá trị ở cột ngay sau anchor, fallback +2 / +3 nếu trống
+  // (một số template chèn ô trống giữa label và value)
+  const _valAfter = (a)=>{
+    const row = rows[a.r]||[];
+    for(let off=1; off<=3; off++){
+      const v = row[a.c+off];
+      if(v!=null && String(v).trim()!=='') return v;
+    }
+    return null;
+  };
   const nameA=_findAnchor(rows, /^(họ và tên|họ tên|tên)$/);
-  if(nameA) setVal('f-name', (rows[nameA.r]||[])[nameA.c+1]);
+  if(nameA) setVal('f-name', _valAfter(nameA));
   // f-class label = "NĂM SINH" → lấy giá trị Năm sinh từ CSV
   const ysA=_findAnchor(rows, /^(năm sinh|năm sanh)$/);
-  if(ysA) setVal('f-class', (rows[ysA.r]||[])[ysA.c+1]);
+  if(ysA) setVal('f-class', _valAfter(ysA));
   // f-age label = "CẤP ĐỘ LỚP" → lấy giá trị Lớp / Cấp độ từ CSV
   const lopA=_findAnchor(rows, /^(lớp|cấp độ lớp|cấp độ|độ tuổi|tuổi)$/);
-  if(lopA) setVal('f-age', (rows[lopA.r]||[])[lopA.c+1]);
+  if(lopA) setVal('f-age', _valAfter(lopA));
   const gvA=_findAnchor(rows, /^(giáo viên|gv)$/);
-  if(gvA) setVal('f-teacher', (rows[gvA.r]||[])[gvA.c+1]);
+  if(gvA) setVal('f-teacher', _valAfter(gvA));
   const dtA=_findAnchor(rows, /ngày (kiểm tra|kt|test|đánh giá)/);
-  if(dtA){ const v=(rows[dtA.r]||[])[dtA.c+1]; if(v!=null) setVal('f-test-date', _excelDate(v)); }
+  if(dtA){ const v=_valAfter(dtA); if(v!=null) setVal('f-test-date', _excelDate(v)); }
   const drA=_findAnchor(rows, /ngày (báo cáo|bc)/);
-  if(drA){ const v=(rows[drA.r]||[])[drA.c+1]; if(v!=null) setVal('f-report-date', _excelDate(v)); }
+  if(drA){ const v=_valAfter(drA); if(v!=null) setVal('f-report-date', _excelDate(v)); }
 
   // ── Section 1: KIẾN THỨC CƠ BẢN → ĐÁNH GIÁ THEO ĐƠN VỊ → t-kt
   const dvA=_findAnchor(rows, /đánh giá theo đơn vị/);
@@ -3509,6 +3519,41 @@ function importWonderkids(rows){
     if(data.length){
       const arr=data.map(d=>[d.lbl, d.std??0, d.act??0]);
       fillRows('t-kq', arr); count+=arr.length;
+    }
+  }
+
+  // ── Section 1: SO SÁNH CẤP ĐỘ KTCB → t-ss (Dễ / Trung bình / Khó)
+  // Anchor: 'so sánh cấp độ ... mức độ' hoặc 'so sánh cấp độ giải quyết'
+  const ssA=_findAnchor(rows, /so sánh cấp độ.*mức độ|so sánh cấp độ giải quyết|cấp độ giải quyết theo mức/);
+  if(ssA){
+    // Header row có: MỨC ĐỘ | PHÂN LOẠI | CÂU | TIÊU CHUẨN | ĐIỂM THỰC TẾ | TỶ LỆ
+    for(let dr=0;dr<=4;dr++){
+      const hr=ssA.r+dr;
+      const labelC=_findColInRow(rows, hr, /^mức độ$|^phân loại$/, ssA.c);
+      if(labelC<0 || Math.abs(labelC-ssA.c)>10) continue;
+      const stdC=_findColInRow(rows, hr, /tiêu chuẩn|điểm chuẩn/, labelC);
+      const actC=_findColInRow(rows, hr, /điểm thực tế|kết quả/, labelC);
+      if(stdC<0) continue;
+      const map={};
+      for(let r=hr+1;r<rows.length && r<hr+12;r++){
+        const lblN=_norm((rows[r]||[])[labelC]);
+        if(!lblN) continue;
+        if(lblN==='tổng') break;
+        const std=_num((rows[r]||[])[stdC]);
+        const act=actC>=0?_num((rows[r]||[])[actC]):null;
+        if(lblN.includes('dễ')) map.de=[std,act];
+        else if(lblN.includes('trung')) map.tb=[std,act];
+        else if(lblN.includes('khó')) map.kh=[std,act];
+      }
+      const trs=document.querySelectorAll('#t-ss tbody tr[data-row]');
+      ['de','tb','kh'].forEach((k,i)=>{
+        const d=map[k]; if(!d||!trs[i]) return;
+        const inps=trs[i].querySelectorAll('input[data-n]');
+        if(d[0]!=null && inps[0]) inps[0].value=d[0];
+        if(d[1]!=null && inps[1]) inps[1].value=d[1];
+        count++;
+      });
+      break;
     }
   }
 

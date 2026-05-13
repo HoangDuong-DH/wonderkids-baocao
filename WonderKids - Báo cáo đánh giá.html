@@ -2947,11 +2947,24 @@ function loadSaved(){
   try{
     const raw=localStorage.getItem(SAVE_KEY); if(!raw) return;
     const data=JSON.parse(raw); if(!data.v || data.v<3) return;
+    // STRUCTURE CHECK — nếu số input/textarea ẩn không khớp (do thêm/bớt
+    // cột), skip anon restore để tránh shift index làm hỏng data.
+    const curAnonInputs = [...document.querySelectorAll('.page input')].filter(el=>!el.id).length;
+    const curAnonTextareas = [...document.querySelectorAll('.page textarea')].filter(el=>!el.id).length;
+    const savedAnonI = (data.anonInputs||[]).length;
+    const savedAnonT = (data.anonTextareas||[]).length;
+    const anonMismatch = (curAnonInputs!==savedAnonI) || (curAnonTextareas!==savedAnonT);
+    if(anonMismatch){
+      console.warn('[loadSaved] Anon count mismatch — backup cũ, dùng HTML default cho input không id. Saved:',{i:savedAnonI,t:savedAnonT},'Now:',{i:curAnonInputs,t:curAnonTextareas});
+      try{ localStorage.setItem(SAVE_KEY+'-backup-'+Date.now(), raw); }catch(_){}
+    }
     let iIdx=0, tIdx=0;
     document.querySelectorAll('.page input,.page textarea').forEach(el=>{
       if(el.id){ if(data.byId[el.id]!=null) el.value=data.byId[el.id]; }
-      else if(el.tagName==='INPUT'){ if(data.anonInputs[iIdx]!=null) el.value=data.anonInputs[iIdx]; iIdx++; }
-      else { if(data.anonTextareas[tIdx]!=null) el.value=data.anonTextareas[tIdx]; tIdx++; }
+      else if(!anonMismatch){
+        if(el.tagName==='INPUT'){ if(data.anonInputs[iIdx]!=null) el.value=data.anonInputs[iIdx]; iIdx++; }
+        else { if(data.anonTextareas[tIdx]!=null) el.value=data.anonTextareas[tIdx]; tIdx++; }
+      }
     });
     document.querySelectorAll('.page select').forEach((s,i)=>{
       const k=s.id||'sel'+i;
@@ -2960,6 +2973,11 @@ function loadSaved(){
     document.querySelectorAll('.page [data-chk]').forEach((c,i)=>{
       c.classList.toggle('on', (data.checks||[]).includes(i));
     });
+    if(anonMismatch){
+      // save lại trạng thái mới ngay để không lặp warning lần sau
+      setTimeout(()=>{ try{ saveNow(); }catch(_){} }, 200);
+      setTimeout(()=>{ try{ toast && toast('Cấu trúc bảng đã cập nhật. Dữ liệu cũ đã sao lưu, bảng dùng giá trị mặc định mới.', 'info'); }catch(_){} }, 400);
+    }
   }catch(e){ console.error('loadSaved',e); }
 }
 // Migration v2 → v3: nạp v2 (index-based) khi DOM còn ở dạng input gốc

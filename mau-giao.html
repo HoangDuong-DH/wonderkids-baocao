@@ -378,29 +378,30 @@ body{
   vertical-align:top;
 }
 .ability tbody td:first-child{font:700 11.5px/1.3 var(--font-display);color:var(--ink);width:115px}
-.ability tbody td:last-child{text-align:center;width:140px;padding:6px 8px !important}
+.ability tbody td:last-child{text-align:left;width:175px;padding:6px 10px !important;vertical-align:middle}
 .ability tbody tr:last-child td{border-bottom:0}
-/* Score bar + grade chip combo trong cột last (Cấp độ) */
-.ability tbody td:last-child{display:table-cell;vertical-align:middle}
+/* Grade cell: bar + level name (Xuất sắc / Tốt / Khá / Đạt / Cần cố gắng) */
 .ability tbody td:last-child span{
-  display:inline-flex;align-items:center;gap:8px;
-  font:700 12px/1 var(--font-display);
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;
+  font:700 10.5px/1.2 var(--font-display);
   position:relative;width:100%;
 }
 .ability tbody td:last-child span::before{
-  content:"";display:block;flex:1;height:7px;
-  background:#f5e9c8;border-radius:99px;position:relative;overflow:hidden;
+  content:"";display:block;height:7px;
+  background:#f5e9c8;border-radius:99px;
+  grid-column:1;
 }
 .ability tbody td:last-child span::after{
   content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
   height:7px;border-radius:99px;
-  transition:width .3s ease,background .25s ease;
+  transition:width .3s ease,background .25s ease;pointer-events:none;
 }
-.ability tbody td:last-child span.gS::after{width:calc((100% - 28px) * 0.95);background:var(--g-S)}
-.ability tbody td:last-child span.gA::after{width:calc((100% - 28px) * 0.85);background:var(--g-A)}
-.ability tbody td:last-child span.gB::after{width:calc((100% - 28px) * 0.70);background:var(--g-B)}
-.ability tbody td:last-child span.gC::after{width:calc((100% - 28px) * 0.50);background:var(--g-C)}
-.ability tbody td:last-child span.gL::after{width:calc((100% - 28px) * 0.25);background:var(--g-L)}
+/* Bar fill width = pct of available bar track (grid-column 1 takes 1fr) */
+.ability tbody td:last-child span.gS::after{width:calc((100% - 80px) * 0.95);background:var(--g-S)}
+.ability tbody td:last-child span.gA::after{width:calc((100% - 80px) * 0.85);background:var(--g-A)}
+.ability tbody td:last-child span.gB::after{width:calc((100% - 80px) * 0.70);background:var(--g-B)}
+.ability tbody td:last-child span.gC::after{width:calc((100% - 80px) * 0.50);background:var(--g-C)}
+.ability tbody td:last-child span.gL::after{width:calc((100% - 80px) * 0.25);background:var(--g-L)}
 .ability tbody td:last-child span.gS{color:var(--g-S)}
 .ability tbody td:last-child span.gA{color:var(--g-A)}
 .ability tbody td:last-child span.gB{color:var(--g-B)}
@@ -700,7 +701,7 @@ body{
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">MỨC C</span>
+            <span class="lbl">Đạt</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -712,7 +713,7 @@ body{
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">MỨC C</span>
+            <span class="lbl">Đạt</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -724,7 +725,7 @@ body{
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">MỨC C</span>
+            <span class="lbl">Đạt</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -736,7 +737,7 @@ body{
           <span class="grade-circle">L</span>
           <span class="meta">
             <span class="pct">25%</span>
-            <span class="lbl">MỨC L</span>
+            <span class="lbl">Cần cố gắng</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -763,15 +764,15 @@ body{
             <span class="ico eye"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span>
             <span class="ttl"><small>Nhóm 01</small>Tư duy cơ bản</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">MỨC C</span>
+            <span class="mval">Đạt</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC">C</span></td></tr>
-              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC">C</span></td></tr>
-              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">C</span></td></tr>
+              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC">Đạt</span></td></tr>
+              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC">Đạt</span></td></tr>
+              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">Đạt</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -782,17 +783,17 @@ body{
             <span class="ico calc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h4"/></svg></span>
             <span class="ttl"><small>Nhóm 02</small>Tư duy toán học</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">MỨC C</span>
+            <span class="mval">Đạt</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL">L</span></td></tr>
-              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL">L</span></td></tr>
-              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC">C</span></td></tr>
-              <tr><td>Kiểu mẫu</td><td contenteditable="true">Khả năng nhận diện và dự đoán mối quan hệ mang tính quy luật của đồ vật.</td><td><span class="gB">B</span></td></tr>
-              <tr><td>Dữ liệu</td><td contenteditable="true">Khả năng thu thập các nguồn lực khác nhau và sắp xếp theo đặc điểm của chúng.</td><td><span class="gB">B</span></td></tr>
+              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL">Cần cố gắng</span></td></tr>
+              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL">Cần cố gắng</span></td></tr>
+              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC">Đạt</span></td></tr>
+              <tr><td>Kiểu mẫu</td><td contenteditable="true">Khả năng nhận diện và dự đoán mối quan hệ mang tính quy luật của đồ vật.</td><td><span class="gB">Khá</span></td></tr>
+              <tr><td>Dữ liệu</td><td contenteditable="true">Khả năng thu thập các nguồn lực khác nhau và sắp xếp theo đặc điểm của chúng.</td><td><span class="gB">Khá</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -803,16 +804,16 @@ body{
             <span class="ico brain"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 4 7 7c-2 0-4 2-4 4 0 2 1 3 2 4-1 1-1 3 0 4 0 2 2 4 4 4 0 1 1 2 3 2s3-1 3-2c2 0 4-2 4-4 1-1 1-3 0-4 1-1 2-2 2-4 0-2-2-4-4-4 0-3-2-5-5-5z"/></svg></span>
             <span class="ttl"><small>Nhóm 03</small>Tư duy logic</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">MỨC C</span>
+            <span class="mval">Đạt</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC">C</span></td></tr>
-              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL">L</span></td></tr>
-              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC">C</span></td></tr>
-              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">C</span></td></tr>
+              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC">Đạt</span></td></tr>
+              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL">Cần cố gắng</span></td></tr>
+              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC">Đạt</span></td></tr>
+              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">Đạt</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -823,16 +824,16 @@ body{
             <span class="ico bulb"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
             <span class="ttl"><small>Nhóm 04</small>Tư duy sáng tạo</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">MỨC L</span>
+            <span class="mval">Cần cố gắng</span>
             <span class="grade-big">L</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL">L</span></td></tr>
-              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL">L</span></td></tr>
-              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL">L</span></td></tr>
-              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">L</span></td></tr>
+              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL">Cần cố gắng</span></td></tr>
+              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL">Cần cố gắng</span></td></tr>
+              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL">Cần cố gắng</span></td></tr>
+              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">Cần cố gắng</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -1023,9 +1024,17 @@ const __GRADE_SCORE = {S:5, A:4, B:3, C:2, L:1};
 const __GRADE_NEXT = {S:'A',A:'B',B:'C',C:'L',L:'S'};
 const __GRADE_RADAR_PCT = {S:95,A:80,B:65,C:50,L:25};
 
+// Tên mức theo tieu-hoc (thay letter S/A/B/C/L để dễ hiểu)
+const __GRADE_NAME = {S:'Xuất sắc', A:'Tốt', B:'Khá', C:'Đạt', L:'Cần cố gắng'};
+
 function _abilityGrade(abilityEl){
-  const grades = [...abilityEl.querySelectorAll('tbody td:last-child span')].map(s=>s.textContent.trim().toUpperCase());
-  if(!grades.length) return 'C';
+  // Đọc grade từ CSS class (gS/gA/gB/gC/gL) thay vì textContent (vì giờ text là tên dài như "Đạt"/"Cần cố gắng")
+  const spans = abilityEl.querySelectorAll('tbody td:last-child span');
+  if(!spans.length) return 'C';
+  const grades = [...spans].map(s=>{
+    const m = s.className.match(/g([SABCL])/);
+    return m ? m[1] : 'C';
+  });
   const total = grades.reduce((acc,g)=>acc+(__GRADE_SCORE[g]||0), 0);
   const avg = total / grades.length;
   if(avg >= 4.5) return 'S';
@@ -1045,8 +1054,8 @@ function _setS1Card(card, grade){
   const pctEl = card.querySelector('.meta .pct');
   if(pctEl) pctEl.textContent = PCT[grade] || '50%';
   const lEl = card.querySelector('.meta .lbl');
-  if(lEl) lEl.textContent = 'MỨC ' + grade;
-  // Legacy fallback (cards cũ với <span class="grade">)
+  if(lEl) lEl.textContent = __GRADE_NAME[grade] || grade;
+  // Legacy fallback
   const gEl = card.querySelector('.grade');
   if(gEl && gEl.classList.contains('grade')) gEl.textContent = grade;
 }
@@ -1063,7 +1072,7 @@ function recomputeAllMG(){
     const gradeBig = ab.querySelector('.grade-big');
     if(gradeBig) gradeBig.textContent = grade;
     const mval = ab.querySelector('.mval');
-    if(mval) mval.textContent = 'MỨC ' + grade;
+    if(mval) mval.textContent = __GRADE_NAME[grade] || grade;
     // Sync s1-card
     if(cards[idx]) _setS1Card(cards[idx], grade);
   });
@@ -1075,13 +1084,14 @@ function recomputeAllMG(){
   if(typeof renderDonut==='function') renderDonut();
 }
 
-// Click to cycle grade in ability tables — auto-recompute everything
+// Click to cycle grade in ability tables — đọc grade từ class (text giờ là tên dài)
 document.addEventListener('click', e=>{
   const span = e.target.closest('.ability tbody td:last-child span');
   if(!span) return;
-  const cur = span.textContent.trim().toUpperCase();
+  const m = span.className.match(/g([SABCL])/);
+  const cur = m ? m[1] : 'C';
   const next = __GRADE_NEXT[cur] || 'C';
-  span.textContent = next;
+  span.textContent = __GRADE_NAME[next] || next;
   span.className = 'g'+next;
   recomputeAllMG();
 });
@@ -1111,11 +1121,11 @@ function autoCommentMG(){
   let html = '';
   html += `<p>Bé <b>${fullName}</b> đang ở giai đoạn <b>${stage}</b> trong phát triển tư duy.</p>`;
   if(strengths.length){
-    const list = strengths.map(g=>`<b>${g.title}</b> (mức ${g.grade})`).join(', ');
+    const list = strengths.map(g=>`<b>${g.title}</b> (mức ${__GRADE_NAME[g.grade] || g.grade})`).join(', ');
     html += `<p><b>🌟 Điểm sáng:</b> Bé thể hiện tốt ở ${list}. Đây là nền tảng đáng khích lệ — phụ huynh có thể tiếp tục duy trì qua các hoạt động vui chơi đa dạng.</p>`;
   }
   if(weaknesses.length){
-    const list = weaknesses.map(g=>`<b>${g.title}</b> (mức ${g.grade})`).join(', ');
+    const list = weaknesses.map(g=>`<b>${g.title}</b> (mức ${__GRADE_NAME[g.grade] || g.grade})`).join(', ');
     html += `<p><b>📌 Cần củng cố:</b> Bé chưa thực sự vững ở ${list}. Đây là cơ hội để phụ huynh đồng hành cùng bé qua các hoạt động thực tế hằng ngày.</p>`;
   }
   html += `<p><b>✨ Lời nhắn:</b> Mỗi đứa trẻ có nhịp phát triển riêng. Sau 1-3 tháng luyện tập đều đặn cùng phụ huynh và giáo viên, bé hoàn toàn có thể tiến bộ rõ rệt. Quan trọng nhất là giữ tinh thần thoải mái, vui chơi và khám phá cùng bé!</p>`;
@@ -1175,7 +1185,7 @@ function loadMockProfileMG(key){
     const ab = abilities[i]; if(!ab) return;
     const spans = ab.querySelectorAll('tbody td:last-child span');
     rowGrades.forEach((g,j)=>{
-      if(spans[j]){ spans[j].textContent = g; spans[j].className = 'g'+g; }
+      if(spans[j]){ spans[j].textContent = __GRADE_NAME[g] || g; spans[j].className = 'g'+g; }
     });
   });
   recomputeAllMG();
@@ -1197,7 +1207,7 @@ function resetFormMG(){
   if(sexSel){ sexSel.value = 'Nam'; updateAvatar('Nam'); }
   // Reset all ability grades to C (default)
   document.querySelectorAll('.ability tbody td:last-child span').forEach(s=>{
-    s.textContent = 'C';
+    s.textContent = __GRADE_NAME.C;
     s.className = 'gC';
   });
   // Clear comments

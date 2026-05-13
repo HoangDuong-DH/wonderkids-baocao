@@ -1793,20 +1793,15 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <span class="ico">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
     </span>
-    <span>3. NHẬN XÉT CHUNG &amp; ĐỊNH HƯỚNG</span>
+    <span>3. ĐỊNH HƯỚNG GIÁO DỤC</span>
   </div>
 
   <div class="s3 single">
     <div class="nx">
       <div class="h">
-        NHẬN XÉT CHUNG
+        ĐỊNH HƯỚNG GIÁO DỤC &amp; CẢI THIỆN
         <button type="button" class="auto-comment-btn" onclick="autoFillComments(true)" title="Sinh nhận xét tự động từ kết quả">🪄 Tự động nhận xét</button>
       </div>
-      <textarea id="f-comment" placeholder="Nhận xét chung về kết quả đánh giá..."></textarea>
-    </div>
-
-    <div class="nx">
-      <div class="h">ĐỊNH HƯỚNG GIÁO DỤC &amp; CẢI THIỆN</div>
       <textarea id="f-direction" placeholder="Định hướng giáo dục và các bước cải thiện cho con..."></textarea>
     </div>
 
@@ -3164,7 +3159,7 @@ function autoCommentDinhHuong(){
   return txt;
 }
 
-/* Lấp đầy 4 textarea (sum1-note, sum2-note, f-comment, f-direction).
+/* Lấp đầy 3 textarea (sum1-note, sum2-note, f-direction).
    force=true → ghi đè dù đã có nội dung. force=false → chỉ điền nếu trống. */
 function autoFillComments(force){
   const fill = (id, text)=>{
@@ -3175,7 +3170,6 @@ function autoFillComments(force){
   };
   fill('sum1-note',   autoCommentKTCB());
   fill('sum2-note',   autoCommentTuDuy());
-  fill('f-comment',   autoCommentChung());
   fill('f-direction', autoCommentDinhHuong());
   if(force) toast && toast('Đã sinh nhận xét tự động ✨', 'success');
 }

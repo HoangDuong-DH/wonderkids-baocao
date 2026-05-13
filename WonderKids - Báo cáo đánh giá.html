@@ -549,7 +549,17 @@ body{
   border:2px solid var(--c-line-soft);background:#fffaf0;border-radius:12px;padding:10px 12px;
   display:flex;flex-direction:column;min-height:140px;
 }
-.s3 .nx > .h{font:800 11.5px/1 var(--font-body);color:var(--c-primary);letter-spacing:.07em;margin-bottom:6px}
+.s3 .nx > .h{font:800 11.5px/1 var(--font-body);color:var(--c-primary);letter-spacing:.07em;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.auto-comment-btn{
+  font:700 10.5px var(--font-body);letter-spacing:.02em;
+  background:linear-gradient(135deg,#fff3da,#ffd9a3);
+  color:var(--c-primary-2);border:1.5px solid var(--c-primary-2);
+  border-radius:14px;padding:4px 12px;cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease, background .2s ease;
+}
+.auto-comment-btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(233,78,27,.18);background:linear-gradient(135deg,#ffe6b8,#ffb86b)}
+.auto-comment-btn:active{transform:translateY(0)}
+@media print{.auto-comment-btn{display:none !important}}
 .s3 .nx textarea{
   width:100%;border:0;outline:0;resize:none;background:transparent;flex:1;
   font:500 12px/1.85 var(--font-body);color:var(--c-ink);
@@ -1779,7 +1789,10 @@ body.print-preview .hdr .mascot svg{display:none !important}
 
   <div class="s3 single">
     <div class="nx">
-      <div class="h">NHẬN XÉT &amp; ĐỊNH HƯỚNG</div>
+      <div class="h">
+        NHẬN XÉT &amp; ĐỊNH HƯỚNG
+        <button type="button" class="auto-comment-btn" onclick="autoFillComments(true)" title="Sinh nhận xét tự động từ kết quả">🪄 Tự động nhận xét</button>
+      </div>
       <textarea id="f-comment" placeholder="Nhận xét chung & định hướng giáo dục cho trẻ..."></textarea>
     </div>
 
@@ -2721,6 +2734,153 @@ function refreshSummary(){
   }
   // Update charts mỗi lần điểm thay đổi
   refreshCharts();
+  // Auto-fill nhận xét nếu textarea còn trống (không ghi đè user đã gõ)
+  autoFillComments(false);
+}
+
+/* ───────── AUTO-COMMENT — sinh nhận xét tự động từ data ───────── */
+function _fmtInt(x){ return Number.isInteger(x) ? x : +x.toFixed(1); }
+
+function _sortedByPct(tableId){
+  const data = _tblData(tableId).filter(d=>d.max>0);
+  return data.sort((a,b)=>b.pct-a.pct);
+}
+
+function _diffPattern(tableId){
+  // Phân tích pattern theo cấp độ Dễ / Trung bình / Khó
+  const data = _tblData(tableId).filter(d=>d.max>0);
+  if(!data.length) return {comment:'', foundation:''};
+  const findBy = re => data.find(d=>re.test(d.lbl));
+  const dễ = findBy(/dễ/i), tb = findBy(/trung bình/i), khó = findBy(/khó/i);
+  const ok = d => d && d.pct>=0.6;
+  if(ok(dễ) && ok(tb) && ok(khó))
+    return {comment:'làm tốt cả 3 mức độ dễ, trung bình và khó', foundation:'đã chắc nền tảng'};
+  if(ok(dễ) && ok(tb) && !ok(khó))
+    return {comment:'làm tốt bài dễ và trung bình nhưng còn chật vật ở bài khó', foundation:'có thể xử lý bài khó nhưng chưa đồng đều'};
+  if(ok(dễ) && !ok(tb))
+    return {comment:'làm tốt bài dễ nhưng cần củng cố thêm ở bài trung bình và khó', foundation:'cần củng cố bài cơ bản và nâng cao'};
+  if(!ok(dễ))
+    return {comment:'cần củng cố ngay từ bài cơ bản', foundation:'cần củng cố nền tảng'};
+  return {comment:'kết quả chưa đồng đều giữa các mức độ', foundation:'có thể xử lý bài khó nhưng chưa đồng đều'};
+}
+
+function _kqWordComment(){
+  // Phân tích t-kq (bài toán có lời / không lời)
+  const data = _tblData('t-kq').filter(d=>d.max>0);
+  if(data.length<2) return '';
+  const colVan = data.find(d=>/có lời/i.test(d.lbl));
+  const coBan  = data.find(d=>/cơ bản|không/i.test(d.lbl)) || data.find(d=>d!==colVan);
+  if(!colVan || !coBan) return '';
+  if(colVan.pct < coBan.pct - 0.1)
+    return 'có lời văn cho thấy con cần rèn thêm đọc hiểu đề và chuyển dữ kiện thành phép toán';
+  if(coBan.pct < colVan.pct - 0.1)
+    return 'không lời văn cho thấy con cần rèn thêm tính toán trực tiếp và thao tác số';
+  return 'có lời văn và không lời văn cho thấy con cần rèn đồng đều cả đọc hiểu đề lẫn tính toán';
+}
+
+function _topBottom(tableId, topN=2, botN=2){
+  const sorted = _sortedByPct(tableId);
+  if(!sorted.length) return {top:'', bottom:'', lowest:''};
+  return {
+    top: sorted.slice(0, topN).map(d=>d.lbl).join(', '),
+    bottom: sorted.slice(-botN).reverse().map(d=>d.lbl).join(', '),
+    lowest: sorted[sorted.length-1].lbl
+  };
+}
+
+function autoCommentKTCB(){
+  const data = _tblData('t-kt').filter(d=>d.max>0);
+  if(!data.length) return '';
+  const cur = data.reduce((s,d)=>s+d.cur,0);
+  const max = data.reduce((s,d)=>s+d.max,0);
+  const pct = max>0 ? cur/max : 0;
+  const level = pctToLevel(pct);
+  const {top, bottom, lowest} = _topBottom('t-kt', 2, 2);
+  const ability = 'nắm vững các khái niệm cơ bản';
+  const diff = _diffPattern('t-ss');
+  const kq = _kqWordComment();
+  let txt = `Học viên đạt ${_fmtInt(cur)}/${_fmtInt(max)} điểm, tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.`;
+  if(top) txt += ` Con có điểm mạnh ở ${top}, cho thấy khả năng ${ability} khá tốt.`;
+  if(bottom) txt += ` Tuy nhiên, con cần củng cố thêm ${bottom}${lowest && bottom!==lowest ? `, đặc biệt là ${lowest}`:''}.`;
+  if(diff.comment) txt += ` Xét theo độ khó, con ${diff.comment}.`;
+  if(diff.foundation) txt += ` Điều này cho thấy con ${diff.foundation}.`;
+  if(kq) txt += ` Đồng thời, kết quả bài toán ${kq}.`;
+  return txt;
+}
+
+function autoCommentTuDuy(){
+  const data = _tblData('t-nl').filter(d=>d.max>0);
+  if(!data.length) return '';
+  const cur = data.reduce((s,d)=>s+d.cur,0);
+  const max = data.reduce((s,d)=>s+d.max,0);
+  const pct = max>0 ? cur/max : 0;
+  const level = pctToLevel(pct);
+  const {top, bottom, lowest} = _topBottom('t-nl', 2, 2);
+  const ability = 'tư duy logic và phân tích';
+  const diff = _diffPattern('t-cd');
+  let txt = `Học viên đạt ${_fmtInt(cur)}/${_fmtInt(max)} điểm, tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.`;
+  if(top) txt += ` Con có điểm mạnh ở ${top}, cho thấy khả năng ${ability} khá tốt.`;
+  if(bottom) txt += ` Tuy nhiên, con cần củng cố thêm ${bottom}${lowest && bottom!==lowest ? `, đặc biệt là ${lowest}`:''}.`;
+  if(diff.comment) txt += ` Xét theo độ khó, con ${diff.comment}.`;
+  if(diff.foundation) txt += ` Điều này cho thấy con ${diff.foundation}.`;
+  return txt;
+}
+
+function autoCommentChung(){
+  const ktData = _tblData('t-kt').filter(d=>d.max>0);
+  const nlData = _tblData('t-nl').filter(d=>d.max>0);
+  if(!ktData.length && !nlData.length) return '';
+  const totalCur = [...ktData,...nlData].reduce((s,d)=>s+d.cur,0);
+  const totalMax = [...ktData,...nlData].reduce((s,d)=>s+d.max,0);
+  const pct = totalMax>0 ? totalCur/totalMax : 0;
+  const level = pctToLevel(pct);
+  // So sánh tỷ trọng KTCB vs Tư duy
+  const ktPct = ktData.length ? ktData.reduce((s,d)=>s+d.cur,0)/ktData.reduce((s,d)=>s+d.max,0) : null;
+  const nlPct = nlData.length ? nlData.reduce((s,d)=>s+d.cur,0)/nlData.reduce((s,d)=>s+d.max,0) : null;
+  const strongPart = (ktPct!=null && nlPct!=null && ktPct>nlPct) ? 'kiến thức cơ bản' : 'tư duy toán học';
+  // Top/bottom hợp nhất từ cả 2 bảng
+  const all = [...ktData, ...nlData].sort((a,b)=>b.pct-a.pct);
+  const top = all.slice(0,2).map(d=>d.lbl).join(', ');
+  const bottom = all.slice(-2).reverse().map(d=>d.lbl).join(', ');
+  const lowest = all.length ? all[all.length-1].lbl : '';
+  const diff = _diffPattern('t-ss');
+  const kq = _kqWordComment();
+  let txt = `Học viên đạt ${_fmtInt(totalCur)}/${_fmtInt(totalMax)} điểm, tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.\n\n`;
+  txt += `Con thể hiện nền tảng ${strongPart} tốt hơn`;
+  if(top) txt += `, đặc biệt ở các kỹ năng ${top}`;
+  txt += '.';
+  if(bottom) txt += ` Tuy nhiên, con cần củng cố thêm ở một số lĩnh vực như ${bottom}${lowest && bottom!==lowest ? `, đặc biệt là ${lowest}`:''}, để đảm bảo nền tảng vững chắc hơn.`;
+  if(diff.foundation) txt += `\n\nXét theo độ khó, con ${diff.foundation}.`;
+  if(kq) txt += ` Đồng thời, kết quả bài toán ${kq}.`;
+  return txt;
+}
+
+function autoCommentDinhHuong(){
+  const all = [..._tblData('t-kt'), ..._tblData('t-nl')]
+    .filter(d=>d.max>0).sort((a,b)=>a.pct-b.pct);
+  const bottom3 = all.slice(0,3).map(d=>d.lbl).join(', ');
+  let txt = 'ĐỊNH HƯỚNG CHUNG:\n';
+  txt += `1. Củng cố nền tảng kiến thức cơ bản: Tập trung vào các kỹ năng nền tảng như ${bottom3 || '(các kỹ năng yếu)'} và rèn luyện qua các bài tập/học cụ trực quan để giúp con nắm vững các khái niệm cơ bản.\n`;
+  txt += '2. Phát triển tư duy toán học: Con cần rèn luyện thêm khả năng suy luận logic, giải quyết các bài toán nhiều bước và phát triển khả năng giải thích chi tiết trong quá trình giải quyết.';
+  return txt;
+}
+
+/* Lấp đầy 3 textarea (sum1-note, sum2-note, f-comment).
+   force=true → ghi đè dù đã có nội dung. force=false → chỉ điền nếu trống. */
+function autoFillComments(force){
+  const fill = (id, text)=>{
+    const ta = document.getElementById(id); if(!ta || !text) return;
+    if(!force && ta.value && ta.value.trim()) return;
+    ta.value = text;
+    ta.dispatchEvent(new Event('input',{bubbles:true}));
+  };
+  fill('sum1-note', autoCommentKTCB());
+  fill('sum2-note', autoCommentTuDuy());
+  const chung = autoCommentChung();
+  const huong = autoCommentDinhHuong();
+  const full = [chung, huong].filter(Boolean).join('\n\n');
+  fill('f-comment', full);
+  if(force) toast && toast('Đã sinh nhận xét tự động ✨', 'success');
 }
 
 document.addEventListener('input', e=>{

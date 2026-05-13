@@ -214,14 +214,14 @@ body{
   border-radius:14px;overflow:hidden;margin-top:5px;
 }
 .summary-merged .merged-head{
-  display:grid;grid-template-columns:1fr 1fr;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(90deg, var(--c-yellow), var(--c-primary-2));
+  padding:7px 14px;
 }
-.summary-merged .merged-head .seg{
-  padding:6px 14px;font:800 13px/1 var(--font-body);
-  color:#fff;text-align:center;letter-spacing:.02em;
+.summary-merged .merged-head .seg-title{
+  font:800 14px/1 var(--font-body);color:#fff;
+  letter-spacing:.04em;text-shadow:0 1px 0 rgba(0,0,0,.12);
 }
-.summary-merged .merged-head .seg.k1{background:var(--c-yellow)}
-.summary-merged .merged-head .seg.k2{background:var(--c-primary-2)}
 .summary-merged .merged-body{
   display:grid;grid-template-columns:180px 1fr 290px;gap:14px;
   padding:12px 16px;align-items:stretch;
@@ -994,7 +994,8 @@ body.print-preview .quick-actions{display:none !important}
 
   /* === SUMMARY MERGED — 3-col (Donut LEFT | Info-rows MID | Radar RIGHT) === */
   .summary-merged{margin-top:4px !important;margin-bottom:0 !important}
-  .summary-merged .merged-head .seg{padding:4px 12px !important;font-size:12px !important}
+  .summary-merged .merged-head{padding:5px 12px !important}
+  .summary-merged .merged-head .seg-title{font-size:12.5px !important;letter-spacing:.03em !important}
   .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:155px 1fr 250px !important;gap:12px !important;align-items:stretch !important}
   .merged-donut-wrap svg{width:150px !important;height:150px !important}
   .merged-legend{gap:10px !important;font-size:9px !important}
@@ -1387,8 +1388,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
   <!-- SUMMARY GỘP — Nested donut + 2 info panels -->
   <div class="summary-merged">
     <div class="merged-head">
-      <span class="seg k1">1. KIẾN THỨC CƠ BẢN</span>
-      <span class="seg k2">2. TƯ DUY TOÁN HỌC</span>
+      <span class="seg-title">📊 TỔNG QUAN KẾT QUẢ ĐÁNH GIÁ</span>
     </div>
     <div class="merged-body">
       <!-- LEFT: Nested donut overview -->
@@ -1413,7 +1413,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
               <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
             </select>
           </div>
-          <span class="level-stage" id="sum1-stage"></span>
+          <span class="level-stage" id="sum1-stage" style="display:none"></span>
           <!-- Hidden textarea, kept for autosave compat -->
           <textarea id="sum1-note" class="hidden-note" placeholder="Nhận xét…" style="display:none"></textarea>
         </div>
@@ -1429,7 +1429,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
               <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
             </select>
           </div>
-          <span class="level-stage" id="sum2-stage"></span>
+          <span class="level-stage" id="sum2-stage" style="display:none"></span>
           <textarea id="sum2-note" class="hidden-note" placeholder="Nhận xét…" style="display:none"></textarea>
         </div>
       </div>

@@ -223,7 +223,7 @@ body{
   letter-spacing:.04em;text-shadow:0 1px 0 rgba(0,0,0,.12);
 }
 .summary-merged .merged-body{
-  display:grid;grid-template-columns:220px 280px 1fr;gap:12px;
+  display:grid;grid-template-columns:220px 300px 1fr;gap:14px;
   padding:12px 16px;align-items:stretch;
 }
 .merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:center}
@@ -237,58 +237,61 @@ body{
 .merged-radar-wrap .chart-svg{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0}
 .merged-radar-wrap .chart-svg svg{width:100%;max-height:270px;height:auto;display:block}
 
-/* Info-row: horizontal layout với section title + % + level */
-.info-row{
-  display:flex;align-items:center;gap:8px;
-  padding:7px 10px;border-radius:9px;overflow:hidden;
+/* Info-card: vertical stat card layout (2 cards side-by-side in middle col) */
+.merged-info-stack{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  align-content:center;min-width:0;
 }
-.info-row.k1{background:#fff8ec;border:1.5px solid var(--c-yellow)}
-.info-row.k2{background:#fff3e0;border:1.5px solid var(--c-primary-2)}
+.info-card{
+  display:flex;flex-direction:column;gap:5px;
+  padding:10px 11px;border-radius:11px;min-width:0;overflow:hidden;
+  position:relative;
+}
+.info-card.k1{background:#fff8ec;border:1.5px solid var(--c-yellow)}
+.info-card.k2{background:#fff3e0;border:1.5px solid var(--c-primary-2)}
 
-/* Title block: bullet dot + section name */
-.info-row .info-title-block{
-  display:flex;align-items:center;gap:6px;flex:0 0 auto;
-  border-right:1.5px dashed rgba(0,0,0,.08);
-  padding-right:9px;min-width:0;
+.info-card .info-card-head{
+  display:flex;align-items:flex-start;gap:7px;
+  border-bottom:1.5px dashed rgba(0,0,0,.08);
+  padding-bottom:6px;min-width:0;
 }
-.info-row .info-bullet{
-  width:9px;height:9px;border-radius:50%;flex-shrink:0;
+.info-card .info-bullet{
+  width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px;
 }
-.info-row.k1 .info-bullet{background:var(--c-yellow)}
-.info-row.k2 .info-bullet{background:var(--c-primary-2)}
-.info-row .info-section-name{
-  font:800 10px/1.2 var(--font-body);letter-spacing:.02em;
-  display:inline-block;max-width:84px;
+.info-card.k1 .info-bullet{background:var(--c-yellow)}
+.info-card.k2 .info-bullet{background:var(--c-primary-2)}
+.info-card .info-section-name{
+  font:800 10.5px/1.25 var(--font-body);letter-spacing:.03em;
+  word-break:break-word;flex:1;min-width:0;
 }
-.info-row.k1 .info-section-name{color:#a07410}
-.info-row.k2 .info-section-name{color:var(--c-primary-2)}
+.info-card.k1 .info-section-name{color:#a07410}
+.info-card.k2 .info-section-name{color:var(--c-primary-2)}
 
-/* % block: big % + score */
-.info-row .info-pct-block{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;flex:0 0 auto}
-.info-row .info-pct{font:800 18px/1 var(--font-body)}
-.info-row.k1 .info-pct{color:#a07410}
-.info-row.k2 .info-pct{color:var(--c-primary-2)}
-.info-row .info-score{font:600 9.5px var(--font-body);color:var(--c-muted);margin-top:2px}
-
-/* Level block: inline 'Mức:' + dropdown */
-.info-row .info-level-block{display:flex;align-items:center;gap:5px;flex:0 0 auto;margin-left:auto;white-space:nowrap}
-.info-row .level-lab-mini{
-  font:700 9.5px var(--font-body);color:var(--c-muted);
-  text-transform:none;letter-spacing:0;
+.info-card .info-pct{
+  font:800 28px/1 var(--font-body);margin-top:4px;
 }
-.info-row .level-select{
-  text-align:left;font:800 12px/1.1 var(--font-body);
+.info-card.k1 .info-pct{color:#a07410}
+.info-card.k2 .info-pct{color:var(--c-primary-2)}
+.info-card .info-score{font:600 10px var(--font-body);color:var(--c-muted);margin-top:-1px}
+
+.info-card .info-level-block{
+  display:flex;align-items:center;margin-top:auto;padding-top:5px;
+  border-top:1px dashed rgba(0,0,0,.08);min-width:0;
+}
+.info-card .level-select{
+  text-align:left;font:800 13px/1.15 var(--font-body);
   color:var(--c-primary-2);background:transparent;border:0;outline:0;
-  cursor:pointer;padding:1px 14px 1px 2px;max-width:100%;
+  cursor:pointer;padding:2px 16px 2px 0;width:100%;min-width:0;
+  text-overflow:ellipsis;overflow:hidden;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   background-repeat:no-repeat;background-position:right 2px center;
   appearance:none;-webkit-appearance:none;
 }
-.info-row .level-select[data-level="Xuất sắc"]{color:var(--lv-excellent)}
-.info-row .level-select[data-level="Tốt"]{color:var(--lv-good)}
-.info-row .level-select[data-level="Khá"]{color:var(--lv-fair)}
-.info-row .level-select[data-level="Đạt"]{color:var(--lv-low)}
-.info-row .level-select[data-level="Cần cố gắng"]{color:var(--lv-bad)}
+.info-card .level-select[data-level="Xuất sắc"]{color:var(--lv-excellent)}
+.info-card .level-select[data-level="Tốt"]{color:var(--lv-good)}
+.info-card .level-select[data-level="Khá"]{color:var(--lv-fair)}
+.info-card .level-select[data-level="Đạt"]{color:var(--lv-low)}
+.info-card .level-select[data-level="Cần cố gắng"]{color:var(--lv-bad)}
 .merged-legend{display:flex;gap:14px;font:700 10px var(--font-body);color:var(--c-ink-soft)}
 .merged-legend .lg-item{display:inline-flex;align-items:center;gap:5px}
 .merged-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
@@ -1012,21 +1015,22 @@ body.print-preview .quick-actions{display:none !important}
   .summary-merged{margin-top:4px !important;margin-bottom:0 !important}
   .summary-merged .merged-head{padding:5px 12px !important}
   .summary-merged .merged-head .seg-title{font-size:12.5px !important;letter-spacing:.03em !important}
-  .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:200px 215px 1fr !important;gap:12px !important;align-items:stretch !important}
+  .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:190px 235px 1fr !important;gap:12px !important;align-items:stretch !important}
   .merged-donut-wrap svg{width:190px !important;height:190px !important}
   .merged-legend{gap:10px !important;font-size:9px !important}
   .merged-legend .dot{width:7px !important;height:7px !important}
   .merged-radar-wrap .merged-radar-title{font-size:10px !important;margin-bottom:0 !important}
   .merged-radar-wrap .chart-svg svg{max-height:240px !important}
-  /* Compact info-row với section title */
-  .info-row{padding:6px 9px !important;gap:3px 8px !important;border-radius:8px !important}
-  .info-row .info-title-block{padding-right:7px !important;min-width:90px !important;gap:5px !important}
-  .info-row .info-bullet{width:7px !important;height:7px !important}
-  .info-row .info-section-name{font-size:9.5px !important;line-height:1.15 !important}
-  .info-row .info-pct{font-size:16px !important}
-  .info-row .info-score{font-size:8.5px !important;margin-top:1px !important}
-  .info-row .level-lab-mini{font-size:8.5px !important}
-  .info-row .level-select{font-size:11.5px !important;padding:0 12px 0 1px !important}
+  /* Compact info-card (vertical stat layout, 2 cards side-by-side) */
+  .merged-info-stack{gap:8px !important}
+  .info-card{padding:8px 9px !important;border-radius:9px !important;gap:3px !important}
+  .info-card .info-card-head{padding-bottom:4px !important;gap:5px !important}
+  .info-card .info-bullet{width:7px !important;height:7px !important;margin-top:2px !important}
+  .info-card .info-section-name{font-size:9.5px !important;line-height:1.2 !important}
+  .info-card .info-pct{font-size:23px !important;margin-top:2px !important}
+  .info-card .info-score{font-size:8.5px !important}
+  .info-card .info-level-block{padding-top:3px !important}
+  .info-card .level-select{font-size:11.5px !important;padding:1px 14px 1px 0 !important}
   .sumcard .level .lab{font-size:9.5px;padding:4px 12px}
   .sumcard .level select{font-size:10.5px;padding:4px 22px 4px 12px}
   .sumcard textarea,.sumcard .ta-print-mirror{
@@ -1419,17 +1423,15 @@ body.print-preview .hdr .mascot svg{display:none !important}
       </div>
       <!-- MIDDLE: 2 info-row compact horizontal -->
       <div class="merged-info-stack">
-        <div class="info-row k1" id="sumcard-1">
-          <div class="info-title-block">
+        <div class="info-card k1" id="sumcard-1">
+          <div class="info-card-head">
             <span class="info-bullet"></span>
-            <span class="info-section-name">1. KIẾN THỨC CƠ BẢN</span>
+            <span class="info-section-name">KIẾN THỨC CƠ BẢN</span>
           </div>
-          <div class="info-pct-block">
-            <span class="info-pct" id="info-1-pct">—%</span>
-            <span class="info-score" id="info-1-score">— / — điểm</span>
-          </div>
+          <div class="info-pct" id="info-1-pct">—%</div>
+          <div class="info-score" id="info-1-score">—/— đ</div>
           <div class="info-level-block">
-            <select id="sum1-level" class="level-select" data-level="">
+            <select id="sum1-level" class="level-select" data-level="" title="Mức đánh giá">
               <option value="">— Chọn —</option>
               <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
             </select>
@@ -1437,17 +1439,15 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <span class="level-stage" id="sum1-stage" style="display:none"></span>
           <textarea id="sum1-note" class="hidden-note" placeholder="Nhận xét…" style="display:none"></textarea>
         </div>
-        <div class="info-row k2" id="sumcard-2">
-          <div class="info-title-block">
+        <div class="info-card k2" id="sumcard-2">
+          <div class="info-card-head">
             <span class="info-bullet"></span>
-            <span class="info-section-name">2. TƯ DUY TOÁN HỌC</span>
+            <span class="info-section-name">TƯ DUY TOÁN HỌC</span>
           </div>
-          <div class="info-pct-block">
-            <span class="info-pct" id="info-2-pct">—%</span>
-            <span class="info-score" id="info-2-score">— / — điểm</span>
-          </div>
+          <div class="info-pct" id="info-2-pct">—%</div>
+          <div class="info-score" id="info-2-score">—/— đ</div>
           <div class="info-level-block">
-            <select id="sum2-level" class="level-select" data-level="">
+            <select id="sum2-level" class="level-select" data-level="" title="Mức đánh giá">
               <option value="">— Chọn —</option>
               <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
             </select>

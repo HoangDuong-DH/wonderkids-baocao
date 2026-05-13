@@ -223,19 +223,56 @@ body{
 .summary-merged .merged-head .seg.k1{background:var(--c-yellow)}
 .summary-merged .merged-head .seg.k2{background:var(--c-primary-2)}
 .summary-merged .merged-body{
-  display:grid;grid-template-columns:140px 1fr 230px;gap:10px;
-  padding:10px 14px;align-items:stretch;
+  display:grid;grid-template-columns:180px 1fr 290px;gap:14px;
+  padding:12px 16px;align-items:stretch;
 }
-.merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:center}
-.merged-donut-wrap svg{width:130px;height:130px;display:block}
-.merged-info-stack{display:flex;flex-direction:column;gap:8px}
+.merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:center}
+.merged-donut-wrap svg{width:170px;height:170px;display:block}
+.merged-info-stack{display:flex;flex-direction:column;gap:10px;justify-content:center}
 .merged-radar-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .merged-radar-wrap .merged-radar-title{
-  font:800 10.5px var(--font-body);color:var(--c-primary-2);
+  font:800 11px var(--font-body);color:var(--c-primary-2);
   text-align:center;margin-bottom:2px;letter-spacing:.02em;
 }
 .merged-radar-wrap .chart-svg{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0}
-.merged-radar-wrap .chart-svg svg{width:100%;max-height:210px;height:auto;display:block}
+.merged-radar-wrap .chart-svg svg{width:100%;max-height:240px;height:auto;display:block}
+
+/* Info-row: horizontal compact layout */
+.info-row{
+  display:grid;grid-template-columns:auto auto 1fr;gap:10px 14px;
+  align-items:center;padding:8px 14px;border-radius:10px;
+}
+.info-row.k1{background:#fff8ec;border:1.5px solid var(--c-yellow)}
+.info-row.k2{background:#fff3e0;border:1.5px solid var(--c-primary-2)}
+.info-row .info-pct-block{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
+.info-row .info-pct{font:800 24px/1 var(--font-body)}
+.info-row.k1 .info-pct{color:#a07410}
+.info-row.k2 .info-pct{color:var(--c-primary-2)}
+.info-row .info-score{font:600 10px var(--font-body);color:var(--c-muted);margin-top:2px}
+.info-row .info-level-block{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.info-row .level-lab{
+  display:inline-block;padding:2px 8px;border-radius:999px;
+  background:var(--c-pill-bg);font:800 8.5px/1 var(--font-body);
+  letter-spacing:.06em;color:var(--c-ink);text-transform:uppercase;
+}
+.info-row .level-select{
+  text-align:left;font:800 14px/1.1 var(--font-body);
+  color:var(--c-primary-2);background:transparent;border:0;outline:0;
+  cursor:pointer;padding:1px 16px 1px 0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 2px center;
+  appearance:none;-webkit-appearance:none;
+}
+.info-row .level-select[data-level="Xuất sắc"]{color:var(--lv-excellent)}
+.info-row .level-select[data-level="Tốt"]{color:var(--lv-good)}
+.info-row .level-select[data-level="Khá"]{color:var(--lv-fair)}
+.info-row .level-select[data-level="Đạt"]{color:var(--lv-low)}
+.info-row .level-select[data-level="Cần cố gắng"]{color:var(--lv-bad)}
+.info-row .level-stage{
+  justify-self:end;display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.65);
+  font:700 10.5px var(--font-body);white-space:nowrap;
+}
 .merged-legend{display:flex;gap:14px;font:700 10px var(--font-body);color:var(--c-ink-soft)}
 .merged-legend .lg-item{display:inline-flex;align-items:center;gap:5px}
 .merged-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
@@ -955,20 +992,22 @@ body.print-preview .quick-actions{display:none !important}
   .field label{font-size:9.5px !important}
   .field .input,.field .ta-print-mirror{font-size:11px !important;padding:1px 0 !important}
 
-  /* === SUMMARY MERGED (nested donut) compact === */
+  /* === SUMMARY MERGED — 3-col (Donut LEFT | Info-rows MID | Radar RIGHT) === */
   .summary-merged{margin-top:4px !important;margin-bottom:0 !important}
   .summary-merged .merged-head .seg{padding:4px 12px !important;font-size:12px !important}
-  .summary-merged .merged-body{padding:8px 12px !important;grid-template-columns:140px 1fr 1fr !important;gap:10px !important;align-items:stretch !important}
-  .merged-donut-wrap svg{width:130px !important;height:130px !important}
+  .summary-merged .merged-body{padding:9px 14px !important;grid-template-columns:155px 1fr 250px !important;gap:12px !important;align-items:stretch !important}
+  .merged-donut-wrap svg{width:150px !important;height:150px !important}
   .merged-legend{gap:10px !important;font-size:9px !important}
   .merged-legend .dot{width:7px !important;height:7px !important}
-  .info-side{padding:6px 8px !important;gap:3px !important;min-height:0 !important}
-  .info-side .info-pct{font-size:20px !important}
-  .info-side .info-score{font-size:9.5px !important}
-  .info-side .level-lab{font-size:8.5px !important;padding:2px 8px !important}
-  .info-side .level-select{font-size:13px !important;padding:1px 16px 1px 4px !important}
-  .info-side .level-stage{padding:2px 8px !important;font-size:9px !important;margin:0 !important}
-  .info-side .comment{font-size:10px !important;min-height:14px !important}
+  .merged-radar-wrap .merged-radar-title{font-size:10px !important;margin-bottom:0 !important}
+  .merged-radar-wrap .chart-svg svg{max-height:210px !important}
+  /* Compact info-row */
+  .info-row{padding:6px 12px !important;gap:8px 12px !important}
+  .info-row .info-pct{font-size:19px !important}
+  .info-row .info-score{font-size:9px !important}
+  .info-row .level-lab{font-size:8.5px !important;padding:2px 7px !important}
+  .info-row .level-select{font-size:13px !important;padding:1px 14px 1px 0 !important}
+  .info-row .level-stage{font-size:9.5px !important;padding:2px 8px !important}
   .sumcard .level .lab{font-size:9.5px;padding:4px 12px}
   .sumcard .level select{font-size:10.5px;padding:4px 22px 4px 12px}
   .sumcard textarea,.sumcard .ta-print-mirror{
@@ -1360,12 +1399,14 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <span class="lg-item"><span class="dot k2"></span>Tư duy</span>
         </div>
       </div>
-      <!-- MIDDLE: 2 info-side stacked -->
+      <!-- MIDDLE: 2 info-row compact horizontal -->
       <div class="merged-info-stack">
-        <div class="info-side k1" id="sumcard-1">
-          <div class="info-pct" id="info-1-pct">—%</div>
-          <div class="info-score" id="info-1-score">— / — điểm</div>
-          <div class="info-level-row">
+        <div class="info-row k1" id="sumcard-1">
+          <div class="info-pct-block">
+            <span class="info-pct" id="info-1-pct">—%</span>
+            <span class="info-score" id="info-1-score">— / — điểm</span>
+          </div>
+          <div class="info-level-block">
             <span class="level-lab">MỨC ĐÁNH GIÁ</span>
             <select id="sum1-level" class="level-select" data-level="">
               <option value="">— Chọn —</option>
@@ -1373,12 +1414,15 @@ body.print-preview .hdr .mascot svg{display:none !important}
             </select>
           </div>
           <span class="level-stage" id="sum1-stage"></span>
-          <textarea id="sum1-note" class="comment" placeholder="Nhận xét tổng quan…"></textarea>
+          <!-- Hidden textarea, kept for autosave compat -->
+          <textarea id="sum1-note" class="hidden-note" placeholder="Nhận xét…" style="display:none"></textarea>
         </div>
-        <div class="info-side k2" id="sumcard-2">
-          <div class="info-pct" id="info-2-pct">—%</div>
-          <div class="info-score" id="info-2-score">— / — điểm</div>
-          <div class="info-level-row">
+        <div class="info-row k2" id="sumcard-2">
+          <div class="info-pct-block">
+            <span class="info-pct" id="info-2-pct">—%</span>
+            <span class="info-score" id="info-2-score">— / — điểm</span>
+          </div>
+          <div class="info-level-block">
             <span class="level-lab">MỨC ĐÁNH GIÁ</span>
             <select id="sum2-level" class="level-select" data-level="">
               <option value="">— Chọn —</option>
@@ -1386,7 +1430,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
             </select>
           </div>
           <span class="level-stage" id="sum2-stage"></span>
-          <textarea id="sum2-note" class="comment" placeholder="Nhận xét tổng quan…"></textarea>
+          <textarea id="sum2-note" class="hidden-note" placeholder="Nhận xét…" style="display:none"></textarea>
         </div>
       </div>
       <!-- RIGHT: Radar năng lực 6 lĩnh vực -->

@@ -235,11 +235,14 @@ body{
 .legend .dot.l{background:var(--g-L)}
 
 /* ───── MAIN 2-COL ───── */
-/* ─── VIZ ROW: Radar + Donut song song ở TOP, abilities full-width bên dưới ─── */
+/* ─── VIZ ROW: Radar full-width làm focus point ─── */
 .viz-row{
   display:grid;grid-template-columns:1.3fr 1fr;gap:18px;
   padding:0 44px;margin-bottom:22px;align-items:stretch;
 }
+.viz-row.single{grid-template-columns:1fr}
+.viz-row.single .radar-chart{height:340px}
+.viz-row.single .s4{padding:18px 22px 10px}
 .viz-box{display:flex;flex-direction:column}
 .viz-box .sec-h{margin-bottom:8px}
 .viz-box .s4,.viz-box .s5{
@@ -304,11 +307,34 @@ body{
   vertical-align:top;
 }
 .ability tbody td:first-child{font:700 11.5px/1.3 var(--font-display);color:var(--ink);width:115px}
-.ability tbody td:last-child{text-align:center;width:55px}
+.ability tbody td:last-child{text-align:center;width:140px;padding:6px 8px !important}
 .ability tbody tr:last-child td{border-bottom:0}
-.ability tbody .gC{color:var(--g-C);font-weight:800;font-size:14px}
-.ability tbody .gL{color:var(--g-L);font-weight:800;font-size:14px}
-.ability tbody .gB{color:var(--g-B);font-weight:800;font-size:14px}
+/* Score bar + grade chip combo trong cột last (Cấp độ) */
+.ability tbody td:last-child{display:table-cell;vertical-align:middle}
+.ability tbody td:last-child span{
+  display:inline-flex;align-items:center;gap:8px;
+  font:700 12px/1 var(--font-display);
+  position:relative;width:100%;
+}
+.ability tbody td:last-child span::before{
+  content:"";display:block;flex:1;height:7px;
+  background:#f5e9c8;border-radius:99px;position:relative;overflow:hidden;
+}
+.ability tbody td:last-child span::after{
+  content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+  height:7px;border-radius:99px;
+  transition:width .3s ease,background .25s ease;
+}
+.ability tbody td:last-child span.gS::after{width:calc((100% - 28px) * 0.95);background:var(--g-S)}
+.ability tbody td:last-child span.gA::after{width:calc((100% - 28px) * 0.85);background:var(--g-A)}
+.ability tbody td:last-child span.gB::after{width:calc((100% - 28px) * 0.70);background:var(--g-B)}
+.ability tbody td:last-child span.gC::after{width:calc((100% - 28px) * 0.50);background:var(--g-C)}
+.ability tbody td:last-child span.gL::after{width:calc((100% - 28px) * 0.25);background:var(--g-L)}
+.ability tbody td:last-child span.gS{color:var(--g-S)}
+.ability tbody td:last-child span.gA{color:var(--g-A)}
+.ability tbody td:last-child span.gB{color:var(--g-B)}
+.ability tbody td:last-child span.gC{color:var(--g-C)}
+.ability tbody td:last-child span.gL{color:var(--g-L)}
 
 /* ───── Right column: Section 3,4,5 ───── */
 .s3-DEPRECATED{
@@ -654,17 +680,10 @@ body{
       </div>
     </div>
 
-    <div class="legend">
-      <span class="it"><span class="dot s"></span>Vượt trội (S)</span>
-      <span class="it"><span class="dot a"></span>Rất tốt (A)</span>
-      <span class="it"><span class="dot b"></span>Tốt (B)</span>
-      <span class="it"><span class="dot c"></span>Trung bình (C)</span>
-      <span class="it"><span class="dot l"></span>Cần hỗ trợ (L)</span>
-    </div>
   </div>
 
-  <!-- ─── SECTION 2: VISUALIZATION (Radar + Donut song song) ─── -->
-  <div class="viz-row">
+  <!-- ─── SECTION 2: HÌNH DÁNG NĂNG LỰC (Radar full-width — focus point) ─── -->
+  <div class="viz-row single">
     <div class="viz-box">
       <div class="sec-h"><span class="num">2</span>Hình dáng năng lực — Radar</div>
       <div class="s4">
@@ -674,17 +693,11 @@ body{
         </div>
       </div>
     </div>
-    <div class="viz-box">
-      <div class="sec-h"><span class="num">3</span>Điểm chi tiết theo nhóm</div>
-      <div class="s5">
-        <div id="detail-bars"><!-- 4 mini bar charts auto-render từ ability tables --></div>
-      </div>
-    </div>
   </div>
 
   <!-- ─── SECTION 4: CHI TIẾT NĂNG LỰC (full-width) ─── -->
   <div class="detail-section">
-    <div class="sec-h"><span class="num">4</span>Kết quả đánh giá chi tiết</div>
+    <div class="sec-h"><span class="num">3</span>Kết quả đánh giá chi tiết</div>
     <div class="s2-full">
       <div class="s2">
         <!-- TƯ DUY CƠ BẢN -->
@@ -771,7 +784,7 @@ body{
   </div>
   <!-- ─── SECTION 5: NHẬN XÉT & ĐỊNH HƯỚNG ─── -->
   <div class="s6">
-    <div class="sec-h"><span class="num">5</span>Nhận xét chung &amp; Định hướng
+    <div class="sec-h"><span class="num">4</span>Nhận xét chung &amp; Định hướng
       <button class="auto-comment-btn-mg" onclick="fillCommentsMG(true)" title="Sinh nhận xét và định hướng tự động từ kết quả đánh giá">🪄 Tự động nhận xét</button>
     </div>
     <div class="nx-box">
@@ -873,51 +886,9 @@ function renderRadar(){
 renderRadar();
 
 /* ─── Donut: distribution of detail-skill levels ─── */
-/* Render 4 mini bar charts (replace donut) — kiểu PDF CMS gốc
-   Mỗi nhóm tư duy có chart riêng cho các kỹ năng chi tiết với điểm số.
-   Grade → score midpoint: S=95, A=85, B=70, C=50, L=25 */
-function renderDetailBars(){
-  const host = document.getElementById('detail-bars');
-  if(!host) return;
-  const GRADE_SCORE = {S:95, A:85, B:70, C:50, L:25};
-  const GRADE_COLOR = {S:'#5fb74f', A:'#3ea1d3', B:'#f5b84a', C:'#f08526', L:'#df5728'};
-  const abilities = document.querySelectorAll('.ability');
-  let html = '';
-  abilities.forEach(ab => {
-    const titleEl = ab.querySelector('.left .ttl');
-    let title = '';
-    if(titleEl){
-      // ttl has <small>Nhóm 01</small>TextLabel — chỉ lấy text label
-      const tmp = titleEl.cloneNode(true);
-      const small = tmp.querySelector('small'); if(small) small.remove();
-      title = tmp.textContent.trim();
-    }
-    const groupGrade = (ab.querySelector('.grade-big')?.textContent || 'C').toUpperCase();
-    html += `<div class="dbar-group">
-      <div class="dbar-head">
-        <span class="dbar-title">${title}</span>
-        <span class="dbar-grade g${groupGrade}">MỨC ${groupGrade}</span>
-      </div>
-      <div class="dbar-rows">`;
-    ab.querySelectorAll('tbody tr').forEach(tr => {
-      const name = (tr.cells[0]?.textContent || '').trim();
-      const grade = (tr.cells[2]?.textContent || 'C').trim().toUpperCase();
-      const score = GRADE_SCORE[grade] || 0;
-      const color = GRADE_COLOR[grade] || '#aaa';
-      html += `<div class="dbar-row">
-        <span class="dbar-lbl" title="${name}">${name}</span>
-        <span class="dbar-track"><span class="dbar-fill" style="width:${score}%;background:${color}"></span></span>
-        <span class="dbar-val">${score}</span>
-        <span class="dbar-chip g${grade}">${grade}</span>
-      </div>`;
-    });
-    html += '</div></div>';
-  });
-  host.innerHTML = html;
-}
-// Compat alias — recomputeAllMG cũ gọi renderDonut()
-function renderDonut(){ renderDetailBars(); }
-renderDetailBars();
+/* Detail bars đã GỘP vào ability tables (CSS pseudo-element bar trong td cuối)
+   → không cần render riêng. Stub renderDonut() để giữ tương thích với recomputeAllMG. */
+function renderDonut(){ /* no-op — bar visualization đã inline trong tables qua CSS */ }
 
 /* ═══════════════════════════════════════════════════════════════
    AVATAR ADAPTIVE THEO GIỚI TÍNH

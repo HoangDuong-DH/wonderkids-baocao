@@ -223,11 +223,19 @@ body{
 .summary-merged .merged-head .seg.k1{background:var(--c-yellow)}
 .summary-merged .merged-head .seg.k2{background:var(--c-primary-2)}
 .summary-merged .merged-body{
-  display:grid;grid-template-columns:180px 1fr 1fr;gap:12px;
-  padding:12px 14px;align-items:center;
+  display:grid;grid-template-columns:140px 1fr 230px;gap:10px;
+  padding:10px 14px;align-items:stretch;
 }
-.merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
-.merged-donut-wrap svg{width:170px;height:170px;display:block}
+.merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:center}
+.merged-donut-wrap svg{width:130px;height:130px;display:block}
+.merged-info-stack{display:flex;flex-direction:column;gap:8px}
+.merged-radar-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.merged-radar-wrap .merged-radar-title{
+  font:800 10.5px var(--font-body);color:var(--c-primary-2);
+  text-align:center;margin-bottom:2px;letter-spacing:.02em;
+}
+.merged-radar-wrap .chart-svg{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0}
+.merged-radar-wrap .chart-svg svg{width:100%;max-height:210px;height:auto;display:block}
 .merged-legend{display:flex;gap:14px;font:700 10px var(--font-body);color:var(--c-ink-soft)}
 .merged-legend .lg-item{display:inline-flex;align-items:center;gap:5px}
 .merged-legend .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
@@ -1344,6 +1352,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
       <span class="seg k2">2. TƯ DUY TOÁN HỌC</span>
     </div>
     <div class="merged-body">
+      <!-- LEFT: Nested donut overview -->
       <div class="merged-donut-wrap">
         <svg class="merged-donut" id="merged-donut" viewBox="0 0 180 180"></svg>
         <div class="merged-legend">
@@ -1351,31 +1360,39 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <span class="lg-item"><span class="dot k2"></span>Tư duy</span>
         </div>
       </div>
-      <div class="info-side k1" id="sumcard-1">
-        <div class="info-pct" id="info-1-pct">—%</div>
-        <div class="info-score" id="info-1-score">— / — điểm</div>
-        <div class="info-level-row">
-          <span class="level-lab">MỨC ĐÁNH GIÁ</span>
-          <select id="sum1-level" class="level-select" data-level="">
-            <option value="">— Chọn —</option>
-            <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
-          </select>
+      <!-- MIDDLE: 2 info-side stacked -->
+      <div class="merged-info-stack">
+        <div class="info-side k1" id="sumcard-1">
+          <div class="info-pct" id="info-1-pct">—%</div>
+          <div class="info-score" id="info-1-score">— / — điểm</div>
+          <div class="info-level-row">
+            <span class="level-lab">MỨC ĐÁNH GIÁ</span>
+            <select id="sum1-level" class="level-select" data-level="">
+              <option value="">— Chọn —</option>
+              <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
+            </select>
+          </div>
+          <span class="level-stage" id="sum1-stage"></span>
+          <textarea id="sum1-note" class="comment" placeholder="Nhận xét tổng quan…"></textarea>
         </div>
-        <span class="level-stage" id="sum1-stage"></span>
-        <textarea id="sum1-note" class="comment" placeholder="Nhận xét tổng quan…"></textarea>
+        <div class="info-side k2" id="sumcard-2">
+          <div class="info-pct" id="info-2-pct">—%</div>
+          <div class="info-score" id="info-2-score">— / — điểm</div>
+          <div class="info-level-row">
+            <span class="level-lab">MỨC ĐÁNH GIÁ</span>
+            <select id="sum2-level" class="level-select" data-level="">
+              <option value="">— Chọn —</option>
+              <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
+            </select>
+          </div>
+          <span class="level-stage" id="sum2-stage"></span>
+          <textarea id="sum2-note" class="comment" placeholder="Nhận xét tổng quan…"></textarea>
+        </div>
       </div>
-      <div class="info-side k2" id="sumcard-2">
-        <div class="info-pct" id="info-2-pct">—%</div>
-        <div class="info-score" id="info-2-score">— / — điểm</div>
-        <div class="info-level-row">
-          <span class="level-lab">MỨC ĐÁNH GIÁ</span>
-          <select id="sum2-level" class="level-select" data-level="">
-            <option value="">— Chọn —</option>
-            <option>Xuất sắc</option><option>Tốt</option><option>Khá</option><option>Đạt</option><option>Cần cố gắng</option>
-          </select>
-        </div>
-        <span class="level-stage" id="sum2-stage"></span>
-        <textarea id="sum2-note" class="comment" placeholder="Nhận xét tổng quan…"></textarea>
+      <!-- RIGHT: Radar năng lực 6 lĩnh vực -->
+      <div class="merged-radar-wrap">
+        <div class="merged-radar-title">🎯 Năng lực — 6 lĩnh vực</div>
+        <div class="chart-svg" id="chart-nl-radar"></div>
       </div>
     </div>
   </div>
@@ -1530,16 +1547,10 @@ body.print-preview .hdr .mascot svg{display:none !important}
     </table>
   </div>
 
-  <!-- BIỂU ĐỒ row: Cluster Bars + Radar năng lực side-by-side -->
-  <div class="vis-row">
-    <div class="cluster-bars" id="cluster-bars">
-      <div class="cl-title">📊 Theo nhóm năng lực tư duy</div>
-      <div id="cluster-rows"></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">🎯 Radar năng lực — 6 lĩnh vực</div>
-      <div id="chart-nl-radar" class="chart-svg"></div>
-    </div>
+  <!-- BIỂU ĐỒ: Cluster Bars full-width (Radar đã chuyển lên top trong merged sumcard) -->
+  <div class="cluster-bars" id="cluster-bars">
+    <div class="cl-title">📊 Theo nhóm năng lực tư duy</div>
+    <div id="cluster-rows"></div>
   </div>
 
   <!-- ───── SECTION 3 ───── -->

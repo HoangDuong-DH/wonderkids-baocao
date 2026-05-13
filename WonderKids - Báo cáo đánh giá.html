@@ -2803,8 +2803,9 @@ function _topBottom(tableId, topN=2, botN=2){
 }
 
 /* QUY CHUẨN CHẤM ĐIỂM:
-   - KTCB (Kiến thức cơ bản) = t-kt (5 đơn vị, 20đ) + t-kq (bài toán có/không lời, 20đ) = 40đ
-   - Tư duy toán học = qscore (10 câu, 5+5+5+5+5+5+5+7+7+11 = 60đ)
+   - KTCB (Kiến thức cơ bản) = t-kt (5 đơn vị) — quy chuẩn 40đ
+     (t-kq là góc nhìn THỨ 2 của cùng 20 câu — không cộng để tránh double-count)
+   - Tư duy toán học = qscore 10 câu — quy chuẩn 60đ
    - Tổng test = 100đ */
 function _qscoreData(){
   const data = [];
@@ -2817,10 +2818,8 @@ function _qscoreData(){
 }
 function _ktcbTotals(){
   const kt = _tblData('t-kt').filter(d=>d.max>0);
-  const kq = _tblData('t-kq').filter(d=>d.max>0);
-  const all = [...kt, ...kq];
-  const cur = all.reduce((s,d)=>s+d.cur,0);
-  const max = all.reduce((s,d)=>s+d.max,0);
+  const cur = kt.reduce((s,d)=>s+d.cur,0);
+  const max = kt.reduce((s,d)=>s+d.max,0);
   return {cur, max, pct: max>0 ? cur/max : 0};
 }
 function _tuduyTotals(){
@@ -2884,8 +2883,7 @@ function autoCommentChung(){
   const lowest = allCats.length ? allCats[allCats.length-1].lbl : '';
   const diff = _diffPattern('t-ss');
   const kq = _kqWordComment();
-  let txt = `Học viên đạt ${_fmtInt(totalCur)}/${_fmtInt(totalMax)} điểm `
-         + `(KTCB ${_fmtInt(ktcb.cur)}/${_fmtInt(ktcb.max)} + Tư duy ${_fmtInt(tuduy.cur)}/${_fmtInt(tuduy.max)}), `
+  let txt = `Học viên đạt ${_fmtInt(totalCur)}/${_fmtInt(totalMax)} điểm, `
          + `tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.\n\n`;
   txt += `Con thể hiện nền tảng ${strongPart} tốt hơn`;
   if(top) txt += `, đặc biệt ở các kỹ năng ${top}`;

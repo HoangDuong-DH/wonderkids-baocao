@@ -1636,7 +1636,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <th style="width:60px">Tỷ lệ</th>
         </tr></thead>
         <tbody id="t-kt-body">
-          <tr data-row><td><span class="cat-ico" style="background:#f3811f">123</span></td><td class="left"><input class="label-cell" value="Các số đến 9"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr data-row><td><span class="cat-ico" style="background:#f3811f">123</span></td><td class="left"><input class="label-cell" value="Tư duy số học"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
           <tr class="zebra" data-row><td><span class="cat-ico" style="background:#a26ad8"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></td><td class="left"><input class="label-cell" value="Phép cộng & phép trừ"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
           <tr data-row><td><span class="cat-ico" style="background:#5cb83e"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.49.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25C6 6.83 4 8 4 11c0 2.25 1.5 3.5 1.5 3.5C5 11 9.5 9 14 9c3-.06 5-1 5-1z"/></svg></span></td><td class="left"><input class="label-cell" value="Phân loại"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
           <tr class="zebra" data-row><td><span class="cat-ico" style="background:#46a6dd"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span></td><td class="left"><input class="label-cell" value="Đo lường"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
@@ -2842,6 +2842,7 @@ function _tuduyTotals(){
 /* ───── LOOKUP TABLES (từ NHẬN XÉT - Trang tính1.csv user cung cấp) ───── */
 // KTCB — t-kt: tên đơn vị (lowercased) → năng lực tương ứng
 const __KTCB_UNIT_ABILITY = {
+  'tư duy số học':               'thực hiện phép tính và các bài toán số học',
   'các số đến 9':                'thực hiện phép tính và các bài toán số học',
   'phép cộng & phép trừ':        'xử lý bài toán số học nhanh và chính xác',
   'phép cộng và phép trừ':       'xử lý bài toán số học nhanh và chính xác',
@@ -2853,6 +2854,7 @@ const __KTCB_UNIT_ABILITY = {
 };
 // KTCB — t-kt: tên đơn vị → mức độ ảnh hưởng (khi YẾU)
 const __KTCB_UNIT_IMPACT = {
+  'tư duy số học':               'ảnh hưởng đến khả năng thực hiện phép toán cơ bản và phức tạp',
   'các số đến 9':                'ảnh hưởng đến khả năng thực hiện phép toán cơ bản và phức tạp',
   'phép cộng & phép trừ':        'ảnh hưởng đến khả năng tính toán chính xác và giải bài toán',
   'phép cộng và phép trừ':       'ảnh hưởng đến khả năng tính toán chính xác và giải bài toán',
@@ -3310,7 +3312,7 @@ function resetForm(){
 }
 
 const DEFAULT_LABELS={
-  't-kt':['Các số đến 9','Phép cộng & phép trừ','Phân loại','Đo lường','Các kiến thức toán tư duy khác'],
+  't-kt':['Tư duy số học','Phép cộng & phép trừ','Phân loại','Đo lường','Các kiến thức toán tư duy khác'],
   't-kq':['Bài toán có lời văn','Bài toán cơ bản'],
   't-nl':['Giải quyết vấn đề','Logic và quan sát','Phân tích và phân loại','Số và ký hiệu','Không gian và hình học','Suy luận toán học'],
 };
@@ -3340,7 +3342,7 @@ const __MOCK_PROFILES = {
     class: '2018-09-15', age: 'Lớp 1', teacher: 'Cô Mai',
     // t-kt: tổng max=40, cur=37 (~92%) — đều ≥85% tất cả đơn vị
     kt: [
-      ['Các số đến 9',                 10, 10],
+      ['Tư duy số học',                 10, 10],
       ['Phép cộng & phép trừ',         10, 9],
       ['Phân loại',                    6, 6],
       ['Đo lường',                     8, 7],
@@ -3364,7 +3366,7 @@ const __MOCK_PROFILES = {
     class: '2018-05-20', age: 'Lớp 1', teacher: 'Cô Mai',
     // t-kt: 25/40 (~63%)
     kt: [
-      ['Các số đến 9',                 10, 7],
+      ['Tư duy số học',                 10, 7],
       ['Phép cộng & phép trừ',         10, 6],
       ['Phân loại',                    6, 4],
       ['Đo lường',                     8, 5],
@@ -3384,7 +3386,7 @@ const __MOCK_PROFILES = {
     class: '2018-11-10', age: 'Lớp 1', teacher: 'Cô Mai',
     // t-kt: 13/40 (~33%)
     kt: [
-      ['Các số đến 9',                 10, 4],
+      ['Tư duy số học',                 10, 4],
       ['Phép cộng & phép trừ',         10, 3],
       ['Phân loại',                    6, 2],
       ['Đo lường',                     8, 3],
@@ -3405,7 +3407,7 @@ const __MOCK_PROFILES = {
     class: '2018-03-12', age: 'Lớp 1', teacher: 'Cô Mai',
     // KTCB mạnh: 32/40 (80%)
     kt: [
-      ['Các số đến 9',                 10, 9],
+      ['Tư duy số học',                 10, 9],
       ['Phép cộng & phép trừ',         10, 9],
       ['Phân loại',                    6, 5],
       ['Đo lường',                     8, 6],
@@ -3494,7 +3496,7 @@ function loadSample(){
 
   // Kiến thức cơ bản — A,B,C,D,E
   fillRows('t-kt',[
-    ['Các số đến 9',5,2],
+    ['Tư duy số học',5,2],
     ['Phép cộng & phép trừ',5,4],
     ['Phân loại',3,0],
     ['Đo lường',4,2],
@@ -3656,7 +3658,7 @@ function slog(msg, type){
 
 /* ── CSV mẫu nhúng sẵn (Đinh Mạnh Hùng — từ PDF CMS chuẩn) — chạy được offline 100% ──
    Data balanced: KTCB 60% · Năng lực 52% → mức KHÁ → mọi visualization có ý nghĩa */
-const __SAMPLE_CSV = "ĐÁNH GIÁ ĐẦU KÌ,,,,,,,,,,,,,,,,,,,,,\nTÊN,Đinh Mạnh Hùng,,NĂM SINH,2016-05-28,,,,,,,,,,,,,,,,,\nLỚP,Trung tâm - Phố Huế,,,,,,,,,,,,,,,,,,,,\n,,,,,,,,,,,,,,,,,,,,,\nKIẾN THỨC CƠ BẢN,,,,,,,,,,,,,,,,,,,,,\nKẾT QUẢ ĐÁNH GIÁ THEO CÂU HỎI RIÊNG BIỆT,,,,,ĐÁNH GIÁ THEO ĐƠN VỊ RIÊNG BIỆT,,,,,,,,,,,,,,,,\nMỤC,ĐƠN VỊ,ĐÁP ÁN,KẾT QUẢ,,ĐƠN VỊ,PHÂN LOẠI,TIÊU CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,,,,,,,,,\n1,A,4,X,,A,Các số đến 9,5,2,0.4,,,,,,,,,,,,\n2,C,2,X,,B,Phép cộng và phép trừ,5,2,0.4,,,,,,,,,,,,\n3,B,5,X,,C,Phân loại,3,1,0.33,,,,,,,,,,,,\n4,E,1,O,,D,Đo lường,4,4,1,,,,,,,,,,,,\n5,B,3,O,,E,Các hình dạng khác nhau,3,3,1,,,,,,,,,,,,\n6,B,0,X,,TỔNG,,20,12,0.6,,,,,,,,,,,,\n7,D,2,O,,,,,,,,,,,,,,,,,,\n8,A,0,X,,SO SÁNH KHẢ NĂNG GIẢI TOÁN CÓ/KHÔNG CÓ LỜI VĂN,,,,,,,,,,,,,,,,\n9,C,5,O,,PHÂN LOẠI,TIÊU CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,,,,,,,,,,\n10,B,2,X,,Bài toán có lời văn,13,8,0.62,,,,,,,,,,,,,\n11,D,4,O,,Bài toán cơ bản,7,4,0.57,,,,,,,,,,,,,\n12,D,3,O,,,,,,,,,,,,,,,,,,\n13,B,3,O,,,,,,,,,,,,,,,,,,\n14,E,2,O,,,,,,,,,,,,,,,,,,\n15,E,2,O,,,,,,,,,,,,,,,,,,\n16,A,3,O,,,,,,,,,,,,,,,,,,\n17,A,4,O,,,,,,,,,,,,,,,,,,\n18,D,5,O,,,,,,,,,,,,,,,,,,\n19,C,5,X,,,,,,,,,,,,,,,,,,\n20,A,0,X,,,,,,,,,,,,,,,,,,\n,,,,,,,,,,,,,,,,,,,,,\nTƯ DUY TOÁN HỌC,,,,,,,,,,,,,,,,,,,,,\nKẾT QUẢ ĐÁNH GIÁ THEO CÂU HỎI RIÊNG BIỆT,,,,,ĐÁNH GIÁ THEO LĨNH VỰC,,,,,,,SO SÁNH NĂNG LỰC GIẢI QUYẾT VẤN ĐỀ THEO CẤP ĐỘ,,,,,,,,,\nMỤC,,ĐIỂM CHUẨN,TỔNG,,PHÂN LOẠI,NỘI DUNG ĐÁNH GIÁ,CÂU,ĐIỂM CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,PHÂN LOẠI,SỐ LƯỢNG CÂU,CỤ THỂ,ĐIỂM CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,\n,,,,,,,,,,,,,,,,,,,,,\nNĂNG LỰC TƯ DUY CƠ BẢN,1,5,0,,A. Khả năng hiểu toán,\"Áp dụng kiến thức đã học, lập luận để giải quyết những bài toán mới.\",\"2,3,5,7,8,9\",34,16,0.47,,KHÓ,3,\"8,9,10\",25,13,0.52,,,,\n,2,5,1,,B. Khả năng quan sát trực quan,Tìm ra mối quan hệ hoặc bản chất sự vật thông qua trực quan.,\"1,3,4,6,10\",31,20,0.65,,TRUNG BÌNH,4,\"4,5,6,7\",20,12,0.6,,,,\n,3,5,5,,C. Khả năng tổng hợp thông tin,\"Thu thập thông tin cần thiết, phân loại và giải quyết vấn đề.\",\"1,2,5,6,7,8,9\",39,16,0.41,,DỄ,3,\"1,2,3\",15,6,0.4,,,,\n,4,5,0,,D. Khả năng dự đoán toán học,Vận dụng và công thức hóa khái niệm toán học phù hợp.,\"4,5,6,7,10\",31,22,0.71,,TỔNG,,,60,31,0.52,,,,\n,5,5,5,,E. Khả năng nhận thức không gian,Phát hiện và giải quyết bài toán về hình học phẳng và không gian.,\"2,3,7,9,10\",33,19,0.58,,,,,,,,,,,\n,6,5,5,,F. Khả năng suy luận toán học,Sử dụng các phương pháp như quy nạp hay diễn dịch.,\"4,5,8,9\",24,8,0.33,,,,,,,,,,,\n,7,5,2,,TỔNG,,,192,101,0.526,,,,,,,,,,,\nTƯ DUY TOÁN HỌC,8,7,2,,,,,,,,,,,,,,,,,,\n,9,7,1,,,,,,,,,,,,,,,,,,\nÝ TƯỞNG SÁNG TẠO - GIẢI QUYẾT VẤN ĐỀ,10,11,10,,,,,,,,,,,,,,,,,,\n";
+const __SAMPLE_CSV = "ĐÁNH GIÁ ĐẦU KÌ,,,,,,,,,,,,,,,,,,,,,\nTÊN,Đinh Mạnh Hùng,,NĂM SINH,2016-05-28,,,,,,,,,,,,,,,,,\nLỚP,Trung tâm - Phố Huế,,,,,,,,,,,,,,,,,,,,\n,,,,,,,,,,,,,,,,,,,,,\nKIẾN THỨC CƠ BẢN,,,,,,,,,,,,,,,,,,,,,\nKẾT QUẢ ĐÁNH GIÁ THEO CÂU HỎI RIÊNG BIỆT,,,,,ĐÁNH GIÁ THEO ĐƠN VỊ RIÊNG BIỆT,,,,,,,,,,,,,,,,\nMỤC,ĐƠN VỊ,ĐÁP ÁN,KẾT QUẢ,,ĐƠN VỊ,PHÂN LOẠI,TIÊU CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,,,,,,,,,\n1,A,4,X,,A,Tư duy số học,5,2,0.4,,,,,,,,,,,,\n2,C,2,X,,B,Phép cộng và phép trừ,5,2,0.4,,,,,,,,,,,,\n3,B,5,X,,C,Phân loại,3,1,0.33,,,,,,,,,,,,\n4,E,1,O,,D,Đo lường,4,4,1,,,,,,,,,,,,\n5,B,3,O,,E,Các hình dạng khác nhau,3,3,1,,,,,,,,,,,,\n6,B,0,X,,TỔNG,,20,12,0.6,,,,,,,,,,,,\n7,D,2,O,,,,,,,,,,,,,,,,,,\n8,A,0,X,,SO SÁNH KHẢ NĂNG GIẢI TOÁN CÓ/KHÔNG CÓ LỜI VĂN,,,,,,,,,,,,,,,,\n9,C,5,O,,PHÂN LOẠI,TIÊU CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,,,,,,,,,,\n10,B,2,X,,Bài toán có lời văn,13,8,0.62,,,,,,,,,,,,,\n11,D,4,O,,Bài toán cơ bản,7,4,0.57,,,,,,,,,,,,,\n12,D,3,O,,,,,,,,,,,,,,,,,,\n13,B,3,O,,,,,,,,,,,,,,,,,,\n14,E,2,O,,,,,,,,,,,,,,,,,,\n15,E,2,O,,,,,,,,,,,,,,,,,,\n16,A,3,O,,,,,,,,,,,,,,,,,,\n17,A,4,O,,,,,,,,,,,,,,,,,,\n18,D,5,O,,,,,,,,,,,,,,,,,,\n19,C,5,X,,,,,,,,,,,,,,,,,,\n20,A,0,X,,,,,,,,,,,,,,,,,,\n,,,,,,,,,,,,,,,,,,,,,\nTƯ DUY TOÁN HỌC,,,,,,,,,,,,,,,,,,,,,\nKẾT QUẢ ĐÁNH GIÁ THEO CÂU HỎI RIÊNG BIỆT,,,,,ĐÁNH GIÁ THEO LĨNH VỰC,,,,,,,SO SÁNH NĂNG LỰC GIẢI QUYẾT VẤN ĐỀ THEO CẤP ĐỘ,,,,,,,,,\nMỤC,,ĐIỂM CHUẨN,TỔNG,,PHÂN LOẠI,NỘI DUNG ĐÁNH GIÁ,CÂU,ĐIỂM CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,PHÂN LOẠI,SỐ LƯỢNG CÂU,CỤ THỂ,ĐIỂM CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,\n,,,,,,,,,,,,,,,,,,,,,\nNĂNG LỰC TƯ DUY CƠ BẢN,1,5,0,,A. Khả năng hiểu toán,\"Áp dụng kiến thức đã học, lập luận để giải quyết những bài toán mới.\",\"2,3,5,7,8,9\",34,16,0.47,,KHÓ,3,\"8,9,10\",25,13,0.52,,,,\n,2,5,1,,B. Khả năng quan sát trực quan,Tìm ra mối quan hệ hoặc bản chất sự vật thông qua trực quan.,\"1,3,4,6,10\",31,20,0.65,,TRUNG BÌNH,4,\"4,5,6,7\",20,12,0.6,,,,\n,3,5,5,,C. Khả năng tổng hợp thông tin,\"Thu thập thông tin cần thiết, phân loại và giải quyết vấn đề.\",\"1,2,5,6,7,8,9\",39,16,0.41,,DỄ,3,\"1,2,3\",15,6,0.4,,,,\n,4,5,0,,D. Khả năng dự đoán toán học,Vận dụng và công thức hóa khái niệm toán học phù hợp.,\"4,5,6,7,10\",31,22,0.71,,TỔNG,,,60,31,0.52,,,,\n,5,5,5,,E. Khả năng nhận thức không gian,Phát hiện và giải quyết bài toán về hình học phẳng và không gian.,\"2,3,7,9,10\",33,19,0.58,,,,,,,,,,,\n,6,5,5,,F. Khả năng suy luận toán học,Sử dụng các phương pháp như quy nạp hay diễn dịch.,\"4,5,8,9\",24,8,0.33,,,,,,,,,,,\n,7,5,2,,TỔNG,,,192,101,0.526,,,,,,,,,,,\nTƯ DUY TOÁN HỌC,8,7,2,,,,,,,,,,,,,,,,,,\n,9,7,1,,,,,,,,,,,,,,,,,,\nÝ TƯỞNG SÁNG TẠO - GIẢI QUYẾT VẤN ĐỀ,10,11,10,,,,,,,,,,,,,,,,,,\n";
 
 function loadSampleCSV(){
   slog('▶ Bắt đầu load CSV nhúng sẵn','');
@@ -4253,6 +4255,7 @@ const __LABEL_MIGRATION = {
   // t-kt cũ
   'Các dạng toán tư duy mở rộng':'Các kiến thức toán tư duy khác',
   'Các hình dạng khác nhau':'Các kiến thức toán tư duy khác',
+  'Các số đến 9':'Tư duy số học',
   // t-nl: cả phiên bản gốc, phiên bản "Khả năng ...", và phiên bản "Tư duy ..." trước → short form mới
   'Khả năng hiểu toán':'Giải quyết vấn đề',
   'Hiểu toán':'Giải quyết vấn đề',

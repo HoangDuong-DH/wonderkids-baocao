@@ -2379,11 +2379,16 @@ function renderNestedDonut(id, pct1, pct2, level1, level2){
   if(pct2!=null){
     el.appendChild(mkC({cx,cy,r:R2,fill:'none',stroke:col2,'stroke-width':SW2,'stroke-dasharray':C2.toFixed(2),'stroke-dashoffset':off2.toFixed(2),transform:`rotate(-90 ${cx} ${cy})`,'stroke-linecap':'round'}));
   }
-  // Center labels (2 rings %)
-  const p1Txt = pct1!=null ? Math.round(pct1*100)+'%' : '—';
-  const p2Txt = pct2!=null ? Math.round(pct2*100)+'%' : '—';
-  el.appendChild(mkT({x:cx, y:cy-4, 'text-anchor':'middle', 'font-family':'Be Vietnam Pro,sans-serif', 'font-weight':'800', 'font-size':16, fill:col1}, p1Txt));
-  el.appendChild(mkT({x:cx, y:cy+14, 'text-anchor':'middle', 'font-family':'Be Vietnam Pro,sans-serif', 'font-weight':'800', 'font-size':14, fill:col2}, p2Txt));
+  // Center label = single TB% (average) — số chi tiết đã có trong info-row, không lặp lại
+  const hasP1 = pct1!=null, hasP2 = pct2!=null;
+  let avgPct = null;
+  if(hasP1 && hasP2)      avgPct = (pct1+pct2)/2;
+  else if(hasP1)          avgPct = pct1;
+  else if(hasP2)          avgPct = pct2;
+  const avgTxt = avgPct!=null ? Math.round(avgPct*100)+'%' : '—';
+  const avgCol = avgPct!=null ? (_chartColor(avgPct) || '#e94e1b') : '#9aa0a6';
+  el.appendChild(mkT({x:cx, y:cy-6, 'text-anchor':'middle', 'font-family':'Be Vietnam Pro,sans-serif', 'font-weight':'700', 'font-size':10, fill:'#8a8f99', 'letter-spacing':'0.06em'}, 'TRUNG BÌNH'));
+  el.appendChild(mkT({x:cx, y:cy+15, 'text-anchor':'middle', 'font-family':'Be Vietnam Pro,sans-serif', 'font-weight':'800', 'font-size':22, fill:avgCol}, avgTxt));
 }
 function _setSumcardAccent(cardSel, level){
   const card=document.querySelector(cardSel); if(!card) return;

@@ -223,6 +223,22 @@ body{
 .legend .dot.l{background:var(--g-L)}
 
 /* ───── MAIN 2-COL ───── */
+/* ─── VIZ ROW: Radar + Donut song song ở TOP, abilities full-width bên dưới ─── */
+.viz-row{
+  display:grid;grid-template-columns:1.3fr 1fr;gap:18px;
+  padding:0 44px;margin-bottom:22px;align-items:stretch;
+}
+.viz-box{display:flex;flex-direction:column}
+.viz-box .sec-h{margin-bottom:8px}
+.viz-box .s4,.viz-box .s5{
+  flex:1;background:#fff;border:2px solid var(--hair-soft);
+  border-radius:16px;padding:14px 18px;box-shadow:0 4px 0 #fcecc4;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.detail-section{padding:0 44px;margin-bottom:22px}
+.detail-section .sec-h{margin-bottom:10px}
+.s2-full{display:flex;flex-direction:column;gap:14px}
+
 .main-2{
   display:grid;grid-template-columns:1.4fr 1fr;gap:18px;
   padding:0 44px;margin-top:22px;
@@ -576,7 +592,7 @@ body{
           <span class="ttl"><small>Năng lực 01</small>Tư duy cơ bản</span>
         </div>
         <span class="grade">C</span>
-        <span class="lbl">TRUNG BÌNH</span>
+        <span class="lbl">MỨC C</span>
         <span class="bar"><i></i></span>
       </div>
       <div class="s1-card c2">
@@ -585,7 +601,7 @@ body{
           <span class="ttl"><small>Năng lực 02</small>Tư duy toán học</span>
         </div>
         <span class="grade">C</span>
-        <span class="lbl">TRUNG BÌNH</span>
+        <span class="lbl">MỨC C</span>
         <span class="bar"><i></i></span>
       </div>
       <div class="s1-card c3">
@@ -594,7 +610,7 @@ body{
           <span class="ttl"><small>Năng lực 03</small>Tư duy logic</span>
         </div>
         <span class="grade">C</span>
-        <span class="lbl">TRUNG BÌNH</span>
+        <span class="lbl">MỨC C</span>
         <span class="bar"><i></i></span>
       </div>
       <div class="s1-card l4">
@@ -603,7 +619,7 @@ body{
           <span class="ttl"><small>Năng lực 04</small>Tư duy sáng tạo</span>
         </div>
         <span class="grade">L</span>
-        <span class="lbl">CẦN HỖ TRỢ</span>
+        <span class="lbl">MỨC L</span>
         <span class="bar"><i></i></span>
       </div>
     </div>
@@ -617,11 +633,32 @@ body{
     </div>
   </div>
 
-  <!-- ─── MAIN 2-COL: SECTIONS 2 / 3-4-5 ─── -->
-  <div class="main-2">
-    <!-- LEFT: SECTION 2 -->
-    <div>
-      <div class="sec-h"><span class="num">2</span>Kết quả đánh giá chi tiết</div>
+  <!-- ─── SECTION 2: VISUALIZATION (Radar + Donut song song) ─── -->
+  <div class="viz-row">
+    <div class="viz-box">
+      <div class="sec-h"><span class="num">2</span>Hình dáng năng lực — Radar</div>
+      <div class="s4">
+        <svg id="radar-chart" class="radar-chart" viewBox="-30 -10 380 320"></svg>
+        <div class="radar-legend">
+          <span><span class="sw"></span>Năng lực của bé <span data-name>Bách</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="viz-box">
+      <div class="sec-h"><span class="num">3</span>Phân bố mức độ chi tiết</div>
+      <div class="s5">
+        <div class="donut-wrap">
+          <svg id="donut-chart" class="donut-chart" viewBox="0 0 140 140"></svg>
+          <div class="donut-info" id="donut-info"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION 4: CHI TIẾT NĂNG LỰC (full-width) ─── -->
+  <div class="detail-section">
+    <div class="sec-h"><span class="num">4</span>Kết quả đánh giá chi tiết</div>
+    <div class="s2-full">
       <div class="s2">
         <!-- TƯ DUY CƠ BẢN -->
         <div class="ability gC">
@@ -629,7 +666,7 @@ body{
             <span class="ico eye"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span>
             <span class="ttl"><small>Nhóm 01</small>Tư duy cơ bản</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">TRUNG BÌNH</span>
+            <span class="mval">MỨC C</span>
             <span class="grade-big">C</span>
           </div>
           <table>
@@ -648,7 +685,7 @@ body{
             <span class="ico calc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h4"/></svg></span>
             <span class="ttl"><small>Nhóm 02</small>Tư duy toán học</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">TRUNG BÌNH</span>
+            <span class="mval">MỨC C</span>
             <span class="grade-big">C</span>
           </div>
           <table>
@@ -669,7 +706,7 @@ body{
             <span class="ico brain"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 4 7 7c-2 0-4 2-4 4 0 2 1 3 2 4-1 1-1 3 0 4 0 2 2 4 4 4 0 1 1 2 3 2s3-1 3-2c2 0 4-2 4-4 1-1 1-3 0-4 1-1 2-2 2-4 0-2-2-4-4-4 0-3-2-5-5-5z"/></svg></span>
             <span class="ttl"><small>Nhóm 03</small>Tư duy logic</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">TRUNG BÌNH</span>
+            <span class="mval">MỨC C</span>
             <span class="grade-big">C</span>
           </div>
           <table>
@@ -689,7 +726,7 @@ body{
             <span class="ico bulb"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
             <span class="ttl"><small>Nhóm 04</small>Tư duy sáng tạo</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">CẦN HỖ TRỢ</span>
+            <span class="mval">MỨC L</span>
             <span class="grade-big">L</span>
           </div>
           <table>
@@ -704,27 +741,7 @@ body{
         </div>
       </div>
     </div>
-
-    <!-- RIGHT COLUMN -->
-    <div>
-      <div class="sec-h"><span class="num">3</span>Hình dáng năng lực — Radar</div>
-      <div class="s4">
-        <svg id="radar-chart" class="radar-chart" viewBox="-30 -10 380 320"></svg>
-        <div class="radar-legend">
-          <span><span class="sw"></span>Năng lực của bé <span data-name>Bách</span></span>
-        </div>
-      </div>
-
-      <div class="sec-h"><span class="num">4</span>Phân bố mức độ chi tiết</div>
-      <div class="s5">
-        <div class="donut-wrap">
-          <svg id="donut-chart" class="donut-chart" viewBox="0 0 140 140"></svg>
-          <div class="donut-info" id="donut-info"></div>
-        </div>
-      </div>
-    </div>
   </div>
-
   <!-- ─── SECTION 5: NHẬN XÉT & ĐỊNH HƯỚNG ─── -->
   <div class="s6">
     <div class="sec-h"><span class="num">5</span>Nhận xét chung &amp; Định hướng</div>

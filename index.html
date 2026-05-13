@@ -3818,17 +3818,51 @@ const __migratedFromV2 = migrateV2();
 setupAutoGrowFields();
 _disableBrowserAutocomplete(); // áp dụng lại trên các textarea mới
 
-// 3) Migration label cũ
+// 3) Migration label cũ → label mới (t-kt + t-nl)
 const __LABEL_MIGRATION = {
-  'Các dạng toán tư duy mở rộng':'Các hình dạng khác nhau',
+  // t-kt cũ
+  'Các dạng toán tư duy mở rộng':'Các kiến thức toán tư duy khác',
+  'Các hình dạng khác nhau':'Các kiến thức toán tư duy khác',
+  // t-nl cũ → Tư duy ... mới (theo thứ tự dòng)
+  'Khả năng hiểu toán':'Tư duy giải quyết vấn đề',
+  'Hiểu toán':'Tư duy giải quyết vấn đề',
+  'Quan sát trực quan':'Tư duy logic và quan sát',
+  'Khả năng quan sát trực quan':'Tư duy logic và quan sát',
+  'Tổng hợp thông tin':'Tư duy phân tích và phân loại',
+  'Khả năng tổng hợp thông tin':'Tư duy phân tích và phân loại',
+  'Dự đoán toán học':'Tư duy số và ký hiệu',
+  'Khả năng dự đoán toán học':'Tư duy số và ký hiệu',
+  'Nhận thức không gian':'Tư duy không gian và hình học',
+  'Khả năng nhận thức không gian':'Tư duy không gian và hình học',
+  'Suy luận toán học':'Tư duy suy luận toán học',
+  'Khả năng suy luận toán học':'Tư duy suy luận toán học',
 };
-document.querySelectorAll('.tbl .label-cell').forEach(el=>{
-  if(__LABEL_MIGRATION[el.value]) el.value=__LABEL_MIGRATION[el.value];
-});
+function __runLabelMigration(){
+  let changed = 0;
+  document.querySelectorAll('.tbl .label-cell').forEach(el=>{
+    const v = (el.value||'').trim();
+    if(__LABEL_MIGRATION[v]){ el.value=__LABEL_MIGRATION[v]; changed++; }
+  });
+  // Fill desc-cell rỗng bằng default từ DEFAULT_DESCS
+  if(typeof DEFAULT_DESCS!=='undefined'){
+    for(const [tid,descs] of Object.entries(DEFAULT_DESCS)){
+      document.querySelectorAll(`#${tid} tbody tr[data-row] input.desc-cell`).forEach((inp,i)=>{
+        if(!(inp.value||'').trim() && descs[i]){ inp.value=descs[i]; changed++; }
+      });
+    }
+  }
+  return changed;
+}
+__runLabelMigration();
 
 // 4) Nạp v3 nếu có, không thì giữ data đã migrate từ v2
 if(!__migratedFromV2) loadSaved();
 else { saveNow(); localStorage.removeItem('wk-baocao-v2'); }
+
+// 4b) Migration LẠI sau loadSaved — vì loadSaved có thể restore label cũ
+//     từ saved state. Đảm bảo người dùng luôn thấy label mới.
+const __postLoadMigrated = __runLabelMigration();
+if(__postLoadMigrated > 0){ setTimeout(()=>{ try{ saveNow(); }catch(_){} }, 200); }
 
 refreshSummary();
 autoGrowAll();

@@ -229,18 +229,26 @@ body{
 .merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:center}
 .merged-donut-wrap svg{width:220px;height:220px;display:block}
 .merged-info-stack{display:flex;flex-direction:column;gap:10px;justify-content:center}
-/* Radar trong section 2 (Tư duy) — full-width sibling, KHÔNG trong grid s2 nữa */
+/* Insight row 2-col: LEFT = qscore + cluster | RIGHT = radar (song song) */
+.s2-insight-row{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:14px;align-items:stretch;margin:6px 0;
+}
+.s2-insight-left{display:flex;flex-direction:column;gap:10px;min-width:0}
+.s2-insight-left .qscore-wrap,
+.s2-insight-left .cluster-bars{margin:0 !important}
+
 .s2-radar{
-  margin:6px 0;
+  margin:0;display:flex;flex-direction:column;
   background:#fffaf0;border:1.5px solid #f3d9a6;border-radius:10px;
-  padding:10px 14px 8px;
+  padding:10px 12px 6px;min-width:0;
 }
 .s2-radar .chart-title{
   font:800 12px var(--font-body);color:var(--c-primary-2);
-  text-align:center;margin:0 0 4px;letter-spacing:.02em;
+  text-align:center;margin:0 0 2px;letter-spacing:.02em;
 }
-.s2-radar .chart-svg{display:flex;align-items:center;justify-content:center}
-.s2-radar .chart-svg svg{width:100%;max-width:680px;max-height:340px;height:auto;display:block}
+.s2-radar .chart-svg{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.s2-radar .chart-svg svg{width:100%;max-height:320px;height:auto;display:block}
 
 /* Info-card: 2 cards side-by-side, NOT square — each has extended Nhận xét */
 .merged-info-stack{
@@ -1117,10 +1125,12 @@ body.print-preview .quick-actions{display:none !important}
     padding:4px 7px !important;background:rgba(255,255,255,.45) !important;
     border:1px dashed rgba(0,0,0,.18) !important;border-radius:6px !important;
   }
-  /* Radar trong section 2 — compact print */
-  .s2-radar{margin-top:5px !important;padding:7px 10px 5px !important;border-radius:8px !important}
-  .s2-radar .chart-title{font-size:10.5px !important;margin-bottom:2px !important}
-  .s2-radar .chart-svg svg{max-height:230px !important}
+  /* Insight row: qscore + cluster bên trái song song với radar bên phải */
+  .s2-insight-row{display:grid !important;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) !important;gap:10px !important;margin:5px 0 !important;align-items:stretch !important}
+  .s2-insight-left{display:flex !important;flex-direction:column !important;gap:7px !important;min-width:0 !important}
+  .s2-radar{margin:0 !important;padding:6px 9px 4px !important;border-radius:8px !important}
+  .s2-radar .chart-title{font-size:10px !important;margin-bottom:1px !important}
+  .s2-radar .chart-svg svg{max-height:210px !important}
   .sumcard .level .lab{font-size:9.5px;padding:4px 12px}
   .sumcard .level select{font-size:10.5px;padding:4px 22px 4px 12px}
   .sumcard textarea,.sumcard .ta-print-mirror{
@@ -1643,29 +1653,34 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <span>2. TƯ DUY TOÁN HỌC – CHI TIẾT</span>
   </div>
 
-  <!-- Thứ tự mới: bảng kết quả từng câu → charts (cluster + radar) → 2 bảng chi tiết -->
+  <!-- Insight row: LEFT = qscore + cluster bars (stack) | RIGHT = radar -->
+  <div class="s2-insight-row">
+    <div class="s2-insight-left">
+      <!-- 1) Bảng kết quả 10 câu tư duy toán -->
+      <div class="qscore-wrap" id="qscore-wrap">
+        <div class="qscore-head">
+          <span class="ttl">🧠 Điểm chi tiết 10 câu tư duy toán</span>
+          <span class="sum" id="qscore-sum">Tổng <b>—</b> / <b>—</b> điểm</span>
+        </div>
+        <table class="qscore" id="qscore">
+          <tr class="qs-num"><th>Câu</th></tr>
+          <tr class="qs-max"><th>Điểm chuẩn</th></tr>
+          <tr class="qs-cur"><th>Điểm đạt</th></tr>
+        </table>
+      </div>
 
-  <!-- 1) Bảng kết quả 10 câu tư duy toán -->
-  <div class="qscore-wrap" id="qscore-wrap">
-    <div class="qscore-head">
-      <span class="ttl">🧠 Điểm chi tiết 10 câu tư duy toán</span>
-      <span class="sum" id="qscore-sum">Tổng <b>—</b> / <b>—</b> điểm</span>
+      <!-- 2a) Cluster bars (chart cột) -->
+      <div class="cluster-bars" id="cluster-bars">
+        <div class="cl-title">📊 Theo nhóm năng lực tư duy</div>
+        <div id="cluster-rows"></div>
+      </div>
     </div>
-    <table class="qscore" id="qscore">
-      <tr class="qs-num"><th>Câu</th></tr>
-      <tr class="qs-max"><th>Điểm chuẩn</th></tr>
-      <tr class="qs-cur"><th>Điểm đạt</th></tr>
-    </table>
-  </div>
 
-  <!-- 2) Charts: Cluster bars + Radar 6 lĩnh vực -->
-  <div class="cluster-bars" id="cluster-bars">
-    <div class="cl-title">📊 Theo nhóm năng lực tư duy</div>
-    <div id="cluster-rows"></div>
-  </div>
-  <div class="s2-radar chart-box">
-    <div class="chart-title">🎯 Radar năng lực — 6 lĩnh vực</div>
-    <div class="chart-svg" id="chart-nl-radar"></div>
+    <!-- 2b) Radar 6 lĩnh vực — song song bên phải -->
+    <div class="s2-radar chart-box">
+      <div class="chart-title">🎯 Radar năng lực — 6 lĩnh vực</div>
+      <div class="chart-svg" id="chart-nl-radar"></div>
+    </div>
   </div>
 
   <!-- 3) 2 bảng chi tiết: Theo lĩnh vực + Theo cấp độ -->

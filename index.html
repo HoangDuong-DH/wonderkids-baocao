@@ -1759,14 +1759,26 @@ function _wrapLbl(s, max){
   s=String(s||'').trim();
   if(s.length<=max || !s.includes(' ')) return [s];
   const words=s.split(/\s+/);
-  let l1='', l2='';
-  for(const w of words){
-    if(!l2 && (l1?l1+' '+w:w).length<=max) l1=l1?l1+' '+w:w;
-    else l2=l2?l2+' '+w:w;
+  // Tìm split point cho 2 dòng cân nhất (cả 2 dòng đều ≤ max)
+  let best=null;
+  for(let i=1;i<words.length;i++){
+    const l1=words.slice(0,i).join(' ');
+    const l2=words.slice(i).join(' ');
+    if(l1.length<=max && l2.length<=max){
+      const score=Math.abs(l1.length-l2.length);
+      if(!best || score<best.score) best={l1,l2,score};
+    }
   }
-  // Nếu l2 quá dài, cắt với dấu …
-  if(l2.length>max+2) l2=l2.slice(0,max)+'…';
-  return l2 ? [l1,l2] : [l1];
+  if(best) return [best.l1,best.l2];
+  // Fallback: greedy 3+ dòng, KHÔNG truncate (giữ trọn nghĩa)
+  const lines=[''];
+  for(const w of words){
+    const cur=lines[lines.length-1];
+    const next=cur?cur+' '+w:w;
+    if(next.length<=max || !cur) lines[lines.length-1]=next;
+    else lines.push(w);
+  }
+  return lines;
 }
 
 function _tblData(tableId){
@@ -1883,8 +1895,8 @@ function renderRadarChart(containerId, tableId, chartType){
   const maxPct=Math.max(...data.map(d=>d.pct));
   const avgPct=data.reduce((s,d)=>s+d.pct,0)/data.length;
   const sc=_autoScale(maxPct);
-  // ViewBox rộng để có chỗ cho label 2 dòng ở sides
-  const W=480, H=360, cx=W/2, cy=H/2, R=Math.min(W,H)*0.30;
+  // ViewBox rộng để có chỗ cho label 2-3 dòng ở sides (không cắt nghĩa)
+  const W=540, H=380, cx=W/2, cy=H/2, R=Math.min(W,H)*0.28;
   const n=data.length;
   const ang = i => (-Math.PI/2)+i*2*Math.PI/n;
   const fmt = (x)=> Number.isInteger(x)?x:(+x.toFixed(2));
@@ -2382,7 +2394,7 @@ function renderNestedDonut(id, pct1, pct2, level1, level2){
   if(pct2!=null){
     el.appendChild(mkC({cx,cy,r:R2,fill:'none',stroke:col2,'stroke-width':SW2,'stroke-dasharray':C2.toFixed(2),'stroke-dashoffset':off2.toFixed(2),transform:`rotate(-90 ${cx} ${cy})`,'stroke-linecap':'round'}));
   }
-  // Center label = single TB% (average) — số chi tiết đã có trong info-row, không lặp lại
+  // Center: số % trung bình duy nhất, căn giữa
   const hasP1 = pct1!=null, hasP2 = pct2!=null;
   let avgPct = null;
   if(hasP1 && hasP2)      avgPct = (pct1+pct2)/2;
@@ -2390,8 +2402,7 @@ function renderNestedDonut(id, pct1, pct2, level1, level2){
   else if(hasP2)          avgPct = pct2;
   const avgTxt = avgPct!=null ? Math.round(avgPct*100)+'%' : '—';
   const avgCol = avgPct!=null ? (_chartColor(avgPct) || '#e94e1b') : '#9aa0a6';
-  el.appendChild(mkT({x:cx, y:cy-6, 'text-anchor':'middle', 'font-family':'Be Vietnam Pro,sans-serif', 'font-weight':'700', 'font-size':10, fill:'#8a8f99', 'letter-spacing':'0.06em'}, 'TRUNG BÌNH'));
-  el.appendChild(mkT({x:cx, y:cy+15, 'text-anchor':'middle', 'font-family':'Be Vietnam Pro,sans-serif', 'font-weight':'800', 'font-size':22, fill:avgCol}, avgTxt));
+  el.appendChild(mkT({x:cx, y:cy+10, 'text-anchor':'middle', 'font-family':'Be Vietnam Pro,sans-serif', 'font-weight':'800', 'font-size':30, fill:avgCol}, avgTxt));
 }
 function _setSumcardAccent(cardSel, level){
   const card=document.querySelector(cardSel); if(!card) return;

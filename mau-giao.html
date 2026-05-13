@@ -187,40 +187,111 @@ body{
 /* ───── SECTION 1 OVERVIEW ───── */
 .s1-desc{font:500 13.5px/1.55 var(--font-body);color:var(--ink-soft);margin:0 0 14px;max-width:900px}
 .s1-desc b{color:var(--ink);font-weight:700}
-.s1-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.s1-card{
-  background:#fff;border:2px solid var(--hair-soft);
-  border-radius:16px;padding:16px 14px;text-align:center;
-  display:flex;flex-direction:column;gap:8px;align-items:center;
-  box-shadow:0 4px 0 #fcecc4;
+/* HERO GRID: cards 2x2 trái + radar phải — section 1 tổng quan */
+.hero-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  align-items:stretch;margin-top:8px;
 }
-.s1-card .head{display:flex;align-items:center;gap:10px;width:100%;justify-content:flex-start}
+.hero-radar{
+  background:#fff;border:1.5px solid var(--hair-soft);border-radius:18px;
+  padding:14px 18px 8px;box-shadow:0 4px 0 #fcecc4;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.hero-radar-ttl{
+  font:700 13px/1 var(--font-display);color:var(--orange-deep);
+  letter-spacing:.03em;margin-bottom:2px;
+}
+.hero-radar .radar-chart{width:100%;height:300px}
+
+/* S1-CARDS REDESIGN — 2x2 grid với card hiện đại hơn */
+.s1-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:stretch}
+.s1-card{
+  background:#fff;border:1.5px solid var(--hair-soft);
+  border-radius:16px;padding:14px;
+  display:grid;grid-template-columns:auto 1fr;
+  grid-template-rows:auto auto auto;
+  column-gap:14px;row-gap:8px;
+  box-shadow:0 4px 0 #fcecc4;
+  position:relative;overflow:hidden;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.s1-card:hover{transform:translateY(-2px);box-shadow:0 6px 0 #fcecc4,0 6px 16px rgba(0,0,0,.06)}
+/* Top accent stripe màu theo grade */
+.s1-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--g-C);
+}
+.s1-card[data-grade="S"]::before{background:var(--g-S)}
+.s1-card[data-grade="A"]::before{background:var(--g-A)}
+.s1-card[data-grade="B"]::before{background:var(--g-B)}
+.s1-card[data-grade="C"]::before{background:var(--g-C)}
+.s1-card[data-grade="L"]::before{background:var(--g-L)}
+
+.s1-card .head{
+  grid-column:1 / -1;grid-row:1;
+  display:flex;align-items:center;gap:10px;
+  margin-top:2px;
+}
 .s1-card .head .ico{
-  width:38px;height:38px;border-radius:11px;
+  width:36px;height:36px;border-radius:10px;
   background:var(--g-C-bg);color:var(--g-C);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .2s ease,color .2s ease;
 }
-.s1-card.l4 .head .ico{background:var(--g-L-bg);color:var(--g-L)}
-.s1-card .head .ttl{
-  font:700 13px/1.15 var(--font-display);color:var(--ink);text-align:left;
+.s1-card[data-grade="S"] .head .ico{background:var(--g-S-bg);color:var(--g-S)}
+.s1-card[data-grade="A"] .head .ico{background:var(--g-A-bg);color:var(--g-A)}
+.s1-card[data-grade="B"] .head .ico{background:var(--g-B-bg);color:var(--g-B)}
+.s1-card[data-grade="C"] .head .ico{background:var(--g-C-bg);color:var(--g-C)}
+.s1-card[data-grade="L"] .head .ico{background:var(--g-L-bg);color:var(--g-L)}
+.s1-card .head .ttl{flex:1;min-width:0}
+.s1-card .head .ttl small{display:block;font:600 9.5px/1 var(--font-body);color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.s1-card .head .ttl b{display:block;font:700 13.5px/1.2 var(--font-display);color:var(--ink)}
+
+/* Grade circle big focal point */
+.s1-card .grade-circle{
+  grid-column:1;grid-row:2;align-self:center;
+  width:54px;height:54px;border-radius:50%;
+  background:var(--g-C);color:#fff;
+  font:800 26px/54px var(--font-display);
+  text-align:center;letter-spacing:-.02em;
+  box-shadow:0 3px 0 rgba(0,0,0,.08);
+  transition:background .2s ease;
 }
-.s1-card .head .ttl small{display:block;font:600 10px/1 var(--font-body);color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
-.s1-card .grade{
-  font:700 60px/1 var(--font-display);
+.s1-card[data-grade="S"] .grade-circle{background:var(--g-S)}
+.s1-card[data-grade="A"] .grade-circle{background:var(--g-A)}
+.s1-card[data-grade="B"] .grade-circle{background:var(--g-B)}
+.s1-card[data-grade="C"] .grade-circle{background:var(--g-C)}
+.s1-card[data-grade="L"] .grade-circle{background:var(--g-L)}
+
+/* Meta: percentage + level label */
+.s1-card .meta{
+  grid-column:2;grid-row:2;
+  display:flex;flex-direction:column;justify-content:center;gap:4px;
 }
-.s1-card.c1 .grade,.s1-card.c2 .grade,.s1-card.c3 .grade{color:var(--g-C)}
-.s1-card.l4 .grade{color:var(--g-L)}
-.s1-card .lbl{
-  font:700 12.5px/1 var(--font-display);letter-spacing:.04em;
-}
-.s1-card.c1 .lbl,.s1-card.c2 .lbl,.s1-card.c3 .lbl{color:var(--g-C)}
-.s1-card.l4 .lbl{color:var(--g-L)}
+.s1-card .meta .pct{font:800 22px/1 var(--font-display);color:var(--g-C);transition:color .2s ease}
+.s1-card[data-grade="S"] .meta .pct{color:var(--g-S)}
+.s1-card[data-grade="A"] .meta .pct{color:var(--g-A)}
+.s1-card[data-grade="B"] .meta .pct{color:var(--g-B)}
+.s1-card[data-grade="C"] .meta .pct{color:var(--g-C)}
+.s1-card[data-grade="L"] .meta .pct{color:var(--g-L)}
+.s1-card .meta .lbl{font:700 11px/1 var(--font-body);color:var(--ink-mute);letter-spacing:.06em}
+
+/* Progress bar full width — bigger and visible */
 .s1-card .bar{
-  width:100%;height:8px;border-radius:99px;background:#f3e7c5;overflow:hidden;
+  grid-column:1 / -1;grid-row:3;
+  width:100%;height:10px;border-radius:99px;background:#f3e7c5;overflow:hidden;
+  margin-top:2px;
 }
-.s1-card .bar i{display:block;height:100%;border-radius:99px}
-.s1-card.c1 .bar i,.s1-card.c2 .bar i,.s1-card.c3 .bar i{background:var(--g-C);width:50%}
-.s1-card.l4 .bar i{background:var(--g-L);width:20%}
+.s1-card .bar i{
+  display:block;height:100%;border-radius:99px;
+  background:var(--g-C);width:50%;
+  transition:width .35s ease,background .2s ease;
+}
+.s1-card[data-grade="S"] .bar i{background:var(--g-S);width:95%}
+.s1-card[data-grade="A"] .bar i{background:var(--g-A);width:85%}
+.s1-card[data-grade="B"] .bar i{background:var(--g-B);width:70%}
+.s1-card[data-grade="C"] .bar i{background:var(--g-C);width:50%}
+.s1-card[data-grade="L"] .bar i{background:var(--g-L);width:25%}
 
 .legend{
   display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:center;
@@ -500,28 +571,6 @@ body{
 }
 @page{size:A3 portrait;margin:6mm}
 
-/* ───── DYNAMIC GRADE BINDING ─────
-   s1-card + ability đồng bộ qua data-grade attribute */
-.s1-card[data-grade] .head .ico,
-.s1-card[data-grade] .grade,
-.s1-card[data-grade] .lbl,
-.s1-card[data-grade] .bar i{transition:all .25s ease}
-.s1-card[data-grade="S"] .head .ico{background:var(--g-S-bg);color:var(--g-S)}
-.s1-card[data-grade="A"] .head .ico{background:var(--g-A-bg);color:var(--g-A)}
-.s1-card[data-grade="B"] .head .ico{background:var(--g-B-bg);color:var(--g-B)}
-.s1-card[data-grade="C"] .head .ico{background:var(--g-C-bg);color:var(--g-C)}
-.s1-card[data-grade="L"] .head .ico{background:var(--g-L-bg);color:var(--g-L)}
-.s1-card[data-grade="S"] .grade,.s1-card[data-grade="S"] .lbl{color:var(--g-S)}
-.s1-card[data-grade="A"] .grade,.s1-card[data-grade="A"] .lbl{color:var(--g-A)}
-.s1-card[data-grade="B"] .grade,.s1-card[data-grade="B"] .lbl{color:var(--g-B)}
-.s1-card[data-grade="C"] .grade,.s1-card[data-grade="C"] .lbl{color:var(--g-C)}
-.s1-card[data-grade="L"] .grade,.s1-card[data-grade="L"] .lbl{color:var(--g-L)}
-.s1-card[data-grade="S"] .bar i{background:var(--g-S);width:95%}
-.s1-card[data-grade="A"] .bar i{background:var(--g-A);width:80%}
-.s1-card[data-grade="B"] .bar i{background:var(--g-B);width:65%}
-.s1-card[data-grade="C"] .bar i{background:var(--g-C);width:50%}
-.s1-card[data-grade="L"] .bar i{background:var(--g-L);width:25%}
-
 /* Click to cycle grade — hint cursor */
 .ability tbody td:last-child span{cursor:pointer;transition:transform .15s ease,filter .15s ease;user-select:none}
 .ability tbody td:last-child span:hover{transform:scale(1.18);filter:brightness(1.1)}
@@ -636,63 +685,71 @@ body{
     </div>
   </div>
 
-  <!-- ─── SECTION 1 ─── -->
-  <div class="sec">
+  <!-- ─── SECTION 1: TỔNG QUAN (HERO — cards 2x2 + radar side-by-side) ─── -->
+  <div class="sec hero-sec">
     <div class="sec-h"><span class="num">1</span>Tổng quan năng lực tư duy</div>
     <p class="s1-desc" contenteditable="true">Bé đang ở mức <b>đang phát triển</b> ở các năng lực tư duy. Bé có điểm mạnh hơn ở phần <b>kiểu mẫu và dữ liệu</b>.</p>
 
-    <div class="s1-cards">
-      <div class="s1-card c1">
-        <div class="head">
-          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span>
-          <span class="ttl"><small>Năng lực 01</small>Tư duy cơ bản</span>
+    <div class="hero-grid">
+      <div class="s1-cards">
+        <div class="s1-card" data-card="1">
+          <span class="head">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span>
+            <span class="ttl"><small>Năng lực 01</small><b>Tư duy cơ bản</b></span>
+          </span>
+          <span class="grade-circle">C</span>
+          <span class="meta">
+            <span class="pct">50%</span>
+            <span class="lbl">MỨC C</span>
+          </span>
+          <span class="bar"><i></i></span>
         </div>
-        <span class="grade">C</span>
-        <span class="lbl">MỨC C</span>
-        <span class="bar"><i></i></span>
-      </div>
-      <div class="s1-card c2">
-        <div class="head">
-          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h4"/></svg></span>
-          <span class="ttl"><small>Năng lực 02</small>Tư duy toán học</span>
+        <div class="s1-card" data-card="2">
+          <span class="head">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h4"/></svg></span>
+            <span class="ttl"><small>Năng lực 02</small><b>Tư duy toán học</b></span>
+          </span>
+          <span class="grade-circle">C</span>
+          <span class="meta">
+            <span class="pct">50%</span>
+            <span class="lbl">MỨC C</span>
+          </span>
+          <span class="bar"><i></i></span>
         </div>
-        <span class="grade">C</span>
-        <span class="lbl">MỨC C</span>
-        <span class="bar"><i></i></span>
-      </div>
-      <div class="s1-card c3">
-        <div class="head">
-          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 4 7 7c-2 0-4 2-4 4 0 2 1 3 2 4-1 1-1 3 0 4 0 2 2 4 4 4 0 1 1 2 3 2s3-1 3-2c2 0 4-2 4-4 1-1 1-3 0-4 1-1 2-2 2-4 0-2-2-4-4-4 0-3-2-5-5-5z"/></svg></span>
-          <span class="ttl"><small>Năng lực 03</small>Tư duy logic</span>
+        <div class="s1-card" data-card="3">
+          <span class="head">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 4 7 7c-2 0-4 2-4 4 0 2 1 3 2 4-1 1-1 3 0 4 0 2 2 4 4 4 0 1 1 2 3 2s3-1 3-2c2 0 4-2 4-4 1-1 1-3 0-4 1-1 2-2 2-4 0-2-2-4-4-4 0-3-2-5-5-5z"/></svg></span>
+            <span class="ttl"><small>Năng lực 03</small><b>Tư duy logic</b></span>
+          </span>
+          <span class="grade-circle">C</span>
+          <span class="meta">
+            <span class="pct">50%</span>
+            <span class="lbl">MỨC C</span>
+          </span>
+          <span class="bar"><i></i></span>
         </div>
-        <span class="grade">C</span>
-        <span class="lbl">MỨC C</span>
-        <span class="bar"><i></i></span>
-      </div>
-      <div class="s1-card l4">
-        <div class="head">
-          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
-          <span class="ttl"><small>Năng lực 04</small>Tư duy sáng tạo</span>
+        <div class="s1-card" data-card="4">
+          <span class="head">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
+            <span class="ttl"><small>Năng lực 04</small><b>Tư duy sáng tạo</b></span>
+          </span>
+          <span class="grade-circle">L</span>
+          <span class="meta">
+            <span class="pct">25%</span>
+            <span class="lbl">MỨC L</span>
+          </span>
+          <span class="bar"><i></i></span>
         </div>
-        <span class="grade">L</span>
-        <span class="lbl">MỨC L</span>
-        <span class="bar"><i></i></span>
       </div>
-    </div>
-
-  </div>
-
-  <!-- ─── SECTION 2: HÌNH DÁNG NĂNG LỰC (Radar full-width — focus point) ─── -->
-  <div class="viz-row single">
-    <div class="viz-box">
-      <div class="sec-h"><span class="num">2</span>Hình dáng năng lực — Radar</div>
-      <div class="s4">
+      <div class="hero-radar">
+        <div class="hero-radar-ttl">🎯 Hình dáng năng lực</div>
         <svg id="radar-chart" class="radar-chart" viewBox="-30 -10 380 320"></svg>
         <div class="radar-legend">
           <span><span class="sw"></span>Năng lực của bé <span data-name>Bách</span></span>
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- ─── SECTION 4: CHI TIẾT NĂNG LỰC (full-width) ─── -->
@@ -981,10 +1038,17 @@ function _abilityGrade(abilityEl){
 function _setS1Card(card, grade){
   if(!card) return;
   card.dataset.grade = grade;
-  const gEl = card.querySelector('.grade');
-  if(gEl) gEl.textContent = grade;
-  const lEl = card.querySelector('.lbl');
+  // New design: grade-circle + .pct + .lbl
+  const circle = card.querySelector('.grade-circle');
+  if(circle) circle.textContent = grade;
+  const PCT = {S:'95%',A:'85%',B:'70%',C:'50%',L:'25%'};
+  const pctEl = card.querySelector('.meta .pct');
+  if(pctEl) pctEl.textContent = PCT[grade] || '50%';
+  const lEl = card.querySelector('.meta .lbl');
   if(lEl) lEl.textContent = 'MỨC ' + grade;
+  // Legacy fallback (cards cũ với <span class="grade">)
+  const gEl = card.querySelector('.grade');
+  if(gEl && gEl.classList.contains('grade')) gEl.textContent = grade;
 }
 
 function recomputeAllMG(){

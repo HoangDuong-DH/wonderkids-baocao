@@ -3076,14 +3076,22 @@ function resetForm(){
 }
 
 const DEFAULT_LABELS={
-  't-kt':['Các số đến 9','Phép cộng & phép trừ','Phân loại','Đo lường','Các hình dạng khác nhau'],
+  't-kt':['Các số đến 9','Phép cộng & phép trừ','Phân loại','Đo lường','Các kiến thức toán tư duy khác'],
   't-kq':['Bài toán có lời văn','Bài toán cơ bản'],
-  't-nl':['Khả năng hiểu toán','Quan sát trực quan','Tổng hợp thông tin','Dự đoán toán học','Nhận thức không gian','Suy luận toán học'],
+  't-nl':['Tư duy giải quyết vấn đề','Tư duy logic và quan sát','Tư duy phân tích và phân loại','Tư duy số và ký hiệu','Tư duy không gian và hình học','Tư duy suy luận toán học'],
+};
+const DEFAULT_DESCS={
+  't-nl':['Áp dụng kiến thức để giải quyết bài toán mới','Tìm ra mối quan hệ, bản chất qua trực quan','Thu thập, phân loại thông tin để giải quyết vấn đề','Vận dụng khái niệm, ký hiệu toán học','Giải quyết bài toán hình học phẳng và không gian','Sử dụng quy nạp, diễn dịch'],
 };
 function RESTORE_LABELS(){
   for(const [tid,labels] of Object.entries(DEFAULT_LABELS)){
     const rows=document.querySelectorAll(`#${tid} tbody tr[data-row] input.label-cell`);
     rows.forEach((inp,i)=>{ if(labels[i]) inp.value=labels[i]; });
+  }
+  // Restore description cells (chỉ t-nl hiện có)
+  for(const [tid,descs] of Object.entries(DEFAULT_DESCS)){
+    const rows=document.querySelectorAll(`#${tid} tbody tr[data-row] input.desc-cell`);
+    rows.forEach((inp,i)=>{ if(descs[i]) inp.value=descs[i]; });
   }
 }
 
@@ -3112,15 +3120,17 @@ function loadSample(){
     ['Bài toán cơ bản',7,5],
   ]);
   // So sánh cấp độ — keep blank
-  // Năng lực
+  // Năng lực tư duy (6 lĩnh vực, label mới)
   fillRows('t-nl',[
-    ['Khả năng hiểu toán',30,0],
-    ['Quan sát trực quan',25,1.67],
-    ['Tổng hợp thông tin',35,1.67],
-    ['Dự đoán toán học',30,1.67],
-    ['Nhận thức không gian',25,0],
-    ['Suy luận toán học',20,0],
+    ['Tư duy giải quyết vấn đề',30,0],
+    ['Tư duy logic và quan sát',25,1.67],
+    ['Tư duy phân tích và phân loại',35,1.67],
+    ['Tư duy số và ký hiệu',30,1.67],
+    ['Tư duy không gian và hình học',25,0],
+    ['Tư duy suy luận toán học',20,0],
   ]);
+  // Restore desc-cell sau khi fillRows (vì fillRows chỉ touch label-cell + data inputs)
+  RESTORE_LABELS();
   // Theo cấp độ
   const cd=document.querySelectorAll('#t-cd tbody tr[data-row]');
   const cdData=[[3,15,0],[4,20,1.67],[3,25,0]];
@@ -3462,12 +3472,20 @@ function importWonderkids(rows){
   }
 
   // ── Section 2: ĐÁNH GIÁ THEO LĨNH VỰC → t-nl
+  // Chỉ fill số liệu, KHÔNG đè label (giữ DEFAULT_LABELS 'Tư duy ...' mới)
   const nlA=_findAnchor(rows, /đánh giá theo lĩnh vực/);
   if(nlA){
     const data=_readTable(rows, nlA.r, nlA.c, null, {labelCol:/phân loại/, stdCol:/điểm chuẩn/, actCol:/điểm thực tế/});
     if(data.length){
-      const arr=data.map(d=>[d.lbl.replace(/^khả năng /i,'').replace(/^./,m=>m.toUpperCase()), d.std??0, d.act??0]);
-      fillRows('t-nl', arr); count+=arr.length;
+      // Fill chuẩn/đạt theo thứ tự CSV (6 lĩnh vực), giữ nguyên label-cell hiện có
+      const trs=document.querySelectorAll('#t-nl tbody tr[data-row]');
+      data.forEach((d,i)=>{
+        const r=trs[i]; if(!r) return;
+        const mx=r.querySelector('[data-max]'), cu=r.querySelector('[data-cur]');
+        if(mx && d.std!=null) mx.value=d.std;
+        if(cu && d.act!=null) cu.value=d.act;
+        count++;
+      });
     }
   }
 

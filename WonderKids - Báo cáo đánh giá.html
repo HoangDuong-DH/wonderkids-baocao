@@ -3044,8 +3044,14 @@ function autoCommentTuDuy(){
   return txt;
 }
 
+/* Nhận xét chung — theo template user định nghĩa:
+   "Học viên đạt [điểm tổng]/100 điểm, tương đương [tỷ lệ]%, thuộc mức [mức].
+    Con thể hiện nền tảng [phần tỷ trọng cao] tốt hơn, đặc biệt ở các kỹ năng
+    [nhóm điểm cao]. Tuy nhiên, con cần củng cố thêm ở [nhóm điểm thấp],
+    đặc biệt là [nhóm thấp nhất], để đảm bảo nền tảng vững chắc hơn.
+    Xét theo độ khó, con [...]. Đồng thời, kết quả bài toán [có/không lời văn]
+    cho thấy con cần rèn thêm [kỹ năng]." */
 function autoCommentChung(){
-  // Tổng = KTCB (40đ) + Tư duy (60đ) = 100đ
   const ktcb = _ktcbTotals();
   const tuduy = _tuduyTotals();
   if(ktcb.max===0 && tuduy.max===0) return '';
@@ -3053,33 +3059,87 @@ function autoCommentChung(){
   const totalMax = ktcb.max + tuduy.max;
   const pct = totalMax>0 ? totalCur/totalMax : 0;
   const level = pctToLevel(pct);
-  // Phần nào mạnh hơn — dựa trên % (so sánh tỷ lệ, không phải điểm tuyệt đối)
+  // [phần có tỷ trọng cao] = phần con đạt % cao hơn
   const strongPart = (ktcb.pct > tuduy.pct) ? 'kiến thức cơ bản' : 'tư duy toán học';
-  // Top từ t-kt và t-nl theo tỷ lệ — phân tách 2 source để gán đúng mapping
-  const ktSorted = _sortedByPct('t-kt');
-  const nlSorted = _sortedByPct('t-nl');
-  const topKT = ktSorted[0], botKT = ktSorted[ktSorted.length-1];
-  const topNL = nlSorted[0], botNL = nlSorted[nlSorted.length-1];
+  // Gộp t-kt + t-nl, sort theo %
+  const allCats = [..._tblData('t-kt'), ..._tblData('t-nl')].filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
+  const top2  = allCats.slice(0, 2).map(d=>d.lbl);
+  const bot2  = allCats.slice(-2).reverse().map(d=>d.lbl);
+  const lowest = allCats.length ? allCats[allCats.length-1].lbl : '';
 
-  let txt = `Học viên đạt ${_fmtInt(totalCur)}/${_fmtInt(totalMax)} điểm, `
-         + `tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.\n\n`;
-  txt += `Con thể hiện nền tảng ${strongPart} tốt hơn`;
-  const topNames = [topKT?.lbl, topNL?.lbl].filter(Boolean);
-  if(topNames.length) txt += `, đặc biệt ở các kỹ năng ${topNames.join(', ')}`;
-  txt += '.';
-  const botNames = [botKT?.lbl, botNL?.lbl].filter(Boolean);
-  if(botNames.length){
-    txt += ` Tuy nhiên, con cần củng cố thêm ở một số lĩnh vực như ${botNames.join(', ')}, để đảm bảo nền tảng vững chắc hơn.`;
+  // [Xét theo độ khó] — 3 nhận xét theo pattern Dễ/TB/Khó kết hợp t-ss + t-cd
+  // Logic:
+  //   • Dễ + TB cả 2 >=65% → "đã xử lý tốt các bài dễ và trung bình"
+  //   • Dễ < 50% → "cần củng cố bài cơ bản"
+  //   • Khó >=50% nhưng TB hoặc Dễ <50% → "có thể xử lý bài khó nhưng chưa đồng đều"
+  //   • Fallback → đo nhịp chung
+  const diffData = [..._tblData('t-ss'), ..._tblData('t-cd')].filter(d=>d.max>0);
+  let easyAvg=null, tbAvg=null, hardAvg=null;
+  if(diffData.length){
+    const grouped = {de:[], tb:[], kh:[]};
+    diffData.forEach(d=>{
+      const l = _diffLabelOf(d.lbl);
+      if(l==='dễ') grouped.de.push(d.pct);
+      else if(l==='trung bình') grouped.tb.push(d.pct);
+      else if(l==='khó') grouped.kh.push(d.pct);
+    });
+    const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null;
+    easyAvg = avg(grouped.de);
+    tbAvg   = avg(grouped.tb);
+    hardAvg = avg(grouped.kh);
   }
-  // Định hướng theo cấp độ — kết hợp t-ss (KTCB) + t-cd (Tư duy)
-  const ssData = _tblData('t-ss').filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
-  if(ssData.length){
-    const strongDiff = _diffLabelOf(ssData[0].lbl);
-    const weakLbl = _diffLabelOf(ssData[ssData.length-1].lbl);
-    const weakDesc = __KTCB_DIFFICULTY[weakLbl];
-    if(strongDiff) txt += `\n\nXét theo cấp độ, con xử lý tốt nhất ở mức ${strongDiff}`;
-    if(weakDesc) txt += `, và cần củng cố thêm với ${weakDesc}`;
-    if(strongDiff || weakDesc) txt += '.';
+  let diffPhrase = '';
+  if(easyAvg!==null && tbAvg!==null && easyAvg>=0.65 && tbAvg>=0.65){
+    diffPhrase = 'đã xử lý tốt các bài dễ và trung bình';
+  } else if(easyAvg!==null && easyAvg<0.50){
+    diffPhrase = 'cần củng cố bài cơ bản';
+  } else if(hardAvg!==null && hardAvg>=0.50 && (
+            (tbAvg!==null && tbAvg<0.50) || (easyAvg!==null && easyAvg<0.50))){
+    diffPhrase = 'có thể xử lý bài khó nhưng chưa đồng đều';
+  } else if(easyAvg!==null && tbAvg!==null){
+    diffPhrase = 'kết quả theo các mức độ còn chưa thực sự đồng đều';
+  }
+
+  // [Bài toán có lời/không lời] + [kỹ năng cần rèn]
+  // Pick side YẾU hơn để gợi ý kỹ năng cần rèn
+  const kqData = _tblData('t-kq').filter(d=>d.max>0);
+  let kqType = '', skill = '';
+  if(kqData.length){
+    const colVan = kqData.find(d=>/có lời/i.test(d.lbl));
+    const coBan  = kqData.find(d=>/cơ bản|không/i.test(d.lbl));
+    if(colVan && coBan){
+      if(colVan.pct < coBan.pct){
+        kqType = 'có lời văn';
+        skill = 'đọc hiểu đề, suy luận logic và chuyển dữ kiện thành phép toán';
+      } else if(coBan.pct < colVan.pct){
+        kqType = 'không lời văn';
+        skill = 'tính toán trực tiếp và giải thích từng bước';
+      } else {
+        kqType = 'có lời văn và không lời văn';
+        skill = 'đọc hiểu đề, suy luận logic và giải thích từng bước';
+      }
+    } else if(colVan){
+      kqType = 'có lời văn';
+      skill = colVan.pct<0.5 ? 'đọc hiểu đề và chuyển dữ kiện thành phép toán' : 'suy luận logic và giải thích từng bước';
+    }
+  }
+
+  // Compose template
+  let txt = `Học viên đạt ${_fmtInt(totalCur)}/${_fmtInt(totalMax)} điểm, tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.\n`;
+  txt += `Con thể hiện nền tảng ${strongPart} tốt hơn`;
+  if(top2.length) txt += `, đặc biệt ở các kỹ năng ${top2.join(', ')}`;
+  txt += '.';
+  if(bot2.length){
+    txt += ` Tuy nhiên, con cần củng cố thêm ở một số lĩnh vực như ${bot2.join(', ')}`;
+    if(lowest && !bot2.includes(lowest)) txt += `, đặc biệt là ${lowest}`;
+    else if(lowest && bot2[bot2.length-1] !== lowest) txt += `, đặc biệt là ${lowest}`;
+    txt += `, để đảm bảo nền tảng vững chắc hơn.`;
+  }
+  if(diffPhrase){
+    txt += `\nXét theo độ khó, con ${diffPhrase}.`;
+  }
+  if(kqType && skill){
+    txt += ` Đồng thời, kết quả bài toán ${kqType} cho thấy con cần rèn thêm ${skill}.`;
   }
   return txt;
 }

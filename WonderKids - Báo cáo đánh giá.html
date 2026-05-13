@@ -1435,6 +1435,13 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     Test CSV mẫu
   </button>
+  <select class="tb-mock" onchange="if(this.value){loadMockProfile(this.value);this.value=''}" title="Mock data theo 4 profile để test nhận xét auto" style="appearance:none;-webkit-appearance:none;border:0;background:#fff7ec url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>&quot;) no-repeat right 10px center;color:var(--c-ink);font:600 12.5px/1 var(--font-body);padding:8px 26px 8px 12px;border-radius:999px;cursor:pointer;transition:all .15s ease;border:1px solid rgba(233,78,27,.2)">
+    <option value="">🧪 Mock data</option>
+    <option value="excellent">Xuất sắc (~90%)</option>
+    <option value="good">Khá (~65%)</option>
+    <option value="weak">Cần cố gắng (~30%)</option>
+    <option value="imbalanced">Mất cân đối (KTCB cao, Tư duy thấp)</option>
+  </select>
   <button onclick="document.getElementById('status-panel').classList.toggle('on')" title="Hiện/ẩn log import để debug">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
     Log
@@ -3262,6 +3269,158 @@ function RESTORE_LABELS(){
     const rows=document.querySelectorAll(`#${tid} tbody tr[data-row] input.desc-cell`);
     rows.forEach((inp,i)=>{ if(descs[i]) inp.value=descs[i]; });
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   MOCK DATA — 4 profile để test auto-nhận xét theo từng mức đánh giá
+   Mỗi profile fill đầy đủ: header info, t-kt(40đ), t-kq, t-ss,
+   qscore 10 câu (60đ), t-cd. T-nl thì fill chuẩn/đạt theo lĩnh vực.
+   ───────────────────────────────────────────────────────────────── */
+const __MOCK_PROFILES = {
+  excellent: {
+    name: 'Mock — Học sinh Xuất sắc',
+    class: '2018-09-15', age: 'Lớp 1', teacher: 'Cô Mai',
+    // t-kt: tổng max=40, cur=37 (~92%) — đều ≥85% tất cả đơn vị
+    kt: [
+      ['Các số đến 9',                 10, 10],
+      ['Phép cộng & phép trừ',         10, 9],
+      ['Phân loại',                    6, 6],
+      ['Đo lường',                     8, 7],
+      ['Các kiến thức toán tư duy khác',6, 5],
+    ],
+    // t-kq: bài toán có lời mạnh hơn cơ bản (làm tốt cả hai)
+    kq: [['Bài toán có lời văn', 14, 13], ['Bài toán cơ bản', 6, 6]],
+    // t-ss: cấp độ — Dễ/TB/Khó đều mạnh
+    ss: [['Dễ', 8, 8], ['Trung bình', 10, 9], ['Khó', 4, 4]],
+    // qscore: tổng max=60, cur=55 (~92%)
+    qscore: [5, 5, 5, 5, 5, 5, 5, 7, 6, 10],
+    // t-nl: chuẩn theo CMS, đạt cao
+    nl: [[30, 28], [25, 24], [35, 33], [30, 27], [25, 23], [20, 18]],
+    // t-cd: 3 cấp độ tư duy đều mạnh
+    cd: [['Dễ', 15, 14], ['Trung bình', 20, 18], ['Khó', 25, 23]],
+    // QMatrix 20 câu: 19/20 đúng
+    qmatrix: 'OOOOOOOOOOOOOOOOOOXO',
+  },
+  good: {
+    name: 'Mock — Học sinh Khá',
+    class: '2018-05-20', age: 'Lớp 1', teacher: 'Cô Mai',
+    // t-kt: 25/40 (~63%)
+    kt: [
+      ['Các số đến 9',                 10, 7],
+      ['Phép cộng & phép trừ',         10, 6],
+      ['Phân loại',                    6, 4],
+      ['Đo lường',                     8, 5],
+      ['Các kiến thức toán tư duy khác',6, 3],
+    ],
+    kq: [['Bài toán có lời văn', 14, 8], ['Bài toán cơ bản', 6, 4]],
+    ss: [['Dễ', 8, 7], ['Trung bình', 10, 6], ['Khó', 4, 1]],
+    // qscore: 38/60 (~63%)
+    qscore: [5, 4, 3, 5, 4, 3, 4, 5, 4, 7],
+    nl: [[30, 18], [25, 17], [35, 22], [30, 19], [25, 16], [20, 12]],
+    cd: [['Dễ', 15, 11], ['Trung bình', 20, 13], ['Khó', 25, 14]],
+    // 13/20 đúng (X tập trung ở câu khó cuối)
+    qmatrix: 'OOOXOOXOOXOXOOXXOXOX',
+  },
+  weak: {
+    name: 'Mock — Học sinh Cần cố gắng',
+    class: '2018-11-10', age: 'Lớp 1', teacher: 'Cô Mai',
+    // t-kt: 13/40 (~33%)
+    kt: [
+      ['Các số đến 9',                 10, 4],
+      ['Phép cộng & phép trừ',         10, 3],
+      ['Phân loại',                    6, 2],
+      ['Đo lường',                     8, 3],
+      ['Các kiến thức toán tư duy khác',6, 1],
+    ],
+    kq: [['Bài toán có lời văn', 14, 4], ['Bài toán cơ bản', 6, 3]],
+    // ss: bài dễ tạm ổn, TB/Khó yếu
+    ss: [['Dễ', 8, 5], ['Trung bình', 10, 2], ['Khó', 4, 0]],
+    // qscore: 18/60 (~30%)
+    qscore: [2, 1, 3, 2, 1, 2, 1, 2, 1, 3],
+    nl: [[30, 8], [25, 9], [35, 10], [30, 8], [25, 7], [20, 3]],
+    cd: [['Dễ', 15, 8], ['Trung bình', 20, 5], ['Khó', 25, 2]],
+    // 7/20 đúng
+    qmatrix: 'OOXXOXXOXOXXXOXOXXXX',
+  },
+  imbalanced: {
+    name: 'Mock — Học sinh Mất cân đối',
+    class: '2018-03-12', age: 'Lớp 1', teacher: 'Cô Mai',
+    // KTCB mạnh: 32/40 (80%)
+    kt: [
+      ['Các số đến 9',                 10, 9],
+      ['Phép cộng & phép trừ',         10, 9],
+      ['Phân loại',                    6, 5],
+      ['Đo lường',                     8, 6],
+      ['Các kiến thức toán tư duy khác',6, 3],
+    ],
+    kq: [['Bài toán có lời văn', 14, 9], ['Bài toán cơ bản', 6, 5]],
+    ss: [['Dễ', 8, 7], ['Trung bình', 10, 8], ['Khó', 4, 2]],
+    // Tư duy yếu: 18/60 (30%)
+    qscore: [3, 3, 2, 2, 1, 2, 1, 2, 1, 1],
+    nl: [[30, 9], [25, 12], [35, 14], [30, 8], [25, 6], [20, 4]],
+    cd: [['Dễ', 15, 9], ['Trung bình', 20, 6], ['Khó', 25, 3]],
+    qmatrix: 'OOOOOOOOXOOOOOXOOOXX',
+  },
+};
+
+function loadMockProfile(profileKey){
+  const data = __MOCK_PROFILES[profileKey];
+  if(!data){ toast('Không tìm thấy profile: '+profileKey, 'error'); return; }
+  // 1. Header info
+  document.getElementById('f-name').value = data.name;
+  document.getElementById('f-class').value = data.class;
+  document.getElementById('f-age').value = data.age;
+  document.getElementById('f-teacher').value = data.teacher || '';
+  const today = new Date(); const dd=String(today.getDate()).padStart(2,'0');
+  const mm=String(today.getMonth()+1).padStart(2,'0'); const yy=today.getFullYear();
+  document.getElementById('f-test-date').value = `${dd}/${mm}/${yy}`;
+  document.getElementById('f-report-date').value = `${dd}/${mm}/${yy}`;
+  // 2. Tables (t-kt + t-kq + t-ss)
+  fillRows('t-kt', data.kt);
+  fillRows('t-kq', data.kq);
+  // t-ss: fill chuẩn/đạt theo row order (Dễ, TB, Khó)
+  const ssRows = document.querySelectorAll('#t-ss tbody tr[data-row]');
+  data.ss.forEach((d, i)=>{
+    const r = ssRows[i]; if(!r) return;
+    const mx=r.querySelector('[data-max]'), cu=r.querySelector('[data-cur]');
+    if(mx) mx.value=d[1]; if(cu) cu.value=d[2];
+  });
+  // 3. qscore (10 câu) — fill ĐIỂM ĐẠT, ĐIỂM CHUẨN giữ default
+  data.qscore.forEach((cur, i)=>{
+    const inp = document.querySelector(`[data-tu-cur="${i+1}"]`);
+    if(inp) inp.value = cur;
+  });
+  // 4. t-nl — chỉ fill max/cur, giữ label
+  const nlRows = document.querySelectorAll('#t-nl tbody tr[data-row]');
+  data.nl.forEach((d, i)=>{
+    const r = nlRows[i]; if(!r) return;
+    const mx=r.querySelector('[data-max]'), cu=r.querySelector('[data-cur]');
+    if(mx) mx.value=d[0]; if(cu) cu.value=d[1];
+  });
+  // 5. t-cd
+  const cdRows = document.querySelectorAll('#t-cd tbody tr[data-row]');
+  data.cd.forEach((d, i)=>{
+    const r = cdRows[i]; if(!r) return;
+    const mx=r.querySelector('[data-max]'), cu=r.querySelector('[data-cur]');
+    if(mx) mx.value=d[1]; if(cu) cu.value=d[2];
+  });
+  // 6. QMatrix 20 câu (chỉ kết quả O/X — đáp án + đơn vị giữ default từ CMS)
+  if(data.qmatrix && data.qmatrix.length===20){
+    for(let i=1; i<=20; i++){
+      const kq = document.querySelector(`.qm-result[data-q="${i}"]`);
+      if(kq) kq.value = data.qmatrix[i-1];
+    }
+    if(typeof refreshQMatrix==='function') refreshQMatrix();
+  }
+  // 7. Refresh tất cả + force regenerate nhận xét
+  RESTORE_LABELS(); // đảm bảo desc-cell có default
+  if(typeof refreshQScore==='function') refreshQScore();
+  refreshSummary();
+  scheduleSave();
+  if(typeof autoGrowAll==='function') autoGrowAll();
+  // Force fill nhận xét (ghi đè) sau 100ms để đợi UI settle
+  setTimeout(()=>autoFillComments(true), 100);
+  toast(`Đã load mock data: ${data.name}`, 'info');
 }
 
 /* SAMPLE DATA — Thiên Khôi */

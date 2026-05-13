@@ -1799,10 +1799,15 @@ body.print-preview .hdr .mascot svg{display:none !important}
   <div class="s3 single">
     <div class="nx">
       <div class="h">
-        NHẬN XÉT &amp; ĐỊNH HƯỚNG
+        NHẬN XÉT CHUNG
         <button type="button" class="auto-comment-btn" onclick="autoFillComments(true)" title="Sinh nhận xét tự động từ kết quả">🪄 Tự động nhận xét</button>
       </div>
-      <textarea id="f-comment" placeholder="Nhận xét chung & định hướng giáo dục cho trẻ..."></textarea>
+      <textarea id="f-comment" placeholder="Nhận xét chung về kết quả đánh giá..."></textarea>
+    </div>
+
+    <div class="nx">
+      <div class="h">ĐỊNH HƯỚNG GIÁO DỤC &amp; CẢI THIỆN</div>
+      <textarea id="f-direction" placeholder="Định hướng giáo dục và các bước cải thiện cho con..."></textarea>
     </div>
 
     <svg class="deco-apple" viewBox="0 0 130 100" fill="none">
@@ -3144,17 +3149,22 @@ function autoCommentChung(){
   return txt;
 }
 
+/* Định hướng — template user định nghĩa:
+   "Định hướng giáo dục và cải thiện:
+    1. Củng cố Kiến thức cơ bản: ... [nhóm yếu] ...
+    2. Rèn luyện tư duy logic và suy luận: ..." */
 function autoCommentDinhHuong(){
+  // [nhóm yếu] = 3 categories pct thấp nhất từ t-kt + t-nl
   const all = [..._tblData('t-kt'), ..._tblData('t-nl')]
     .filter(d=>d.max>0).sort((a,b)=>a.pct-b.pct);
-  const bottom3 = all.slice(0,3).map(d=>d.lbl).join(', ');
-  let txt = 'ĐỊNH HƯỚNG CHUNG:\n';
-  txt += `1. Củng cố nền tảng kiến thức cơ bản: Tập trung vào các kỹ năng nền tảng như ${bottom3 || '(các kỹ năng yếu)'} và rèn luyện qua các bài tập/học cụ trực quan để giúp con nắm vững các khái niệm cơ bản.\n`;
-  txt += '2. Phát triển tư duy toán học: Con cần rèn luyện thêm khả năng suy luận logic, giải quyết các bài toán nhiều bước và phát triển khả năng giải thích chi tiết trong quá trình giải quyết.';
+  const weakList = all.slice(0, 3).map(d=>d.lbl).join(', ') || '(các kỹ năng còn yếu)';
+  let txt = 'Định hướng giáo dục và cải thiện:\n';
+  txt += `1. Củng cố Kiến thức cơ bản: Tập trung vào các kỹ năng nền tảng như ${weakList} thông qua bài tập trực quan, trò chơi toán học để tăng cường độ chính xác và sự tự tin trong việc giải quyết các bài toán cơ bản.\n`;
+  txt += `2. Rèn luyện tư duy logic và suy luận: Tăng cường luyện tập với bài toán có lời văn, bài toán nhiều bước, và các bài quy luật để phát triển khả năng suy luận logic và giải quyết các bài toán phức tạp.`;
   return txt;
 }
 
-/* Lấp đầy 3 textarea (sum1-note, sum2-note, f-comment).
+/* Lấp đầy 4 textarea (sum1-note, sum2-note, f-comment, f-direction).
    force=true → ghi đè dù đã có nội dung. force=false → chỉ điền nếu trống. */
 function autoFillComments(force){
   const fill = (id, text)=>{
@@ -3163,12 +3173,10 @@ function autoFillComments(force){
     ta.value = text;
     ta.dispatchEvent(new Event('input',{bubbles:true}));
   };
-  fill('sum1-note', autoCommentKTCB());
-  fill('sum2-note', autoCommentTuDuy());
-  const chung = autoCommentChung();
-  const huong = autoCommentDinhHuong();
-  const full = [chung, huong].filter(Boolean).join('\n\n');
-  fill('f-comment', full);
+  fill('sum1-note',   autoCommentKTCB());
+  fill('sum2-note',   autoCommentTuDuy());
+  fill('f-comment',   autoCommentChung());
+  fill('f-direction', autoCommentDinhHuong());
   if(force) toast && toast('Đã sinh nhận xét tự động ✨', 'success');
 }
 

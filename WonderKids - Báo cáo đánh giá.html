@@ -229,9 +229,9 @@ body{
 .merged-donut-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:center}
 .merged-donut-wrap svg{width:220px;height:220px;display:block}
 .merged-info-stack{display:flex;flex-direction:column;gap:10px;justify-content:center}
-/* Radar moved to section 2 (Tư duy chi tiết) — full-width below 2 tables */
+/* Radar trong section 2 (Tư duy) — full-width sibling, KHÔNG trong grid s2 nữa */
 .s2-radar{
-  grid-column:1 / -1;margin-top:6px;
+  margin:6px 0;
   background:#fffaf0;border:1.5px solid #f3d9a6;border-radius:10px;
   padding:10px 14px 8px;
 }
@@ -1554,7 +1554,15 @@ body.print-preview .hdr .mascot svg{display:none !important}
   </div>
 
 
-  <!-- ───── QUESTION MATRIX — Đáp án từng câu 20 câu ───── -->
+  <!-- ───── SECTION 1 ───── -->
+  <div class="sec-h">
+    <span class="ico">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h7a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v14a2 2 0 0 0 2-2h8z"/></svg>
+    </span>
+    <span>1. KIẾN THỨC CƠ BẢN – CHI TIẾT</span>
+  </div>
+
+  <!-- QUESTION MATRIX — Đáp án từng câu 20 câu, nằm TRONG section 1 -->
   <div class="qmatrix-wrap" id="qmatrix-wrap">
     <div class="qmatrix-head">
       <span class="ttl">📝 Đáp án từng câu — bài kiểm tra 20 câu</span>
@@ -1568,16 +1576,8 @@ body.print-preview .hdr .mascot svg{display:none !important}
     </table>
   </div>
 
-  <!-- ───── SECTION 1 ───── -->
-  <div class="sec-h">
-    <span class="ico">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h7a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h8z"/></svg>
-    </span>
-    <span>1. KIẾN THỨC CƠ BẢN – CHI TIẾT</span>
-  </div>
-
   <div class="s1">
-    <!-- LEFT -->
+    <!-- LEFT: bảng tiêu chuẩn -->
     <div>
       <table class="tbl" id="t-kt" data-sum-group="kt">
         <thead><tr>
@@ -1586,53 +1586,48 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <th style="width:50px">Chuẩn</th>
           <th style="width:50px">Đạt</th>
           <th style="width:60px">Tỷ lệ</th>
-          <th style="width:90px">Ghi chú</th>
         </tr></thead>
         <tbody id="t-kt-body">
-          <tr data-row><td><span class="cat-ico" style="background:#f3811f">123</span></td><td class="left"><input class="label-cell" value="Các số đến 9"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr class="zebra" data-row><td><span class="cat-ico" style="background:#a26ad8"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></td><td class="left"><input class="label-cell" value="Phép cộng & phép trừ"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr data-row><td><span class="cat-ico" style="background:#5cb83e"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.49.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25C6 6.83 4 8 4 11c0 2.25 1.5 3.5 1.5 3.5C5 11 9.5 9 14 9c3-.06 5-1 5-1z"/></svg></span></td><td class="left"><input class="label-cell" value="Phân loại"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr class="zebra" data-row><td><span class="cat-ico" style="background:#46a6dd"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span></td><td class="left"><input class="label-cell" value="Đo lường"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr data-row><td><span class="cat-ico" style="background:#f5b223"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></span></td><td class="left"><input class="label-cell" value="Các hình dạng khác nhau"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
+          <tr data-row><td><span class="cat-ico" style="background:#f3811f">123</span></td><td class="left"><input class="label-cell" value="Các số đến 9"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr class="zebra" data-row><td><span class="cat-ico" style="background:#a26ad8"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></td><td class="left"><input class="label-cell" value="Phép cộng & phép trừ"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr data-row><td><span class="cat-ico" style="background:#5cb83e"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.49.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25C6 6.83 4 8 4 11c0 2.25 1.5 3.5 1.5 3.5C5 11 9.5 9 14 9c3-.06 5-1 5-1z"/></svg></span></td><td class="left"><input class="label-cell" value="Phân loại"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr class="zebra" data-row><td><span class="cat-ico" style="background:#46a6dd"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span></td><td class="left"><input class="label-cell" value="Đo lường"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr data-row><td><span class="cat-ico" style="background:#f5b223"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></span></td><td class="left"><input class="label-cell" value="Các hình dạng khác nhau"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
         </tbody>
-        <tfoot><tr class="total"><td></td><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td><td></td></tr></tfoot>
+        <tfoot><tr class="total"><td></td><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td></tr></tfoot>
       </table>
       <div class="row-ctrls"><button onclick="addRow('t-kt')">+ Thêm dòng</button></div>
-
-      <div class="subcap">KẾT QUẢ BÀI TOÁN — CÓ LỜI / KHÔNG CÓ LỜI</div>
-      <table class="tbl" id="t-kq" data-sum-group="kq">
-        <thead><tr>
-          <th style="width:130px">Phân loại</th>
-          <th style="width:50px">Chuẩn</th>
-          <th style="width:50px">Đạt</th>
-          <th style="width:60px">Tỷ lệ</th>
-          <th>Ghi chú</th>
-        </tr></thead>
-        <tbody id="t-kq-body">
-          <tr data-row><td class="left"><input class="label-cell" value="Bài toán có lời văn"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Bài toán cơ bản"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-        </tbody>
-        <tfoot><tr class="total"><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td><td></td></tr></tfoot>
-      </table>
-      <div class="row-ctrls"><button onclick="addRow('t-kq')">+ Thêm dòng</button></div>
     </div>
 
-    <!-- RIGHT — t-ss + 2 callout boxes Điểm Mạnh / Cần Củng Cố -->
+    <!-- RIGHT: t-ss (theo cấp độ) + t-kq (kết quả bài toán có lời / không lời) -->
     <div class="right-stack">
       <div>
         <table class="tbl" id="t-ss" data-sum-group="ss">
-          <thead><tr><th style="width:78px">Cấp độ</th><th style="width:50px">Chuẩn</th><th style="width:50px">Đạt</th><th style="width:60px">Tỷ lệ</th><th>Ghi chú</th></tr></thead>
+          <thead><tr><th style="width:78px">Cấp độ</th><th style="width:50px">Chuẩn</th><th style="width:50px">Đạt</th><th style="width:60px">Tỷ lệ</th></tr></thead>
           <tbody>
-            <tr data-row><td>Dễ</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-            <tr class="zebra" data-row><td>Trung bình</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-            <tr data-row><td>Khó</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
+            <tr data-row><td>Dễ</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+            <tr class="zebra" data-row><td>Trung bình</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+            <tr data-row><td>Khó</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="chart-box">
-        <div class="chart-title">📊 Tỷ lệ theo phân loại</div>
-        <div id="chart-kt" class="chart-svg"></div>
+      <div>
+        <div class="subcap">KẾT QUẢ BÀI TOÁN — CÓ LỜI / KHÔNG CÓ LỜI</div>
+        <table class="tbl" id="t-kq" data-sum-group="kq">
+          <thead><tr>
+            <th class="left" style="text-align:left">Phân loại</th>
+            <th style="width:50px">Chuẩn</th>
+            <th style="width:50px">Đạt</th>
+            <th style="width:60px">Tỷ lệ</th>
+          </tr></thead>
+          <tbody id="t-kq-body">
+            <tr data-row><td class="left"><input class="label-cell" value="Bài toán có lời văn"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+            <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Bài toán cơ bản"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          </tbody>
+          <tfoot><tr class="total"><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td></tr></tfoot>
+        </table>
+        <div class="row-ctrls"><button onclick="addRow('t-kq')">+ Thêm dòng</button></div>
       </div>
     </div>
 
@@ -1646,20 +1641,46 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <span>2. TƯ DUY TOÁN HỌC – CHI TIẾT</span>
   </div>
 
+  <!-- Thứ tự mới: bảng kết quả từng câu → charts (cluster + radar) → 2 bảng chi tiết -->
+
+  <!-- 1) Bảng kết quả 10 câu tư duy toán -->
+  <div class="qscore-wrap" id="qscore-wrap">
+    <div class="qscore-head">
+      <span class="ttl">🧠 Điểm chi tiết 10 câu tư duy toán</span>
+      <span class="sum" id="qscore-sum">Tổng <b>—</b> / <b>—</b> điểm</span>
+    </div>
+    <table class="qscore" id="qscore">
+      <tr class="qs-num"><th>Câu</th></tr>
+      <tr class="qs-max"><th>Điểm chuẩn</th></tr>
+      <tr class="qs-cur"><th>Điểm đạt</th></tr>
+    </table>
+  </div>
+
+  <!-- 2) Charts: Cluster bars + Radar 6 lĩnh vực -->
+  <div class="cluster-bars" id="cluster-bars">
+    <div class="cl-title">📊 Theo nhóm năng lực tư duy</div>
+    <div id="cluster-rows"></div>
+  </div>
+  <div class="s2-radar chart-box">
+    <div class="chart-title">🎯 Radar năng lực — 6 lĩnh vực</div>
+    <div class="chart-svg" id="chart-nl-radar"></div>
+  </div>
+
+  <!-- 3) 2 bảng chi tiết: Theo lĩnh vực + Theo cấp độ -->
   <div class="s2">
     <div>
       <div class="subcap">THEO LĨNH VỰC</div>
       <table class="tbl" id="t-nl" data-sum-group="nl">
-        <thead><tr><th class="left" style="text-align:left">Năng lực</th><th style="width:50px">Chuẩn</th><th style="width:50px">Đạt</th><th style="width:60px">Tỷ lệ</th><th style="width:90px">Ghi chú</th></tr></thead>
+        <thead><tr><th class="left" style="text-align:left">Năng lực</th><th style="width:50px">Chuẩn</th><th style="width:50px">Đạt</th><th style="width:60px">Tỷ lệ</th></tr></thead>
         <tbody id="t-nl-body">
-          <tr data-row><td class="left"><input class="label-cell" value="Khả năng hiểu toán"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Quan sát trực quan"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr data-row><td class="left"><input class="label-cell" value="Tổng hợp thông tin"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Dự đoán toán học"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr data-row><td class="left"><input class="label-cell" value="Nhận thức không gian"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Suy luận toán học"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
+          <tr data-row><td class="left"><input class="label-cell" value="Khả năng hiểu toán"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Quan sát trực quan"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr data-row><td class="left"><input class="label-cell" value="Tổng hợp thông tin"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Dự đoán toán học"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr data-row><td class="left"><input class="label-cell" value="Nhận thức không gian"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr class="zebra" data-row><td class="left"><input class="label-cell" value="Suy luận toán học"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
         </tbody>
-        <tfoot><tr class="total"><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td><td></td></tr></tfoot>
+        <tfoot><tr class="total"><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td></tr></tfoot>
       </table>
       <div class="row-ctrls"><button onclick="addRow('t-nl')">+ Thêm dòng</button></div>
     </div>
@@ -1667,13 +1688,13 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <div>
       <div class="subcap">THEO CẤP ĐỘ</div>
       <table class="tbl" id="t-cd" data-sum-group="cd">
-        <thead><tr><th style="width:78px">Cấp độ</th><th style="width:50px">Chuẩn</th><th style="width:50px">Đạt</th><th style="width:60px">Tỷ lệ</th><th style="width:90px">Ghi chú</th></tr></thead>
+        <thead><tr><th style="width:78px">Cấp độ</th><th style="width:50px">Chuẩn</th><th style="width:50px">Đạt</th><th style="width:60px">Tỷ lệ</th></tr></thead>
         <tbody>
-          <tr data-row><td>Dễ</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr class="zebra" data-row><td>Trung bình</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
-          <tr data-row><td>Khó</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td><td><input></td></tr>
+          <tr data-row><td>Dễ</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr class="zebra" data-row><td>Trung bình</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr data-row><td>Khó</td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
         </tbody>
-        <tfoot><tr class="total"><td>TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td><td></td></tr></tfoot>
+        <tfoot><tr class="total"><td>TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td></tr></tfoot>
       </table>
     </div>
 
@@ -1688,31 +1709,6 @@ body.print-preview .hdr .mascot svg{display:none !important}
       <path d="M64 58 q9 8 18 0" stroke="#2a2117" stroke-width="2.4" fill="none" stroke-linecap="round"/>
       <g stroke="#f5b223" stroke-width="3" stroke-linecap="round"><path d="M22 30 l8 4"/><path d="M28 14 l5 6"/><path d="M50 4 l1 8"/></g>
     </svg>
-
-    <!-- Radar 6 lĩnh vực — moved here from top sumcard -->
-    <div class="s2-radar chart-box">
-      <div class="chart-title">🎯 Radar năng lực — 6 lĩnh vực</div>
-      <div class="chart-svg" id="chart-nl-radar"></div>
-    </div>
-  </div>
-
-  <!-- ───── INSIGHT: Q-SCORE + CLUSTER BARS (cụm tư duy: Cơ bản / Nâng cao / Sáng tạo) ───── -->
-  <div class="qscore-wrap" id="qscore-wrap">
-    <div class="qscore-head">
-      <span class="ttl">🧠 Điểm chi tiết 10 câu tư duy toán</span>
-      <span class="sum" id="qscore-sum">Tổng <b>—</b> / <b>—</b> điểm</span>
-    </div>
-    <table class="qscore" id="qscore">
-      <tr class="qs-num"><th>Câu</th></tr>
-      <tr class="qs-max"><th>Điểm chuẩn</th></tr>
-      <tr class="qs-cur"><th>Điểm đạt</th></tr>
-    </table>
-  </div>
-
-  <!-- BIỂU ĐỒ: Cluster Bars full-width (Radar đã chuyển lên top trong merged sumcard) -->
-  <div class="cluster-bars" id="cluster-bars">
-    <div class="cl-title">📊 Theo nhóm năng lực tư duy</div>
-    <div id="cluster-rows"></div>
   </div>
 
   <!-- ───── SECTION 3 ───── -->
@@ -2647,9 +2643,8 @@ function refreshSummary(){
   _fillInfo(2, s2Pct, 't-nl');
   // Stage caption đã bỏ — info-row chỉ hiển thị %, score, level (gọn hơn)
 
-  // Charts: Bar KTCB + Radar năng lực + Cluster Bars + Q-Score + Q-Matrix
+  // Charts: Radar năng lực + Cluster Bars + Q-Score + Q-Matrix (đã bỏ bar chart KTCB)
   try{
-    renderBarChart('chart-kt','t-kt','kt');
     renderRadarChart('chart-nl-radar','t-nl','tu');
     refreshQScore();
     refreshQMatrix();

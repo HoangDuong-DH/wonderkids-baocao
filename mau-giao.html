@@ -352,9 +352,30 @@ body{
 .radar-legend{display:flex;gap:18px;justify-content:center;margin-top:4px;font:600 11px/1 var(--font-body);color:var(--ink-soft)}
 .radar-legend .sw{display:inline-block;width:14px;height:3px;background:#f5b84a;border-radius:2px;margin-right:6px;vertical-align:middle}
 
-.donut-wrap{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
-.donut-chart{width:130px;height:130px}
-.donut-info{display:flex;flex-direction:column;gap:6px}
+/* Mini bar charts 4 nhóm — replace donut */
+#detail-bars{display:flex;flex-direction:column;gap:14px}
+.dbar-group{}
+.dbar-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px dashed var(--hair)}
+.dbar-icon{width:18px;height:18px;color:var(--orange-deep);flex-shrink:0}
+.dbar-title{font:700 11.5px/1 var(--font-display);color:var(--ink);flex:1}
+.dbar-grade{padding:3px 9px;border-radius:99px;font:700 10.5px/1 var(--font-display);color:#fff;letter-spacing:.03em}
+.dbar-grade.gS{background:var(--g-S)}
+.dbar-grade.gA{background:var(--g-A)}
+.dbar-grade.gB{background:var(--g-B)}
+.dbar-grade.gC{background:var(--g-C)}
+.dbar-grade.gL{background:var(--g-L)}
+.dbar-rows{display:flex;flex-direction:column;gap:4px}
+.dbar-row{display:grid;grid-template-columns:1fr 70px 26px 22px;align-items:center;gap:7px;font:500 10.5px/1 var(--font-body)}
+.dbar-lbl{color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dbar-track{height:7px;background:#f5e9c8;border-radius:99px;overflow:hidden}
+.dbar-fill{display:block;height:100%;border-radius:99px;transition:width .35s ease,background .25s ease}
+.dbar-val{font:700 10px/1 var(--font-display);color:var(--ink);text-align:right}
+.dbar-chip{font:700 10px/1 var(--font-display);text-align:center;padding:3px 0;border-radius:5px}
+.dbar-chip.gS{color:var(--g-S);background:var(--g-S-bg)}
+.dbar-chip.gA{color:var(--g-A);background:var(--g-A-bg)}
+.dbar-chip.gB{color:var(--g-B);background:var(--g-B-bg)}
+.dbar-chip.gC{color:var(--g-C);background:var(--g-C-bg)}
+.dbar-chip.gL{color:var(--g-L);background:var(--g-L-bg)}
 .donut-row{display:grid;grid-template-columns:60px 1fr 32px;align-items:center;gap:8px;font:500 11.5px/1 var(--font-body)}
 .donut-row .pill{padding:3px 10px;border-radius:99px;font:700 10.5px/1 var(--font-display);text-align:center;color:#fff}
 .donut-row .bar{height:8px;border-radius:99px;background:#f3e7c5;overflow:hidden}
@@ -654,12 +675,9 @@ body{
       </div>
     </div>
     <div class="viz-box">
-      <div class="sec-h"><span class="num">3</span>Phân bố mức độ chi tiết</div>
+      <div class="sec-h"><span class="num">3</span>Điểm chi tiết theo nhóm</div>
       <div class="s5">
-        <div class="donut-wrap">
-          <svg id="donut-chart" class="donut-chart" viewBox="0 0 140 140"></svg>
-          <div class="donut-info" id="donut-info"></div>
-        </div>
+        <div id="detail-bars"><!-- 4 mini bar charts auto-render từ ability tables --></div>
       </div>
     </div>
   </div>
@@ -855,59 +873,51 @@ function renderRadar(){
 renderRadar();
 
 /* ─── Donut: distribution of detail-skill levels ─── */
-function renderDonut(){
-  const svg=document.getElementById('donut-chart');
-  const info=document.getElementById('donut-info');
-  if(!svg||!info) return;
-  // count grades from .ability tables
-  const counts={S:0,A:0,B:0,C:0,L:0};
-  document.querySelectorAll('.ability tbody td:last-child span').forEach(s=>{
-    const g=s.textContent.trim().toUpperCase();
-    if(counts[g]!=null) counts[g]++;
-  });
-  const total = Object.values(counts).reduce((a,b)=>a+b,0)||1;
-  const colors={S:'#5fb74f',A:'#3ea1d3',B:'#f5b84a',C:'#f08526',L:'#df5728'};
-  const labels={S:'Vượt trội',A:'Rất tốt',B:'Tốt',C:'Trung bình',L:'Cần hỗ trợ'};
-
-  // donut
-  const cx=70,cy=70,rOuter=58,rInner=36;
-  let cumulative=0;
-  let html='';
-  // bg ring
-  html += `<circle cx="${cx}" cy="${cy}" r="${(rOuter+rInner)/2}" fill="none" stroke="#fff7e2" stroke-width="${rOuter-rInner}"/>`;
-  for(const g of ['S','A','B','C','L']){
-    const c=counts[g]; if(!c) continue;
-    const frac=c/total;
-    const startAng = cumulative*2*Math.PI - Math.PI/2;
-    const endAng = (cumulative+frac)*2*Math.PI - Math.PI/2;
-    cumulative += frac;
-    const x1=cx+rOuter*Math.cos(startAng), y1=cy+rOuter*Math.sin(startAng);
-    const x2=cx+rOuter*Math.cos(endAng), y2=cy+rOuter*Math.sin(endAng);
-    const x3=cx+rInner*Math.cos(endAng), y3=cy+rInner*Math.sin(endAng);
-    const x4=cx+rInner*Math.cos(startAng), y4=cy+rInner*Math.sin(startAng);
-    const large=frac>0.5?1:0;
-    html += `<path d="M ${x1} ${y1} A ${rOuter} ${rOuter} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${rInner} ${rInner} 0 ${large} 0 ${x4} ${y4} Z" fill="${colors[g]}"/>`;
-  }
-  // center text
-  html += `<text x="${cx}" y="${cy-2}" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="22" fill="#3a2a14">${total}</text>`;
-  html += `<text x="${cx}" y="${cy+14}" text-anchor="middle" font-family="Be Vietnam Pro,sans-serif" font-weight="600" font-size="9" fill="#7b6244" letter-spacing=".08em">KỸ NĂNG</text>`;
-  svg.innerHTML = html;
-
-  // info rows
-  let rows='';
-  for(const g of ['S','A','B','C','L']){
-    const c=counts[g];
-    const pct = total>0 ? (c/total*100) : 0;
-    rows += `
-      <div class="donut-row ${g}">
-        <span class="pill">${g} · ${labels[g]}</span>
-        <span class="bar"><i style="width:${pct}%"></i></span>
-        <span class="ct">${c}</span>
+/* Render 4 mini bar charts (replace donut) — kiểu PDF CMS gốc
+   Mỗi nhóm tư duy có chart riêng cho các kỹ năng chi tiết với điểm số.
+   Grade → score midpoint: S=95, A=85, B=70, C=50, L=25 */
+function renderDetailBars(){
+  const host = document.getElementById('detail-bars');
+  if(!host) return;
+  const GRADE_SCORE = {S:95, A:85, B:70, C:50, L:25};
+  const GRADE_COLOR = {S:'#5fb74f', A:'#3ea1d3', B:'#f5b84a', C:'#f08526', L:'#df5728'};
+  const abilities = document.querySelectorAll('.ability');
+  let html = '';
+  abilities.forEach(ab => {
+    const titleEl = ab.querySelector('.left .ttl');
+    let title = '';
+    if(titleEl){
+      // ttl has <small>Nhóm 01</small>TextLabel — chỉ lấy text label
+      const tmp = titleEl.cloneNode(true);
+      const small = tmp.querySelector('small'); if(small) small.remove();
+      title = tmp.textContent.trim();
+    }
+    const groupGrade = (ab.querySelector('.grade-big')?.textContent || 'C').toUpperCase();
+    html += `<div class="dbar-group">
+      <div class="dbar-head">
+        <span class="dbar-title">${title}</span>
+        <span class="dbar-grade g${groupGrade}">MỨC ${groupGrade}</span>
+      </div>
+      <div class="dbar-rows">`;
+    ab.querySelectorAll('tbody tr').forEach(tr => {
+      const name = (tr.cells[0]?.textContent || '').trim();
+      const grade = (tr.cells[2]?.textContent || 'C').trim().toUpperCase();
+      const score = GRADE_SCORE[grade] || 0;
+      const color = GRADE_COLOR[grade] || '#aaa';
+      html += `<div class="dbar-row">
+        <span class="dbar-lbl" title="${name}">${name}</span>
+        <span class="dbar-track"><span class="dbar-fill" style="width:${score}%;background:${color}"></span></span>
+        <span class="dbar-val">${score}</span>
+        <span class="dbar-chip g${grade}">${grade}</span>
       </div>`;
-  }
-  info.innerHTML = rows;
+    });
+    html += '</div></div>';
+  });
+  host.innerHTML = html;
 }
-renderDonut();
+// Compat alias — recomputeAllMG cũ gọi renderDonut()
+function renderDonut(){ renderDetailBars(); }
+renderDetailBars();
 
 /* ═══════════════════════════════════════════════════════════════
    AVATAR ADAPTIVE THEO GIỚI TÍNH

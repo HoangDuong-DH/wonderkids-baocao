@@ -1091,7 +1091,10 @@ body.print-preview .quick-actions{display:none !important}
   html,body{background:#fff !important;padding:0 !important;margin:0 !important;font-size:10px}
 
   /* === COMPACT spacing toàn cục cho print === */
-  .sec-h{font:800 12.5px/1 var(--font-body) !important;margin:6px 4px 4px !important;color:var(--c-primary-2);padding-bottom:3px !important;border-bottom:1px dashed var(--c-line-soft) !important;gap:7px !important}
+  .sec-h{font:800 12.5px/1 var(--font-body) !important;margin:3px 4px 3px !important;color:var(--c-primary-2);padding-bottom:2px !important;border-bottom:1px dashed var(--c-line-soft) !important;gap:7px !important}
+  .s1,.s2{margin:0 !important}
+  .s2-insight-row{margin:3px 0 !important}
+  .qmatrix-wrap{margin:3px 0 4px !important}
   .sec-h .ico{width:18px;height:18px;color:var(--c-primary-2)}
   .sec-h .ico svg{width:16px;height:16px}
 
@@ -1303,7 +1306,7 @@ body.print-preview .quick-actions{display:none !important}
   }
   .sumcard, .summary-merged, .callout,
   .qmatrix-wrap, .qscore-wrap, .cluster-bars, .vis-row,
-  .chart-box, .level-scale, .insight-panel,
+  .chart-box, .s2-radar, .s2-insight-row, .level-scale, .insight-panel,
   .tbl, table, tr{
     break-inside:avoid !important;page-break-inside:avoid !important;
   }
@@ -1603,7 +1606,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <tr class="zebra" data-row><td><span class="cat-ico" style="background:#a26ad8"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></td><td class="left"><input class="label-cell" value="Phép cộng & phép trừ"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
           <tr data-row><td><span class="cat-ico" style="background:#5cb83e"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.49.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25C6 6.83 4 8 4 11c0 2.25 1.5 3.5 1.5 3.5C5 11 9.5 9 14 9c3-.06 5-1 5-1z"/></svg></span></td><td class="left"><input class="label-cell" value="Phân loại"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
           <tr class="zebra" data-row><td><span class="cat-ico" style="background:#46a6dd"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span></td><td class="left"><input class="label-cell" value="Đo lường"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
-          <tr data-row><td><span class="cat-ico" style="background:#f5b223"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></span></td><td class="left"><input class="label-cell" value="Các hình dạng khác nhau"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
+          <tr data-row><td><span class="cat-ico" style="background:#f5b223"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z"/></svg></span></td><td class="left"><input class="label-cell" value="Các kiến thức toán tư duy khác"></td><td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td></tr>
         </tbody>
         <tfoot><tr class="total"><td></td><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td></tr></tfoot>
       </table>

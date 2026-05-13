@@ -2,6 +2,10 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<!-- CACHE-CONTROL: ép browser luôn check version mới mỗi lần load, không dùng bản cache cũ -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>WonderKids — Báo cáo kết quả đánh giá năng lực đầu kỳ</title>
 <!-- Favicon: chữ W cách điệu trên nền gradient cam-vàng WonderKids + sparkle -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23ffc24a'/><stop offset='1' stop-color='%23e94e1b'/></linearGradient></defs><circle cx='32' cy='32' r='30' fill='url(%23g)'/><path d='M13 19 L21 46 L32 27 L43 46 L51 19' stroke='%23fff' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/><path d='M50 12 L51.5 15.5 L55 17 L51.5 18.5 L50 22 L48.5 18.5 L45 17 L48.5 15.5 Z' fill='%23fff'/></svg>">
@@ -605,6 +609,15 @@ body{
   display:grid;grid-template-columns:54px 1fr 180px;align-items:center;
   background:linear-gradient(90deg, #fde0bb 0%, #ffe8c8 60%, var(--c-primary-2) 60%, var(--c-primary-2) 100%);
 }
+/* Build version tag — chỉ hiện trên màn hình (ẩn khi in/preview) để so sánh giữa 2 máy */
+#build-info{
+  position:fixed;bottom:6px;right:10px;z-index:50;
+  font:500 10px/1 var(--font-body);color:#bbb;
+  background:rgba(255,255,255,.6);padding:3px 7px;border-radius:6px;
+  pointer-events:none;user-select:text;letter-spacing:.02em;
+}
+@media print{ #build-info{display:none !important} }
+body.print-preview #build-info{display:none !important}
 .footer .heart{display:flex;align-items:center;justify-content:center}
 .footer .msg{font:500 11px/1.4 var(--font-body);color:var(--c-ink-soft);padding-right:14px;min-width:0;overflow:hidden}
 .footer .msg b{color:var(--c-primary-2);font-weight:800}
@@ -1450,6 +1463,10 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
     Làm mới
   </button>
+  <button onclick="forceRefresh()" title="Tải lại trang với cache mới nhất từ server (phòng trường hợp cache cũ làm bug)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+    Cập nhật
+  </button>
   <span class="sep"></span>
   <button onclick="togglePrintPreview()" title="Xem trên màn hình ra giấy sẽ trông thế nào — không in thật">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -1843,11 +1860,32 @@ body.print-preview .hdr .mascot svg{display:none !important}
     </div>
     <div class="brand">WONDERKIDS</div>
   </div>
+  <!-- Build version chỉ hiện trên màn hình (ẩn khi in), để so sánh nhanh giữa 2 máy -->
+  <div id="build-info" title="Build version — dùng để so sánh giữa các máy, nếu khác nhau là có cache cũ"></div>
 </div>
 
 <div id="tweaks-root"></div>
 
 <script>
+/* ─────────────────────────────────────────────────
+   BUILD VERSION + FORCE REFRESH
+   document.lastModified auto-update mỗi lần GitHub Pages deploy.
+   Khi 2 máy hiển thị giá trị khác → 1 máy đang xài cache cũ.
+   ───────────────────────────────────────────────── */
+const __BUILD_VERSION = (document.lastModified || 'unknown').replace(/[:/]/g,'-');
+// Populate footer build tag ngay khi DOM sẵn sàng
+document.addEventListener('DOMContentLoaded', ()=>{
+  const el = document.getElementById('build-info');
+  if(el) el.textContent = 'build ' + __BUILD_VERSION;
+});
+function forceRefresh(){
+  // Bust cache bằng query param random + reload. KHÔNG xoá localStorage
+  // (giữ data đã nhập), chỉ ép browser fetch HTML mới từ server.
+  const url = new URL(location.href);
+  url.searchParams.set('_v', Date.now());
+  location.replace(url.toString());
+}
+
 /* ─────────────────────────────────────────────────
    Compute Tỷ lệ + totals + level + gap alert
    ───────────────────────────────────────────────── */

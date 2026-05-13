@@ -1367,7 +1367,6 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <!-- RIGHT — t-ss + 2 callout boxes Điểm Mạnh / Cần Củng Cố -->
     <div class="right-stack">
       <div>
-        <div class="subcap">SO SÁNH CẤP ĐỘ</div>
         <table class="tbl" id="t-ss" data-sum-group="ss">
           <thead><tr><th style="width:78px">Cấp độ</th><th style="width:50px">Chuẩn</th><th style="width:50px">Đạt</th><th style="width:60px">Tỷ lệ</th><th>Ghi chú</th></tr></thead>
           <tbody>
@@ -2548,6 +2547,23 @@ function togglePrintPreview(){
     toast('Đang xem trước in. Click banner trên cùng hoặc ESC để thoát.','info');
   } else {
     _restoreTextareasAfterPrint();
+  }
+}
+
+/* In / Xuất PDF — gọi window.print(), trước đó refresh layout cho chuẩn */
+function doPrint(){
+  try{
+    const wasPreview=document.body.classList.contains('print-preview');
+    if(wasPreview) document.body.classList.remove('print-preview');
+    if(typeof autoGrowAll==='function') autoGrowAll();
+    if(typeof refreshSummary==='function') refreshSummary();
+    setTimeout(()=>{
+      try{ window.print(); }catch(e){ console.error('[print]',e); toast('Không gọi được dialog in: '+e.message,'error'); }
+      if(wasPreview) document.body.classList.add('print-preview');
+    }, 120);
+  }catch(err){
+    console.error('[doPrint]',err);
+    toast('Lỗi: '+err.message,'error');
   }
 }
 /* === Textarea → div SWAP cho print — fix triệt để text bị cắt khi in ===

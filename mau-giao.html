@@ -66,12 +66,20 @@ body{
   box-shadow:0 10px 30px rgba(120,60,10,.14),0 1px 0 rgba(255,255,255,.7) inset;
   border:1px solid rgba(243,129,31,.18);
 }
-.toolbar button{appearance:none;border:0;background:transparent;color:var(--ink);
-  font:600 12.5px/1 var(--font-body);padding:8px 16px;border-radius:999px;cursor:pointer;
-  display:inline-flex;align-items:center;gap:6px;transition:all .15s ease}
-.toolbar button:hover{background:#fff3da;color:var(--orange-deep)}
+.toolbar button,.toolbar a{appearance:none;border:0;background:transparent;color:var(--ink);
+  font:600 12.5px/1 var(--font-body);padding:8px 14px;border-radius:999px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;text-decoration:none}
+.toolbar button:hover,.toolbar a:hover{background:#fff3da;color:var(--orange-deep)}
 .toolbar button.primary{background:var(--orange);color:#fff}
 .toolbar button.primary:hover{background:var(--orange-deep)}
+.toolbar .sep{width:1px;height:18px;background:rgba(0,0,0,.1);align-self:center;margin:0 2px}
+.toolbar .tb-mock{
+  appearance:none;-webkit-appearance:none;border:1px solid rgba(243,129,31,.2);
+  background:#fff7ec url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 10px center;
+  color:var(--ink);font:600 12.5px/1 var(--font-body);padding:8px 26px 8px 12px;border-radius:999px;
+  cursor:pointer;transition:all .15s ease;
+}
+.toolbar .tb-mock:hover{background-color:#fff3da}
 
 /* Page */
 .page{
@@ -492,11 +500,27 @@ body{
 <body>
 
 <div class="toolbar">
-  <a href="index.html" title="Quay về trang chọn báo cáo" style="text-decoration:none;color:inherit;font:600 12.5px/1 var(--font-body);padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.7);display:inline-flex;align-items:center;gap:6px;margin-right:8px;border:1px solid rgba(0,0,0,.08);transition:all .15s ease">
+  <a href="index.html" title="Quay về trang chọn báo cáo">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Trang chính
   </a>
-  <button onclick="window.print()" class="primary">
+  <select class="tb-mock" onchange="if(this.value){loadMockProfileMG(this.value);this.value=''}" title="Mock data để test nhận xét auto">
+    <option value="">🧪 Mock data</option>
+    <option value="excellent">Xuất sắc (toàn S/A)</option>
+    <option value="good">Tốt (B/A đều)</option>
+    <option value="average">Trung bình (C đều)</option>
+    <option value="weak">Cần hỗ trợ (L nhiều)</option>
+  </select>
+  <button onclick="resetFormMG()" title="Xóa toàn bộ và reset về mặc định">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+    Làm mới
+  </button>
+  <button onclick="forceRefreshMG()" title="Tải lại trang với cache mới nhất từ server">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+    Cập nhật
+  </button>
+  <span class="sep"></span>
+  <button onclick="window.print()" class="primary" title="In/Xuất PDF: nhớ bật 'Background graphics' trong dialog in">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
     In / Xuất PDF
   </button>
@@ -1075,14 +1099,76 @@ function fillCommentsMG(force){
   if(body){ body.innerHTML = autoCommentMG(); }
   const list = document.querySelector('.s6 .nx-list');
   if(list){ list.innerHTML = autoDirectionMG(); }
-  if(force){
-    // Toast confirm
-    const t = document.createElement('div');
-    t.textContent = '✨ Đã sinh nhận xét tự động';
-    t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#5fb74f;color:#fff;padding:10px 20px;border-radius:99px;font:600 13px/1 Be Vietnam Pro,sans-serif;box-shadow:0 8px 24px rgba(95,183,79,.3);z-index:1000;animation:mg-toast-out 2.5s forwards';
-    document.body.appendChild(t);
-    setTimeout(()=>t.remove(), 2500);
-  }
+  if(force) _showToastMG('✨ Đã sinh nhận xét tự động');
+}
+
+function _showToastMG(msg, color){
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${color||'#5fb74f'};color:#fff;padding:10px 20px;border-radius:99px;font:600 13px/1 Be Vietnam Pro,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:9999;animation:mg-toast-out 2.5s forwards`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2500);
+}
+
+/* ─── MOCK PROFILES — test nhanh nhận xét theo 4 mức ─── */
+const __MOCK_MG = {
+  excellent: { sex:'Nam', name:'Mock — Bé Xuất sắc',  grades:[['S','S','S'],['S','A','S','A','S'],['A','S','A','S'],['A','S','A','S']] },
+  good:      { sex:'Nữ', name:'Mock — Bé Khá',       grades:[['B','B','A'],['B','A','B','A','B'],['B','B','A','B'],['B','A','B','B']] },
+  average:   { sex:'Nam', name:'Mock — Bé Trung bình', grades:[['C','C','C'],['C','C','C','C','C'],['C','C','C','C'],['C','C','C','C']] },
+  weak:      { sex:'Nữ', name:'Mock — Bé Cần hỗ trợ', grades:[['L','C','L'],['L','L','C','L','C'],['L','C','L','L'],['L','L','L','L']] },
+};
+function loadMockProfileMG(key){
+  const data = __MOCK_MG[key]; if(!data) return;
+  // Name + sex
+  const nameInp = document.querySelector('.info-field input.val');
+  if(nameInp) nameInp.value = data.name;
+  const sexSel = document.getElementById('gender-select');
+  if(sexSel){ sexSel.value = data.sex; updateAvatar(data.sex); }
+  // Fill grade cells trong 4 ability tables theo data.grades
+  const abilities = document.querySelectorAll('.ability');
+  data.grades.forEach((rowGrades, i)=>{
+    const ab = abilities[i]; if(!ab) return;
+    const spans = ab.querySelectorAll('tbody td:last-child span');
+    rowGrades.forEach((g,j)=>{
+      if(spans[j]){ spans[j].textContent = g; spans[j].className = 'g'+g; }
+    });
+  });
+  recomputeAllMG();
+  // Force-regen comments với data mới
+  fillCommentsMG(true);
+  _showToastMG(`Đã load: ${data.name}`, '#f08526');
+}
+
+/* ─── RESET FORM ─── */
+function resetFormMG(){
+  if(!confirm('Xóa toàn bộ data đã nhập và reset về mặc định?')) return;
+  // Reset name fields về placeholder rỗng (giữ default labels)
+  document.querySelectorAll('.info-field input.val').forEach(inp=>{
+    if(inp.id==='gender-select') return;
+    inp.value = '';
+  });
+  // Reset gender to Nam
+  const sexSel = document.getElementById('gender-select');
+  if(sexSel){ sexSel.value = 'Nam'; updateAvatar('Nam'); }
+  // Reset all ability grades to C (default)
+  document.querySelectorAll('.ability tbody td:last-child span').forEach(s=>{
+    s.textContent = 'C';
+    s.className = 'gC';
+  });
+  // Clear comments
+  const body = document.querySelector('.s6 .nx-body');
+  if(body) body.innerHTML = '<p>Nhập điểm và bấm "🪄 Tự động nhận xét" để sinh nhận xét.</p>';
+  const list = document.querySelector('.s6 .nx-list');
+  if(list) list.innerHTML = '<li>Nhập điểm và bấm "🪄 Tự động nhận xét" để sinh định hướng.</li>';
+  recomputeAllMG();
+  _showToastMG('Đã reset form', '#3ea1d3');
+}
+
+/* ─── FORCE REFRESH (bust cache) ─── */
+function forceRefreshMG(){
+  const url = new URL(location.href);
+  url.searchParams.set('_v', Date.now());
+  location.replace(url.toString());
 }
 </script>
 </body>

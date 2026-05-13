@@ -2832,39 +2832,155 @@ function _tuduyTotals(){
   return {cur, max, pct: max>0 ? cur/max : 0, data};
 }
 
+/* ───── LOOKUP TABLES (từ NHẬN XÉT - Trang tính1.csv user cung cấp) ───── */
+// KTCB — t-kt: tên đơn vị (lowercased) → năng lực tương ứng
+const __KTCB_UNIT_ABILITY = {
+  'các số đến 9':                'thực hiện phép tính và các bài toán số học',
+  'phép cộng & phép trừ':        'xử lý bài toán số học nhanh và chính xác',
+  'phép cộng và phép trừ':       'xử lý bài toán số học nhanh và chính xác',
+  'phân loại':                   'tư duy logic, nhận ra điểm giống – khác và sắp xếp thông tin có hệ thống',
+  'đo lường':                    'quan sát, so sánh và ước lượng',
+  'các kiến thức toán tư duy khác':'quan sát, liên kết thông tin và tiếp cận bài toán mới',
+  'các hình dạng khác nhau':     'quan sát, liên kết thông tin và tiếp cận bài toán mới',
+  'các dạng toán tư duy mở rộng':'quan sát, liên kết thông tin và tiếp cận bài toán mới',
+};
+// KTCB — t-kt: tên đơn vị → mức độ ảnh hưởng (khi YẾU)
+const __KTCB_UNIT_IMPACT = {
+  'các số đến 9':                'ảnh hưởng đến khả năng thực hiện phép toán cơ bản và phức tạp',
+  'phép cộng & phép trừ':        'ảnh hưởng đến khả năng tính toán chính xác và giải bài toán',
+  'phép cộng và phép trừ':       'ảnh hưởng đến khả năng tính toán chính xác và giải bài toán',
+  'phân loại':                   'ảnh hưởng đến khả năng tổ chức và xử lý thông tin',
+  'đo lường':                    'cần củng cố khả năng sử dụng và chuyển đổi đơn vị đo trong các tình huống thực tế',
+  'các kiến thức toán tư duy khác':'ảnh hưởng đến khả năng linh hoạt giải quyết các bài toán nâng cao',
+  'các hình dạng khác nhau':     'ảnh hưởng đến khả năng linh hoạt giải quyết các bài toán nâng cao',
+  'các dạng toán tư duy mở rộng':'ảnh hưởng đến khả năng linh hoạt giải quyết các bài toán nâng cao',
+};
+// KTCB — cấp độ giải quyết: mô tả loại bài toán tương ứng
+const __KTCB_DIFFICULTY = {
+  'khó':        'bài toán khó, cần suy luận logic rõ rệt hoặc tư duy nhiều bước',
+  'trung bình': 'bài toán cần suy luận ngắn hoặc 2 bước xử lý',
+  'dễ':         'bài toán cơ bản, nhận biết trực quan, chỉ 1 bước xử lý',
+};
+// Tư duy — t-nl: nhóm tư duy → năng lực tương ứng (full description)
+const __TUDUY_GROUP_ABILITY = {
+  'giải quyết vấn đề':                       'áp dụng kiến thức đã học, lập luận để giải quyết những bài toán mới',
+  'tư duy vận dụng & giải quyết vấn đề':     'áp dụng kiến thức đã học, lập luận để giải quyết những bài toán mới',
+  'tư duy giải quyết vấn đề':                'áp dụng kiến thức đã học, lập luận để giải quyết những bài toán mới',
+  'logic và quan sát':                       'tìm ra mối quan hệ hoặc bản chất sự vật thông qua trực quan',
+  'tư duy logic và quan sát':                'tìm ra mối quan hệ hoặc bản chất sự vật thông qua trực quan',
+  'phân tích và phân loại':                  'thu thập, phân loại thông tin để giải quyết vấn đề',
+  'tư duy phân tích và phân loại':           'thu thập, phân loại thông tin để giải quyết vấn đề',
+  'số và ký hiệu':                           'vận dụng và công thức hóa khái niệm, ký hiệu toán học để giải quyết vấn đề',
+  'tư duy số và ký hiệu':                    'vận dụng và công thức hóa khái niệm, ký hiệu toán học để giải quyết vấn đề',
+  'không gian và hình học':                  'phát hiện và giải quyết những bài toán về hình học phẳng và không gian',
+  'tư duy không gian và hình học':           'phát hiện và giải quyết những bài toán về hình học phẳng và không gian',
+  'suy luận toán học':                       'sử dụng các phương pháp như quy nạp hay diễn dịch',
+  'tư duy suy luận toán học':                'sử dụng các phương pháp như quy nạp hay diễn dịch',
+};
+// Tư duy — cấp độ giải quyết theo mức độ: mô tả khả năng tương ứng
+const __TUDUY_DIFFICULTY = {
+  'khó':        'khả năng tư duy logic và sáng tạo ở mức độ cao',
+  'trung bình': 'khả năng tư duy logic và sáng tạo ở mức độ khá',
+  'dễ':         'khả năng tư duy logic và sáng tạo ở mức độ cơ bản',
+};
+
+// Chuẩn hoá label cấp độ → 'dễ' / 'trung bình' / 'khó'
+function _diffLabelOf(s){
+  const n = String(s||'').toLowerCase().replace(/\s+/g,' ').trim();
+  if(n.includes('khó'))  return 'khó';
+  if(n.includes('trung')) return 'trung bình';
+  if(n.includes('dễ'))   return 'dễ';
+  return '';
+}
+
 function autoCommentKTCB(){
-  // Tổng chấm theo CHUẨN: t-kt + t-kq = 40 điểm
+  // Tổng theo CHUẨN: t-kt = 40 điểm
   const tot = _ktcbTotals();
   if(tot.max===0) return '';
   const level = pctToLevel(tot.pct);
-  // Top/bottom CATEGORIES dùng t-kt (5 đơn vị) để phân tích chi tiết
-  const {top, bottom, lowest} = _topBottom('t-kt', 2, 2);
-  const ability = 'nắm vững các khái niệm cơ bản';
-  const diff = _diffPattern('t-ss');
-  const kq = _kqWordComment();
+  // Top + bottom unit từ t-kt (sorted theo %)
+  const sorted = _sortedByPct('t-kt');
+  if(!sorted.length) return '';
+  const topItem = sorted[0];
+  const bottomItem = sorted[sorted.length-1];
+  const topAbility    = __KTCB_UNIT_ABILITY[_norm(topItem.lbl)]    || 'tiếp thu các đơn vị kiến thức cơ bản';
+  const bottomImpact  = __KTCB_UNIT_IMPACT[_norm(bottomItem.lbl)]  || 'ảnh hưởng đến nền tảng kiến thức cơ bản';
+  // Strong/weak difficulty từ t-ss
+  const ssData = _tblData('t-ss').filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
+  let strongDiff = '', weakDiffDesc = '';
+  if(ssData.length){
+    strongDiff = _diffLabelOf(ssData[0].lbl);
+    const weakLbl = _diffLabelOf(ssData[ssData.length-1].lbl);
+    weakDiffDesc = __KTCB_DIFFICULTY[weakLbl] || '';
+  }
+  // Bài toán có lời / không lời
+  const kqData = _tblData('t-kq').filter(d=>d.max>0);
+  let kqText = '';
+  if(kqData.length){
+    const colVan = kqData.find(d=>/có lời/i.test(d.lbl));
+    const coBan  = kqData.find(d=>/cơ bản|không/i.test(d.lbl)) || (colVan ? kqData.find(d=>d!==colVan) : null);
+    if(colVan && coBan){
+      if(colVan.pct >= coBan.pct){
+        kqText = 'làm tốt bài toán có lời văn — có khả năng chuyển dữ kiện để thực hiện phép toán';
+      } else {
+        kqText = 'làm tốt bài toán cơ bản — cần rèn thêm kỹ năng đọc hiểu đề và chuyển dữ liệu thành phép toán';
+      }
+    } else if(colVan){
+      kqText = colVan.pct>=0.5
+        ? 'làm tốt bài toán có lời văn — có khả năng chuyển dữ kiện để thực hiện phép toán'
+        : 'cần rèn thêm kỹ năng đọc hiểu đề và chuyển dữ liệu thành phép toán';
+    }
+  }
+
   let txt = `Học viên đạt ${_fmtInt(tot.cur)}/${_fmtInt(tot.max)} điểm, tương đương ${Math.round(tot.pct*100)}%, thuộc mức ${level}.`;
-  if(top) txt += ` Con có điểm mạnh ở ${top}, cho thấy khả năng ${ability} khá tốt.`;
-  if(bottom) txt += ` Tuy nhiên, con cần củng cố thêm ${bottom}${lowest && bottom!==lowest ? `, đặc biệt là ${lowest}`:''}.`;
-  if(diff.comment) txt += ` Xét theo độ khó, con ${diff.comment}.`;
-  if(diff.foundation) txt += ` Điều này cho thấy con ${diff.foundation}.`;
-  if(kq) txt += ` Đồng thời, kết quả bài toán ${kq}.`;
+  txt += ` Con có điểm mạnh ở ${topItem.lbl}, cho thấy khả năng ${topAbility} khá tốt.`;
+  if(topItem !== bottomItem){
+    txt += ` Tuy nhiên, con cần củng cố thêm ${bottomItem.lbl}, điều này ${bottomImpact}.`;
+  }
+  if(strongDiff){
+    txt += ` Con có khả năng giải quyết tốt các bài toán ở mức độ ${strongDiff}.`;
+  }
+  if(weakDiffDesc){
+    txt += ` Xét theo cấp độ giải quyết, con cần củng cố thêm với ${weakDiffDesc}.`;
+  }
+  if(kqText){
+    txt += ` Đồng thời, con ${kqText}.`;
+  }
   return txt;
 }
 
 function autoCommentTuDuy(){
-  // Tổng chấm theo CHUẨN: qscore 10 câu = 60 điểm (KHÔNG dùng t-nl 192)
+  // Tổng theo CHUẨN: qscore 10 câu = 60 điểm
   const tot = _tuduyTotals();
   if(tot.max===0) return '';
   const level = pctToLevel(tot.pct);
-  // Top/bottom CATEGORIES dùng t-nl (6 lĩnh vực) để phân tích chi tiết theo năng lực
-  const {top, bottom, lowest} = _topBottom('t-nl', 2, 2);
-  const ability = 'tư duy logic và phân tích';
-  const diff = _diffPattern('t-cd');
+  // Top + bottom nhóm tư duy từ t-nl
+  const sorted = _sortedByPct('t-nl');
+  if(!sorted.length) return '';
+  const topItem = sorted[0];
+  const bottomItem = sorted[sorted.length-1];
+  const topAbility    = __TUDUY_GROUP_ABILITY[_norm(topItem.lbl)]    || 'tư duy logic và phân tích';
+  const bottomAbility = __TUDUY_GROUP_ABILITY[_norm(bottomItem.lbl)] || 'tư duy logic và phân tích';
+  // Strong/weak difficulty từ t-cd
+  const cdData = _tblData('t-cd').filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
+  let strongDiff = '', weakDiffDesc = '';
+  if(cdData.length){
+    strongDiff = _diffLabelOf(cdData[0].lbl);
+    const weakLbl = _diffLabelOf(cdData[cdData.length-1].lbl);
+    weakDiffDesc = __TUDUY_DIFFICULTY[weakLbl] || '';
+  }
+
   let txt = `Học viên đạt ${_fmtInt(tot.cur)}/${_fmtInt(tot.max)} điểm, tương đương ${Math.round(tot.pct*100)}%, thuộc mức ${level}.`;
-  if(top) txt += ` Con có điểm mạnh ở ${top}, cho thấy khả năng ${ability} khá tốt.`;
-  if(bottom) txt += ` Tuy nhiên, con cần củng cố thêm ${bottom}${lowest && bottom!==lowest ? `, đặc biệt là ${lowest}`:''}.`;
-  if(diff.comment) txt += ` Xét theo độ khó, con ${diff.comment}.`;
-  if(diff.foundation) txt += ` Điều này cho thấy con ${diff.foundation}.`;
+  txt += ` Con có điểm mạnh ở ${topItem.lbl}, cho thấy khả năng ${topAbility} khá tốt.`;
+  if(topItem !== bottomItem){
+    txt += ` Tuy nhiên, con cần củng cố thêm ${bottomItem.lbl}, điều này thể hiện ${bottomAbility}.`;
+  }
+  if(strongDiff){
+    txt += ` Xét theo độ khó, con đang xử lý tốt nhất các bài ở mức ${strongDiff}.`;
+  }
+  if(weakDiffDesc){
+    txt += ` Điều này cho thấy con đang phát triển ${weakDiffDesc}.`;
+  }
   return txt;
 }
 
@@ -2877,23 +2993,34 @@ function autoCommentChung(){
   const totalMax = ktcb.max + tuduy.max;
   const pct = totalMax>0 ? totalCur/totalMax : 0;
   const level = pctToLevel(pct);
-  // Phần nào mạnh hơn — dựa trên % chứ không phải điểm tuyệt đối
+  // Phần nào mạnh hơn — dựa trên % (so sánh tỷ lệ, không phải điểm tuyệt đối)
   const strongPart = (ktcb.pct > tuduy.pct) ? 'kiến thức cơ bản' : 'tư duy toán học';
-  // Top/bottom từ t-kt + t-nl (categories descriptive, không cộng điểm)
-  const allCats = [..._tblData('t-kt'), ..._tblData('t-nl')].filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
-  const top = allCats.slice(0,2).map(d=>d.lbl).join(', ');
-  const bottom = allCats.slice(-2).reverse().map(d=>d.lbl).join(', ');
-  const lowest = allCats.length ? allCats[allCats.length-1].lbl : '';
-  const diff = _diffPattern('t-ss');
-  const kq = _kqWordComment();
+  // Top từ t-kt và t-nl theo tỷ lệ — phân tách 2 source để gán đúng mapping
+  const ktSorted = _sortedByPct('t-kt');
+  const nlSorted = _sortedByPct('t-nl');
+  const topKT = ktSorted[0], botKT = ktSorted[ktSorted.length-1];
+  const topNL = nlSorted[0], botNL = nlSorted[nlSorted.length-1];
+
   let txt = `Học viên đạt ${_fmtInt(totalCur)}/${_fmtInt(totalMax)} điểm, `
          + `tương đương ${Math.round(pct*100)}%, thuộc mức ${level}.\n\n`;
   txt += `Con thể hiện nền tảng ${strongPart} tốt hơn`;
-  if(top) txt += `, đặc biệt ở các kỹ năng ${top}`;
+  const topNames = [topKT?.lbl, topNL?.lbl].filter(Boolean);
+  if(topNames.length) txt += `, đặc biệt ở các kỹ năng ${topNames.join(', ')}`;
   txt += '.';
-  if(bottom) txt += ` Tuy nhiên, con cần củng cố thêm ở một số lĩnh vực như ${bottom}${lowest && bottom!==lowest ? `, đặc biệt là ${lowest}`:''}, để đảm bảo nền tảng vững chắc hơn.`;
-  if(diff.foundation) txt += `\n\nXét theo độ khó, con ${diff.foundation}.`;
-  if(kq) txt += ` Đồng thời, kết quả bài toán ${kq}.`;
+  const botNames = [botKT?.lbl, botNL?.lbl].filter(Boolean);
+  if(botNames.length){
+    txt += ` Tuy nhiên, con cần củng cố thêm ở một số lĩnh vực như ${botNames.join(', ')}, để đảm bảo nền tảng vững chắc hơn.`;
+  }
+  // Định hướng theo cấp độ — kết hợp t-ss (KTCB) + t-cd (Tư duy)
+  const ssData = _tblData('t-ss').filter(d=>d.max>0).sort((a,b)=>b.pct-a.pct);
+  if(ssData.length){
+    const strongDiff = _diffLabelOf(ssData[0].lbl);
+    const weakLbl = _diffLabelOf(ssData[ssData.length-1].lbl);
+    const weakDesc = __KTCB_DIFFICULTY[weakLbl];
+    if(strongDiff) txt += `\n\nXét theo cấp độ, con xử lý tốt nhất ở mức ${strongDiff}`;
+    if(weakDesc) txt += `, và cần củng cố thêm với ${weakDesc}`;
+    if(strongDiff || weakDesc) txt += '.';
+  }
   return txt;
 }
 

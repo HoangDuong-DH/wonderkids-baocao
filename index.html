@@ -3627,12 +3627,16 @@ document.addEventListener('keydown', e=>{
 });
 function togglePrintPreview(){
   const on=!document.body.classList.contains('print-preview');
-  document.body.classList.toggle('print-preview', on);
   if(on){
-    _swapTextareasForPrint(); // áp dụng swap để xem-trước đúng kiểu print
+    // QUAN TRỌNG: swap TRƯỚC khi add class print-preview.
+    // Nếu add class trước thì CSS sẽ ẩn textareas, getComputedStyle
+    // sẽ thấy display:none → swap skip tạo mirror → mất hết info.
+    _swapTextareasForPrint();
+    document.body.classList.add('print-preview');
     window.scrollTo({top:0,behavior:'smooth'});
     toast('Đang xem trước in. Click banner trên cùng hoặc ESC để thoát.','info');
   } else {
+    document.body.classList.remove('print-preview');
     _restoreTextareasAfterPrint();
   }
 }

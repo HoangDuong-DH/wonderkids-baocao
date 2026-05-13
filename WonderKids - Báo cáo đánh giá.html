@@ -521,9 +521,9 @@ body{
 .callout li{align-items:flex-start}
 .callout li .dot{margin-top:8px}
 
-.subcap{display:flex;align-items:center;justify-content:center;gap:8px;
-  font:800 11px/1 var(--font-body);color:var(--c-ink);letter-spacing:.05em;
-  margin:8px 0 4px}
+.subcap{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  font:800 11px/1.25 var(--font-body);color:var(--c-ink);letter-spacing:.04em;
+  margin:8px 0 4px;text-align:center;word-break:break-word}
 
 /* ───────── SECTION 2 ───────── */
 .s2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;position:relative}
@@ -1613,7 +1613,7 @@ body.print-preview .hdr .mascot svg{display:none !important}
       </div>
 
       <div>
-        <div class="subcap">KẾT QUẢ BÀI TOÁN — CÓ LỜI / KHÔNG CÓ LỜI</div>
+        <div class="subcap">BÀI TOÁN — CÓ LỜI / KHÔNG LỜI</div>
         <table class="tbl" id="t-kq" data-sum-group="kq">
           <thead><tr>
             <th class="left" style="text-align:left">Phân loại</th>

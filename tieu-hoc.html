@@ -6,6 +6,22 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<!-- AUTO CACHE-BUST: lần đầu mỗi session, force fetch HTML mới (chống GitHub Pages
+     edge cache + browser disk cache lì). Chỉ chạy 1 lần/tab, không reload loop. -->
+<script>
+(function autoCacheBust(){
+  try{
+    var SK = 'wk-fresh-session';
+    if(sessionStorage.getItem(SK)) return;
+    sessionStorage.setItem(SK, '1');
+    var u = new URL(location.href);
+    if(!u.searchParams.get('_v')){
+      u.searchParams.set('_v', Date.now());
+      location.replace(u.toString());
+    }
+  }catch(_){}
+})();
+</script>
 <title>WonderKids — Báo cáo kết quả đánh giá năng lực đầu kỳ</title>
 <!-- Favicon: chữ W cách điệu trên nền gradient cam-vàng WonderKids + sparkle -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23ffc24a'/><stop offset='1' stop-color='%23e94e1b'/></linearGradient></defs><circle cx='32' cy='32' r='30' fill='url(%23g)'/><path d='M13 19 L21 46 L32 27 L43 46 L51 19' stroke='%23fff' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/><path d='M50 12 L51.5 15.5 L55 17 L51.5 18.5 L50 22 L48.5 18.5 L45 17 L48.5 15.5 Z' fill='%23fff'/></svg>">
@@ -3413,12 +3429,25 @@ function _cleanSlate(){
     for(let i=rows.length-1; i>=def; i--){ rows[i].remove(); }
   }
   // 2) Clear values toàn bộ input/textarea/select
-  document.querySelectorAll('.page input').forEach(i=>{ i.value=''; });
-  document.querySelectorAll('.page textarea').forEach(t=>{ t.value=''; t.style.height='auto'; });
+  document.querySelectorAll('.page input').forEach(i=>{ i.value=''; i.classList.remove('just-changed'); });
+  document.querySelectorAll('.page textarea').forEach(t=>{ t.value=''; t.style.height='auto'; t.classList.remove('just-changed'); });
   document.querySelectorAll('.page select').forEach(s=>{ s.selectedIndex=0; s.setAttribute('data-level',''); });
   document.querySelectorAll('.page [data-chk]').forEach(c=>c.classList.remove('on'));
   // 3) Clear pct chips
   document.querySelectorAll('[data-pct]').forEach(p=>{ p.textContent='—'; p.className=''; p.style.removeProperty('--p'); });
+  // 3b) Remove dynamic classes ở rows/cells (validation, focus, hover)
+  document.querySelectorAll('tr.invalid, tr.row-focus, tr.radar-hover').forEach(r=>{
+    r.classList.remove('invalid','row-focus','radar-hover');
+  });
+  document.querySelectorAll('.gap-alert.on').forEach(a=>a.classList.remove('on'));
+  document.querySelectorAll('.radar-vertex.active').forEach(v=>v.classList.remove('active'));
+  // 3c) Save indicator + status panel log
+  const si = document.getElementById('save-ind');
+  if(si){ si.textContent=''; si.classList.remove('saving'); }
+  const sl = document.getElementById('status-log');
+  if(sl) sl.innerHTML = '';
+  // 3d) Remove transient overlay elements (tooltip, confetti) leftover từ render trước
+  document.querySelectorAll('.confetti-burst, #radar-tooltip').forEach(el=>el.remove());
   // 4) Restore year defaults
   const yrs=document.querySelectorAll('.hdr .pill input');
   if(yrs[0]) yrs[0].value='2025'; if(yrs[1]) yrs[1].value='2026';

@@ -2,6 +2,24 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<!-- AUTO CACHE-BUST: lần đầu mỗi session, force fetch HTML mới (chống edge cache) -->
+<script>
+(function autoCacheBust(){
+  try{
+    var SK = 'wk-fresh-session-mg';
+    if(sessionStorage.getItem(SK)) return;
+    sessionStorage.setItem(SK, '1');
+    var u = new URL(location.href);
+    if(!u.searchParams.get('_v')){
+      u.searchParams.set('_v', Date.now());
+      location.replace(u.toString());
+    }
+  }catch(_){}
+})();
+</script>
 <title>WonderKids — Báo cáo đánh giá năng lực tư duy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1246,6 +1264,7 @@ function _applyMG_Grades(grades){
 }
 function loadMockProfileMG(key){
   const data = __MOCK_MG[key]; if(!data) return;
+  _cleanSlateMG();  // clean slate trước khi fill → tránh residue
   _applyMG_InfoFields(data);
   _applyMG_Grades(data.grades);
   recomputeAllMG();
@@ -1403,6 +1422,8 @@ async function importExcelMG(ev){
       const ws = wb.Sheets[wb.SheetNames[0]];
       rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
     }
+    // Clean slate trước khi fill → tránh residue từ data trước
+    _cleanSlateMG();
     const {infoFilled, gradesFilled} = _applyParsedRowsMG(rows);
     recomputeAllMG();
     fillCommentsMG(true);
@@ -1498,27 +1519,36 @@ function downloadSampleCSV_MG(){
 })();
 
 /* ─── RESET FORM ─── */
-function resetFormMG(){
-  if(!confirm('Xóa toàn bộ data đã nhập và reset về mặc định?')) return;
-  // Reset name fields về placeholder rỗng (giữ default labels)
-  document.querySelectorAll('.info-field input.val').forEach(inp=>{
-    if(inp.id==='gender-select') return;
-    inp.value = '';
-  });
-  // Reset gender to Nam
+/* ─── CLEAN SLATE — reset triệt để, dùng chung cho resetFormMG + mọi data load ───
+   Idempotent: gọi nhiều lần vẫn cho cùng kết quả. Ngăn residue khi chuyển data.
+   ─────────────────────────────────────────────────────────────────────────── */
+function _cleanSlateMG(){
+  // 1) Reset info fields về rỗng (giữ select gender)
+  document.querySelectorAll('.info-field input.val').forEach(inp=>{ inp.value=''; });
+  // 2) Reset gender select về Nam + avatar tương ứng
   const sexSel = document.getElementById('gender-select');
-  if(sexSel){ sexSel.value = 'Nam'; updateAvatar('Nam'); }
-  // Reset all ability grades to C (default)
+  if(sexSel){ sexSel.value='Nam'; if(typeof updateAvatar==='function') updateAvatar('Nam'); }
+  // 3) Reset 16 grade cells về C (default) + class
   document.querySelectorAll('.ability tbody td:last-child span').forEach(s=>{
     s.textContent = __GRADE_NAME.C;
     s.className = 'gC';
   });
-  // Clear comments
+  // 4) Reset class-level data-grade trên ability container nếu có
+  document.querySelectorAll('.ability').forEach(ab=>{ ab.classList.remove('gS','gA','gB','gC','gL'); ab.classList.add('gC'); });
+  // 5) Clear contenteditable nội dung mô tả (nếu user đã sửa) — giữ default
+  // Bỏ qua vì default text được set inline, user sửa chỉ phần text → reset bằng innerHTML khó
+  // 6) Clear comment containers (nx-body, nx-list)
   const body = document.querySelector('.s6 .nx-body');
   if(body) body.innerHTML = '<p>Nhập điểm và bấm "🪄 Tự động nhận xét" để sinh nhận xét.</p>';
   const list = document.querySelector('.s6 .nx-list');
   if(list) list.innerHTML = '<li>Nhập điểm và bấm "🪄 Tự động nhận xét" để sinh định hướng.</li>';
-  recomputeAllMG();
+  // 7) Recompute mọi thứ
+  if(typeof recomputeAllMG === 'function') recomputeAllMG();
+}
+
+function resetFormMG(){
+  if(!confirm('Xóa toàn bộ data đã nhập và reset về mặc định?')) return;
+  _cleanSlateMG();
   _showToastMG('Đã reset form', '#3ea1d3');
 }
 

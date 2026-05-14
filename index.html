@@ -6,6 +6,21 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<!-- AUTO CACHE-BUST: lần đầu mỗi session, force fetch HTML mới (chống edge cache) -->
+<script>
+(function autoCacheBust(){
+  try{
+    var SK = 'wk-fresh-session-idx';
+    if(sessionStorage.getItem(SK)) return;
+    sessionStorage.setItem(SK, '1');
+    var u = new URL(location.href);
+    if(!u.searchParams.get('_v')){
+      u.searchParams.set('_v', Date.now());
+      location.replace(u.toString());
+    }
+  }catch(_){}
+})();
+</script>
 <title>WonderKids — Chọn loại báo cáo</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23ffc24a'/><stop offset='1' stop-color='%23e94e1b'/></linearGradient></defs><circle cx='32' cy='32' r='30' fill='url(%23g)'/><path d='M13 19 L21 46 L32 27 L43 46 L51 19' stroke='%23fff' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/><path d='M50 12 L51.5 15.5 L55 17 L51.5 18.5 L50 22 L48.5 18.5 L45 17 L48.5 15.5 Z' fill='%23fff'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">

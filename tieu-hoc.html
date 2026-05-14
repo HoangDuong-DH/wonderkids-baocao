@@ -3416,6 +3416,22 @@ function addRow(tableId){
 /* ─── DEFAULT ROW COUNT cho các bảng động ─── */
 const __DEFAULT_ROWS = {'t-kt':5, 't-kq':2, 't-ss':3, 't-nl':6, 't-cd':3};
 
+/* ─── LOADING GUARD — ngăn race khi user click load liên tiếp ─── */
+let __wkLoadInProgress = false;
+function _beginLoad(label){
+  if(__wkLoadInProgress){
+    toast?.('Đang xử lý — vui lòng đợi tải xong', 'warn');
+    return false;
+  }
+  __wkLoadInProgress = true;
+  document.body.style.cursor = 'wait';
+  return true;
+}
+function _endLoad(){
+  __wkLoadInProgress = false;
+  document.body.style.cursor = '';
+}
+
 /* ─── CLEAN SLATE — reset triệt để, dùng chung cho resetForm + mọi data load ───
    Đảm bảo state là "blank canvas" trước khi fill data mới → không có residue.
    Idempotent: gọi nhiều lần vẫn cho cùng kết quả.
@@ -3633,6 +3649,7 @@ async function importReport(ev){
   const f = ev.target?.files?.[0]; if(!f) return;
   const name = f.name.toLowerCase();
   if(!confirm('Tải báo cáo sẽ đè dữ liệu hiện tại. Tiếp tục?')){ ev.target.value=''; return; }
+  if(!_beginLoad()){ ev.target.value=''; return; }
   try{
     if(name.endsWith('.json')){
       const text = await f.text();
@@ -3674,6 +3691,7 @@ async function importReport(ev){
     toast?.('Lỗi đọc file: ' + (err.message||err), 'error');
   } finally {
     ev.target.value='';
+    _endLoad();
   }
 }
 // Backward-compat: keep old name pointing to new handler
@@ -3805,6 +3823,8 @@ const __MOCK_PROFILES = {
 };
 
 function loadMockProfile(profileKey){
+  if(!_beginLoad()) return;
+  try{
   const data = __MOCK_PROFILES[profileKey];
   if(!data){ toast('Không tìm thấy profile: '+profileKey, 'error'); return; }
   // 0. CLEAN SLATE — đảm bảo không có residue từ data trước đó
@@ -3857,15 +3877,18 @@ function loadMockProfile(profileKey){
     }
     if(typeof refreshQMatrix==='function') refreshQMatrix();
   }
-  // 7. Refresh tất cả + force regenerate nhận xét
+  // 7. Refresh tất cả + force regenerate nhận xét — TẤT CẢ SYNCHRONOUS
+  // (bỏ setTimeout 100ms trước đây → tránh race nếu user click switch khác trong khoảng đó)
   RESTORE_LABELS(); // đảm bảo desc-cell có default
   if(typeof refreshQScore==='function') refreshQScore();
   refreshSummary();
-  scheduleSave();
   if(typeof autoGrowAll==='function') autoGrowAll();
-  // Force fill nhận xét (ghi đè) sau 100ms để đợi UI settle
-  setTimeout(()=>autoFillComments(true), 100);
+  autoFillComments(true);    // sync — fill comments NGAY với data hiện tại
+  refreshSummary();          // refresh lần 2 để chip/insight phản ánh comments mới
+  if(typeof autoGrowAll==='function') autoGrowAll();
+  scheduleSave();
   toast(`Đã load mock data: ${data.name}`, 'info');
+  } finally { _endLoad(); }
 }
 
 /* SAMPLE DATA — Thiên Khôi */
@@ -4051,6 +4074,7 @@ function slog(msg, type){
 const __SAMPLE_CSV = "ĐÁNH GIÁ ĐẦU KÌ,,,,,,,,,,,,,,,,,,,,,\nTÊN,Đinh Mạnh Hùng,,NĂM SINH,2016-05-28,,,,,,,,,,,,,,,,,\nLỚP,Trung tâm - Phố Huế,,,,,,,,,,,,,,,,,,,,\n,,,,,,,,,,,,,,,,,,,,,\nKIẾN THỨC CƠ BẢN,,,,,,,,,,,,,,,,,,,,,\nKẾT QUẢ ĐÁNH GIÁ THEO CÂU HỎI RIÊNG BIỆT,,,,,ĐÁNH GIÁ THEO ĐƠN VỊ RIÊNG BIỆT,,,,,,,,,,,,,,,,\nMỤC,ĐƠN VỊ,ĐÁP ÁN,KẾT QUẢ,,ĐƠN VỊ,PHÂN LOẠI,TIÊU CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,,,,,,,,,\n1,A,4,X,,A,Tư duy số học,5,2,0.4,,,,,,,,,,,,\n2,C,2,X,,B,Phép cộng và phép trừ,5,2,0.4,,,,,,,,,,,,\n3,B,5,X,,C,Phân loại,3,1,0.33,,,,,,,,,,,,\n4,E,1,O,,D,Đo lường,4,4,1,,,,,,,,,,,,\n5,B,3,O,,E,Các hình dạng khác nhau,3,3,1,,,,,,,,,,,,\n6,B,0,X,,TỔNG,,20,12,0.6,,,,,,,,,,,,\n7,D,2,O,,,,,,,,,,,,,,,,,,\n8,A,0,X,,SO SÁNH KHẢ NĂNG GIẢI TOÁN CÓ/KHÔNG CÓ LỜI VĂN,,,,,,,,,,,,,,,,\n9,C,5,O,,PHÂN LOẠI,TIÊU CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,,,,,,,,,,\n10,B,2,X,,Bài toán có lời văn,13,8,0.62,,,,,,,,,,,,,\n11,D,4,O,,Bài toán cơ bản,7,4,0.57,,,,,,,,,,,,,\n12,D,3,O,,,,,,,,,,,,,,,,,,\n13,B,3,O,,,,,,,,,,,,,,,,,,\n14,E,2,O,,,,,,,,,,,,,,,,,,\n15,E,2,O,,,,,,,,,,,,,,,,,,\n16,A,3,O,,,,,,,,,,,,,,,,,,\n17,A,4,O,,,,,,,,,,,,,,,,,,\n18,D,5,O,,,,,,,,,,,,,,,,,,\n19,C,5,X,,,,,,,,,,,,,,,,,,\n20,A,0,X,,,,,,,,,,,,,,,,,,\n,,,,,,,,,,,,,,,,,,,,,\nTƯ DUY TOÁN HỌC,,,,,,,,,,,,,,,,,,,,,\nKẾT QUẢ ĐÁNH GIÁ THEO CÂU HỎI RIÊNG BIỆT,,,,,ĐÁNH GIÁ THEO LĨNH VỰC,,,,,,,SO SÁNH NĂNG LỰC GIẢI QUYẾT VẤN ĐỀ THEO CẤP ĐỘ,,,,,,,,,\nMỤC,,ĐIỂM CHUẨN,TỔNG,,PHÂN LOẠI,NỘI DUNG ĐÁNH GIÁ,CÂU,ĐIỂM CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,PHÂN LOẠI,SỐ LƯỢNG CÂU,CỤ THỂ,ĐIỂM CHUẨN,ĐIỂM THỰC TẾ,TỶ LỆ,,,,\n,,,,,,,,,,,,,,,,,,,,,\nNĂNG LỰC TƯ DUY CƠ BẢN,1,5,0,,A. Khả năng hiểu toán,\"Áp dụng kiến thức đã học, lập luận để giải quyết những bài toán mới.\",\"2,3,5,7,8,9\",34,16,0.47,,KHÓ,3,\"8,9,10\",25,13,0.52,,,,\n,2,5,1,,B. Khả năng quan sát trực quan,Tìm ra mối quan hệ hoặc bản chất sự vật thông qua trực quan.,\"1,3,4,6,10\",31,20,0.65,,TRUNG BÌNH,4,\"4,5,6,7\",20,12,0.6,,,,\n,3,5,5,,C. Khả năng tổng hợp thông tin,\"Thu thập thông tin cần thiết, phân loại và giải quyết vấn đề.\",\"1,2,5,6,7,8,9\",39,16,0.41,,DỄ,3,\"1,2,3\",15,6,0.4,,,,\n,4,5,0,,D. Khả năng dự đoán toán học,Vận dụng và công thức hóa khái niệm toán học phù hợp.,\"4,5,6,7,10\",31,22,0.71,,TỔNG,,,60,31,0.52,,,,\n,5,5,5,,E. Khả năng nhận thức không gian,Phát hiện và giải quyết bài toán về hình học phẳng và không gian.,\"2,3,7,9,10\",33,19,0.58,,,,,,,,,,,\n,6,5,5,,F. Khả năng suy luận toán học,Sử dụng các phương pháp như quy nạp hay diễn dịch.,\"4,5,8,9\",24,8,0.33,,,,,,,,,,,\n,7,5,2,,TỔNG,,,192,101,0.526,,,,,,,,,,,\nTƯ DUY TOÁN HỌC,8,7,2,,,,,,,,,,,,,,,,,,\n,9,7,1,,,,,,,,,,,,,,,,,,\nÝ TƯỞNG SÁNG TẠO - GIẢI QUYẾT VẤN ĐỀ,10,11,10,,,,,,,,,,,,,,,,,,\n";
 
 function loadSampleCSV(){
+  if(!_beginLoad()) return;
   slog('▶ Bắt đầu load CSV nhúng sẵn','');
   _cleanSlate();  // clean slate trước khi fill → tránh residue
   try{
@@ -4078,7 +4102,7 @@ function loadSampleCSV(){
   }catch(err){
     slog('✕ Lỗi: '+err.message,'err'); toast('Lỗi: '+err.message,'error');
     console.error(err);
-  }
+  } finally { _endLoad(); }
 }
 
 /* ── CSV PARSER thuần JS — không cần thư viện ngoài ──
@@ -4357,6 +4381,7 @@ function importWonderkids(rows){
 }
 
 async function importExcel(ev){
+  if(!_beginLoad()){ if(ev?.target) ev.target.value=''; return; }
   try{
     const file=ev?.target?.files?.[0];
     if(!file){ slog('✕ Không có file','err'); return; }
@@ -4406,6 +4431,7 @@ async function importExcel(ev){
     console.error(err);
   }finally{
     if(ev?.target && 'value' in ev.target){ try{ ev.target.value=''; }catch(e){} }
+    _endLoad();
   }
 }
 

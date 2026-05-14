@@ -1263,13 +1263,17 @@ function _applyMG_Grades(grades){
   });
 }
 function loadMockProfileMG(key){
-  const data = __MOCK_MG[key]; if(!data) return;
-  _cleanSlateMG();  // clean slate trước khi fill → tránh residue
-  _applyMG_InfoFields(data);
-  _applyMG_Grades(data.grades);
-  recomputeAllMG();
-  fillCommentsMG(true);
-  _showToastMG(`Đã load: ${data.name}`, '#f08526');
+  if(!_beginLoadMG()) return;
+  try{
+    const data = __MOCK_MG[key]; if(!data) return;
+    _cleanSlateMG();  // clean slate trước khi fill → tránh residue
+    _applyMG_InfoFields(data);
+    _applyMG_Grades(data.grades);
+    recomputeAllMG();
+    fillCommentsMG(true);
+    recomputeAllMG();   // refresh lần 2 sau khi comments fill
+    _showToastMG(`Đã load: ${data.name}`, '#f08526');
+  } finally { _endLoadMG(); }
 }
 
 /* ───────────────────────────────────────────────────────────────────
@@ -1404,6 +1408,7 @@ async function _waitXlsxMG(maxMs=6000){
 async function importExcelMG(ev){
   const f = ev.target?.files?.[0];
   if(!f){ return; }
+  if(!_beginLoadMG()){ if(ev?.target) ev.target.value=''; return; }
   const name = f.name.toLowerCase();
   const isCSV = name.endsWith('.csv') || f.type==='text/csv';
   try{
@@ -1438,6 +1443,7 @@ async function importExcelMG(ev){
   } finally {
     // reset để chọn lại cùng 1 file vẫn fire onchange
     ev.target.value = '';
+    _endLoadMG();
   }
 }
 
@@ -1519,6 +1525,22 @@ function downloadSampleCSV_MG(){
 })();
 
 /* ─── RESET FORM ─── */
+/* ─── LOADING GUARD — ngăn race khi user click load liên tiếp ─── */
+let __wkLoadInProgressMG = false;
+function _beginLoadMG(){
+  if(__wkLoadInProgressMG){
+    _showToastMG('Đang xử lý — vui lòng đợi tải xong', '#d83c2d');
+    return false;
+  }
+  __wkLoadInProgressMG = true;
+  document.body.style.cursor = 'wait';
+  return true;
+}
+function _endLoadMG(){
+  __wkLoadInProgressMG = false;
+  document.body.style.cursor = '';
+}
+
 /* ─── CLEAN SLATE — reset triệt để, dùng chung cho resetFormMG + mọi data load ───
    Idempotent: gọi nhiều lần vẫn cho cùng kết quả. Ngăn residue khi chuyển data.
    ─────────────────────────────────────────────────────────────────────────── */

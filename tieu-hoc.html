@@ -3397,30 +3397,55 @@ function addRow(tableId){
   autoGrowAll();
 }
 
-/* Reset */
-function resetForm(){
-  if(!confirm('Xoá toàn bộ nội dung đã điền?')) return;
+/* ─── DEFAULT ROW COUNT cho các bảng động ─── */
+const __DEFAULT_ROWS = {'t-kt':5, 't-kq':2, 't-ss':3, 't-nl':6, 't-cd':3};
+
+/* ─── CLEAN SLATE — reset triệt để, dùng chung cho resetForm + mọi data load ───
+   Đảm bảo state là "blank canvas" trước khi fill data mới → không có residue.
+   Idempotent: gọi nhiều lần vẫn cho cùng kết quả.
+   ─────────────────────────────────────────────────────────────────────────── */
+function _cleanSlate(){
+  // 1) Reset row count về default (xóa rows thừa từ addRow)
+  for(const [tid, def] of Object.entries(__DEFAULT_ROWS)){
+    const body = document.querySelector(`#${tid} tbody`);
+    if(!body) continue;
+    const rows = body.querySelectorAll('tr[data-row]');
+    for(let i=rows.length-1; i>=def; i--){ rows[i].remove(); }
+  }
+  // 2) Clear values toàn bộ input/textarea/select
   document.querySelectorAll('.page input').forEach(i=>{ i.value=''; });
-  document.querySelectorAll('.page textarea').forEach(t=>t.value='');
-  document.querySelectorAll('.page select').forEach(s=>{s.selectedIndex=0;s.setAttribute('data-level','');});
+  document.querySelectorAll('.page textarea').forEach(t=>{ t.value=''; t.style.height='auto'; });
+  document.querySelectorAll('.page select').forEach(s=>{ s.selectedIndex=0; s.setAttribute('data-level',''); });
   document.querySelectorAll('.page [data-chk]').forEach(c=>c.classList.remove('on'));
-  // restore defaults
+  // 3) Clear pct chips
+  document.querySelectorAll('[data-pct]').forEach(p=>{ p.textContent='—'; p.className=''; p.style.removeProperty('--p'); });
+  // 4) Restore year defaults
   const yrs=document.querySelectorAll('.hdr .pill input');
   if(yrs[0]) yrs[0].value='2025'; if(yrs[1]) yrs[1].value='2026';
-  // restore default labels
-  RESTORE_LABELS();
-  // BUG FIX: resetForm clear cả data-max readonly → ép lại điểm chuẩn cố định
+  // 5) Restore labels mặc định cho t-kt / t-kq / t-nl + desc cells
+  if(typeof RESTORE_LABELS === 'function') RESTORE_LABELS();
+  // 6) Ép điểm chuẩn cố định t-nl (CMS 209đ)
   if(typeof enforceFixedT_NL_Maxes === 'function') enforceFixedT_NL_Maxes();
-  // Restore qscore default max (10 câu tư duy: 5,5,5,5,5,5,5,7,7,11 = 60đ)
+  // 7) Restore qscore default max (10 câu = 60đ)
   if(typeof __QSCORE_DEFAULT_MAX !== 'undefined'){
     for(let i=1;i<=10;i++){
       const mx=document.querySelector(`[data-tu-max="${i}"]`);
       if(mx) mx.value = __QSCORE_DEFAULT_MAX[i-1];
     }
-    if(typeof refreshQScore === 'function') refreshQScore();
   }
-  refreshSummary();
+  // 8) Trigger MỌI recompute để UI đồng bộ về trạng thái rỗng sạch
+  if(typeof refreshQScore === 'function') refreshQScore();
+  if(typeof refreshQMatrix === 'function') refreshQMatrix();
+  if(typeof refreshSummary === 'function') refreshSummary();
+  if(typeof autoGrowAll === 'function') autoGrowAll();
+}
+
+/* Reset có confirm (dùng cho button "Làm mới") */
+function resetForm(){
+  if(!confirm('Xoá toàn bộ nội dung đã điền?')) return;
+  _cleanSlate();
   scheduleSave();
+  toast?.('Đã làm mới form', 'info');
 }
 
 /* ─── EXPORT/IMPORT báo cáo — XLSX (mặc định) + tương thích .json cũ ───
@@ -3430,7 +3455,12 @@ function resetForm(){
    Mở: auto-detect .json hoặc .xlsx (đọc sheet _data nếu có)
    ─────────────────────────────────────────────────────────────────── */
 function _snapshotState(){
-  const data={byId:{}, anonInputs:[], anonTextareas:[], selects:{}, checks:[]};
+  const data={byId:{}, anonInputs:[], anonTextareas:[], selects:{}, checks:[], rowCounts:{}};
+  // Lưu row count của các bảng động để restore khôi phục đúng cấu trúc DOM
+  for(const tid of Object.keys(__DEFAULT_ROWS||{})){
+    const n = document.querySelectorAll(`#${tid} tbody tr[data-row]`).length;
+    if(n>0) data.rowCounts[tid] = n;
+  }
   document.querySelectorAll('.page input,.page textarea').forEach(el=>{
     if(el.id) data.byId[el.id]=el.value;
     else if(el.tagName==='INPUT') data.anonInputs.push(el.value);
@@ -3441,6 +3471,17 @@ function _snapshotState(){
   return data;
 }
 function _applySnapshot(data){
+  // CLEAN SLATE trước — đảm bảo DOM structure khớp với snapshot (cùng default
+  // row count) → index-based anonInputs/anonTextareas khôi phục chính xác.
+  if(typeof _cleanSlate === 'function') _cleanSlate();
+  // Khôi phục row counts trước khi walk DOM, để index alignment chính xác
+  if(data.rowCounts && typeof addRow === 'function'){
+    for(const [tid, target] of Object.entries(data.rowCounts)){
+      const cur = document.querySelectorAll(`#${tid} tbody tr[data-row]`).length;
+      const need = Math.min(50, (+target||0) - cur);  // safety cap 50
+      for(let i=0; i<need; i++) addRow(tid);
+    }
+  }
   let iIdx=0, tIdx=0;
   document.querySelectorAll('.page input,.page textarea').forEach(el=>{
     if(el.id){ if(data.byId?.[el.id]!=null) el.value=data.byId[el.id]; }
@@ -3457,6 +3498,7 @@ function _applySnapshot(data){
   if(typeof enforceFixedT_NL_Maxes === 'function') enforceFixedT_NL_Maxes();
   refreshSummary();
   autoGrowAll();
+  if(typeof autoFillComments === 'function') autoFillComments(true);
   saveNow();
 }
 function _autoFileName(ext){
@@ -3610,24 +3652,9 @@ const importReportJSON = importReport;
 function startNewReport(){
   if(!confirm('Lưu báo cáo hiện tại + bắt đầu báo cáo mới?\n\n(Hệ thống sẽ tải xuống .xlsx backup trước khi xóa)')) return;
   try{ exportReportXLSX(); }catch(_){}
-  // Đợi download xong rồi reset
+  // Đợi download xong rồi reset triệt để bằng cleanSlate
   setTimeout(()=>{
-    document.querySelectorAll('.page input').forEach(i=>{ i.value=''; });
-    document.querySelectorAll('.page textarea').forEach(t=>t.value='');
-    document.querySelectorAll('.page select').forEach(s=>{s.selectedIndex=0;s.setAttribute('data-level','');});
-    document.querySelectorAll('.page [data-chk]').forEach(c=>c.classList.remove('on'));
-    const yrs=document.querySelectorAll('.hdr .pill input');
-    if(yrs[0]) yrs[0].value='2025'; if(yrs[1]) yrs[1].value='2026';
-    RESTORE_LABELS();
-    if(typeof enforceFixedT_NL_Maxes === 'function') enforceFixedT_NL_Maxes();
-    if(typeof __QSCORE_DEFAULT_MAX !== 'undefined'){
-      for(let i=1;i<=10;i++){
-        const mx=document.querySelector(`[data-tu-max="${i}"]`);
-        if(mx) mx.value = __QSCORE_DEFAULT_MAX[i-1];
-      }
-      if(typeof refreshQScore === 'function') refreshQScore();
-    }
-    refreshSummary();
+    _cleanSlate();
     saveNow();
     toast?.('Đã bắt đầu báo cáo mới','info');
   }, 600);
@@ -3751,6 +3778,8 @@ const __MOCK_PROFILES = {
 function loadMockProfile(profileKey){
   const data = __MOCK_PROFILES[profileKey];
   if(!data){ toast('Không tìm thấy profile: '+profileKey, 'error'); return; }
+  // 0. CLEAN SLATE — đảm bảo không có residue từ data trước đó
+  _cleanSlate();
   // 1. Header info
   document.getElementById('f-name').value = data.name;
   document.getElementById('f-class').value = data.class;
@@ -3994,6 +4023,7 @@ const __SAMPLE_CSV = "ĐÁNH GIÁ ĐẦU KÌ,,,,,,,,,,,,,,,,,,,,,\nTÊN,Đinh M�
 
 function loadSampleCSV(){
   slog('▶ Bắt đầu load CSV nhúng sẵn','');
+  _cleanSlate();  // clean slate trước khi fill → tránh residue
   try{
     const rows=parseCSV(__SAMPLE_CSV);
     slog(`✓ Parsed ${rows.length} dòng từ CSV nhúng`,'ok');
@@ -4303,6 +4333,8 @@ async function importExcel(ev){
     if(!file){ slog('✕ Không có file','err'); return; }
     const isCSV=/\.csv$/i.test(file.name);
     slog(`▶ Bắt đầu đọc "${file.name}" (${isCSV?'CSV':'XLSX'}, ${file.size}b)`,'');
+    // Clean slate trước khi parse — đảm bảo data mới không lẫn với data cũ
+    if(typeof _cleanSlate === 'function') _cleanSlate();
 
     let rowsBatches=[];
 

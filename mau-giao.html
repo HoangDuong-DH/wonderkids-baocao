@@ -6,6 +6,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Load XLSX EAGER với 3 CDN fallback (để import .xlsx) -->
+<script>
+(function(){
+  window.__xlsxStatus='loading';
+  const cdns=[
+    'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+    'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'
+  ];
+  let i=0;
+  function tryNext(){
+    if(i>=cdns.length){ window.__xlsxStatus='failed'; document.dispatchEvent(new Event('xlsx-status')); return; }
+    const s=document.createElement('script');
+    s.src=cdns[i++];
+    s.async=false;
+    s.onload=()=>{ window.__xlsxStatus='ready'; document.dispatchEvent(new Event('xlsx-status')); };
+    s.onerror=tryNext;
+    document.head.appendChild(s);
+  }
+  tryNext();
+})();
+</script>
 <style>
 :root{
   --bg:#fef0c8;
@@ -66,10 +88,10 @@ body{
   box-shadow:0 10px 30px rgba(120,60,10,.14),0 1px 0 rgba(255,255,255,.7) inset;
   border:1px solid rgba(243,129,31,.18);
 }
-.toolbar button,.toolbar a{appearance:none;border:0;background:transparent;color:var(--ink);
+.toolbar button,.toolbar a,.toolbar label{appearance:none;border:0;background:transparent;color:var(--ink);
   font:600 12.5px/1 var(--font-body);padding:8px 14px;border-radius:999px;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;text-decoration:none}
-.toolbar button:hover,.toolbar a:hover{background:#fff3da;color:var(--orange-deep)}
+.toolbar button:hover,.toolbar a:hover,.toolbar label:hover{background:#fff3da;color:var(--orange-deep)}
 .toolbar button.primary{background:var(--orange);color:#fff}
 .toolbar button.primary:hover{background:var(--orange-deep)}
 .toolbar .sep{width:1px;height:18px;background:rgba(0,0,0,.1);align-self:center;margin:0 2px}
@@ -80,6 +102,17 @@ body{
   cursor:pointer;transition:all .15s ease;
 }
 .toolbar .tb-mock:hover{background-color:#fff3da}
+
+/* Drag-drop overlay full screen */
+#drop-overlay-mg{
+  position:fixed;inset:0;background:rgba(243,129,31,.10);
+  display:none;align-items:center;justify-content:center;
+  font:800 22px/1.3 Quicksand,Be Vietnam Pro,sans-serif;color:var(--orange-deep);
+  z-index:998;pointer-events:none;
+  border:4px dashed var(--orange);
+}
+body.drag-over-mg #drop-overlay-mg{display:flex}
+@media print{ #drop-overlay-mg{display:none !important} }
 
 /* Page */
 .page{
@@ -596,11 +629,25 @@ body{
 </head>
 <body>
 
+<!-- File input ẩn + Drop overlay full-screen cho kéo-thả import -->
+<input type="file" id="xlsx-input-mg" accept=".csv,.xlsx,.xls" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" onchange="importExcelMG(event)"/>
+<div id="drop-overlay-mg">📥 Thả file CSV / XLSX vào đây…</div>
+
 <div class="toolbar">
   <a href="index.html" title="Quay về trang chọn báo cáo">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Trang chính
   </a>
+  <label for="xlsx-input-mg" title="Nhập CSV (nhanh) hoặc XLSX — đè điểm 16 năng lực + thông tin học viên" style="appearance:none;border:0;background:transparent;color:var(--ink);font:600 12.5px/1 Be Vietnam Pro,sans-serif;padding:8px 12px;border-radius:99px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Nhập CSV/Excel
+    <span id="xlsx-ind-mg" style="font-size:10px;color:var(--ink-mute);font-weight:500">⌛</span>
+  </label>
+  <button onclick="downloadSampleCSV_MG()" title="Tải file CSV mẫu để biết format" style="font:600 12.5px/1 Be Vietnam Pro,sans-serif">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    Mẫu CSV
+  </button>
+  <span class="sep"></span>
   <select class="tb-mock" onchange="if(this.value){loadMockProfileMG(this.value);this.value=''}" title="Mock data để test nhận xét auto">
     <option value="">🧪 Mock data</option>
     <option value="excellent">Xuất sắc (toàn S/A)</option>
@@ -1151,33 +1198,304 @@ function _showToastMG(msg, color){
 }
 
 /* ─── MOCK PROFILES — test nhanh nhận xét theo 4 mức ─── */
+// Mỗi profile fill đầy đủ: 6 info field + 16 grade cells (4 ability groups)
+// Grades structure align với 4 nhóm năng lực: [3, 5, 4, 4] skills
 const __MOCK_MG = {
-  excellent: { sex:'Nam', name:'Mock — Bé Xuất sắc',  grades:[['S','S','S'],['S','A','S','A','S'],['A','S','A','S'],['A','S','A','S']] },
-  good:      { sex:'Nữ', name:'Mock — Bé Khá',       grades:[['B','B','A'],['B','A','B','A','B'],['B','B','A','B'],['B','A','B','B']] },
-  average:   { sex:'Nam', name:'Mock — Bé Trung bình', grades:[['C','C','C'],['C','C','C','C','C'],['C','C','C','C'],['C','C','C','C']] },
-  weak:      { sex:'Nữ', name:'Mock — Bé Cần hỗ trợ', grades:[['L','C','L'],['L','L','C','L','C'],['L','C','L','L'],['L','L','L','L']] },
+  excellent: {
+    name:'Mock — Bé Xuất sắc', sex:'Nam',
+    class:'Lá 1 — Trung tâm Phố Huế', age:'5 tuổi', teacher:'Cô Mai',
+    grades:[['S','S','S'],['S','A','S','A','S'],['A','S','A','S'],['A','S','A','S']],
+  },
+  good: {
+    name:'Mock — Bé Khá', sex:'Nữ',
+    class:'Chồi 2 — Trung tâm Hai Bà Trưng', age:'4 tuổi', teacher:'Cô Lan',
+    grades:[['B','B','A'],['B','A','B','A','B'],['B','B','A','B'],['B','A','B','B']],
+  },
+  average: {
+    name:'Mock — Bé Trung bình', sex:'Nam',
+    class:'Mầm 3 — Trung tâm Đống Đa', age:'3 tuổi', teacher:'Cô Hương',
+    grades:[['C','C','C'],['C','C','C','C','C'],['C','C','C','C'],['C','C','C','C']],
+  },
+  weak: {
+    name:'Mock — Bé Cần hỗ trợ', sex:'Nữ',
+    class:'Mầm 1 — Trung tâm Cầu Giấy', age:'3 tuổi', teacher:'Cô Trang',
+    grades:[['L','C','L'],['L','L','C','L','C'],['L','C','L','L'],['L','L','L','L']],
+  },
 };
-function loadMockProfileMG(key){
-  const data = __MOCK_MG[key]; if(!data) return;
-  // Name + sex
-  const nameInp = document.querySelector('.info-field input.val');
-  if(nameInp) nameInp.value = data.name;
-  const sexSel = document.getElementById('gender-select');
-  if(sexSel){ sexSel.value = data.sex; updateAvatar(data.sex); }
-  // Fill grade cells trong 4 ability tables theo data.grades
+// Áp dụng 6 info-field theo thứ tự DOM: Họ tên / Lớp / Giới tính / Ngày đánh giá / Độ tuổi / Giáo viên
+function _applyMG_InfoFields(data){
+  const fields = document.querySelectorAll('.info-field input.val, .info-field select.val');
+  // Map theo thứ tự HTML: 0=name, 1=class, 2=gender (select), 3=date, 4=age, 5=teacher
+  const today = new Date();
+  const dd=String(today.getDate()).padStart(2,'0'),mm=String(today.getMonth()+1).padStart(2,'0');
+  const todayStr = `${dd}/${mm}/${today.getFullYear()}`;
+  const vals = [data.name, data.class, data.sex, data.date || todayStr, data.age, data.teacher];
+  fields.forEach((f,i)=>{ if(vals[i]!=null && vals[i]!=='') f.value = vals[i]; });
+  if(data.sex && typeof updateAvatar==='function') updateAvatar(data.sex);
+}
+// Áp dụng grades [g1[], g2[], g3[], g4[]] vào 4 ability tables
+function _applyMG_Grades(grades){
   const abilities = document.querySelectorAll('.ability');
-  data.grades.forEach((rowGrades, i)=>{
+  grades.forEach((rowGrades, i)=>{
     const ab = abilities[i]; if(!ab) return;
     const spans = ab.querySelectorAll('tbody td:last-child span');
     rowGrades.forEach((g,j)=>{
-      if(spans[j]){ spans[j].textContent = __GRADE_NAME[g] || g; spans[j].className = 'g'+g; }
+      if(spans[j] && __GRADE_NAME[g]){ spans[j].textContent = __GRADE_NAME[g]; spans[j].className = 'g'+g; }
     });
   });
+}
+function loadMockProfileMG(key){
+  const data = __MOCK_MG[key]; if(!data) return;
+  _applyMG_InfoFields(data);
+  _applyMG_Grades(data.grades);
   recomputeAllMG();
-  // Force-regen comments với data mới
   fillCommentsMG(true);
   _showToastMG(`Đã load: ${data.name}`, '#f08526');
 }
+
+/* ───────────────────────────────────────────────────────────────────
+   IMPORT CSV / XLSX — port cơ chế từ tieu-hoc, đơn giản hoá cho MG
+   ─────────────────────────────────────────────────────────────────── */
+
+// Lookup 16 năng lực: tên (normalized) → {ab: 0-3, sk: 0-n}
+const __SKILL_LOOKUP_MG = (function(){
+  const groups = [
+    ['Năng lực chú ý','Năng lực quan sát','Năng lực ghi nhớ'],
+    ['Số và tính toán','Hình học không gian','Đo lường','Kiểu mẫu','Dữ liệu'],
+    ['Hiểu biết','Ứng dụng','Phân tích','Tổng hợp'],
+    ['Sự trôi chảy','Tính linh hoạt','Tính độc đáo','Tính chính xác'],
+  ];
+  const map = {};
+  groups.forEach((g,ab)=>g.forEach((name,sk)=>{ map[_normMG(name)] = {ab,sk,name}; }));
+  return map;
+})();
+function _normMG(s){ return String(s==null?'':s).toLowerCase().replace(/\s+/g,' ').trim(); }
+function _parseGradeMG(v){
+  // Chấp nhận: chữ cái S/A/B/C/L hoặc tên đầy đủ (Vượt trội, Rất tốt, Tốt, Đang phát triển, Cần đồng hành)
+  // hoặc thang cũ (Xuất sắc, Khá, Đạt, Cần cố gắng)
+  if(v==null) return null;
+  const s = String(v).trim().toUpperCase();
+  if(['S','A','B','C','L'].includes(s)) return s;
+  const n = _normMG(s);
+  const NAME_MAP = {
+    'vượt trội':'S','xuất sắc':'S','excellent':'S','exceptional':'S',
+    'rất tốt':'A','very good':'A',
+    'tốt':'B','khá':'B','good':'B',
+    'đang phát triển':'C','đạt':'C','phát triển':'C','developing':'C','fair':'C',
+    'cần đồng hành':'L','cần cố gắng':'L','cần hỗ trợ':'L','needs support':'L','low':'L',
+  };
+  return NAME_MAP[n] || null;
+}
+function _detectDelimMG(line){
+  const cands=[',',';','\t','|']; let best=',', max=-1;
+  for(const d of cands){
+    let cnt=0, q=false;
+    for(const c of line){ if(c==='"') q=!q; else if(!q && c===d) cnt++; }
+    if(cnt>max){ max=cnt; best=d; }
+  }
+  return best;
+}
+function parseCSV_MG(text){
+  if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+  const firstLineEnd = text.indexOf('\n');
+  const D = _detectDelimMG(firstLineEnd>=0 ? text.slice(0,firstLineEnd) : text);
+  const rows=[]; let row=[], field='', inQ=false, i=0;
+  while(i<text.length){
+    const c=text[i];
+    if(inQ){
+      if(c==='"'){ if(text[i+1]==='"'){ field+='"'; i+=2; continue; } inQ=false; i++; continue; }
+      field+=c; i++; continue;
+    }
+    if(c==='"'){ inQ=true; i++; continue; }
+    if(c===D){ row.push(field); field=''; i++; continue; }
+    if(c==='\r'){ i++; continue; }
+    if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=''; i++; continue; }
+    field+=c; i++;
+  }
+  if(field!=='' || row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+// Đọc rows (2D array) → fill info fields + 16 grade cells
+function _applyParsedRowsMG(rows){
+  let infoFilled = 0, gradesFilled = 0;
+  const INFO_KEYS = {
+    'họ và tên':'name','họ tên':'name','tên':'name',
+    'lớp':'class','trung tâm':'class','cơ sở':'class',
+    'giới tính':'sex','gender':'sex',
+    'ngày đánh giá':'date','ngày':'date','date':'date',
+    'độ tuổi':'age','tuổi':'age','age':'age',
+    'giáo viên':'teacher','gv':'teacher','teacher':'teacher',
+  };
+  const info = {};
+  // Sweep tất cả rows tìm cặp "label,value" cho info fields
+  rows.forEach(r=>{
+    if(!r || r.length<2) return;
+    const lbl = _normMG(r[0]);
+    const val = String(r[1]||'').trim();
+    if(!lbl || !val) return;
+    if(INFO_KEYS[lbl]){
+      info[INFO_KEYS[lbl]] = val;
+      infoFilled++;
+    }
+  });
+  if(Object.keys(info).length){
+    _applyMG_InfoFields(info);
+  }
+  // Sweep tìm các dòng có grade
+  const abilities = document.querySelectorAll('.ability');
+  rows.forEach(r=>{
+    if(!r || r.length<2) return;
+    // Tìm cột chứa skill name + cột chứa grade
+    for(let i=0; i<r.length-1; i++){
+      const skillKey = _normMG(r[i]);
+      if(!skillKey) continue;
+      const hit = __SKILL_LOOKUP_MG[skillKey];
+      if(!hit) continue;
+      // Tìm grade ở các cột tiếp theo
+      for(let j=i+1; j<r.length; j++){
+        const g = _parseGradeMG(r[j]);
+        if(g){
+          const ab = abilities[hit.ab]; if(!ab) break;
+          const spans = ab.querySelectorAll('tbody td:last-child span');
+          if(spans[hit.sk]){
+            spans[hit.sk].textContent = __GRADE_NAME[g];
+            spans[hit.sk].className = 'g'+g;
+            gradesFilled++;
+          }
+          break;
+        }
+      }
+      break;
+    }
+  });
+  return {infoFilled, gradesFilled};
+}
+function _xlsxReadyMG(){ return window.__xlsxStatus==='ready' && typeof XLSX!=='undefined'; }
+async function _waitXlsxMG(maxMs=6000){
+  if(_xlsxReadyMG()) return true;
+  if(window.__xlsxStatus==='failed') return false;
+  return new Promise(resolve=>{
+    const start=Date.now();
+    const t=setInterval(()=>{
+      if(_xlsxReadyMG()){ clearInterval(t); resolve(true); }
+      else if(window.__xlsxStatus==='failed' || Date.now()-start>maxMs){ clearInterval(t); resolve(false); }
+    }, 120);
+  });
+}
+async function importExcelMG(ev){
+  const f = ev.target?.files?.[0];
+  if(!f){ return; }
+  const name = f.name.toLowerCase();
+  const isCSV = name.endsWith('.csv') || f.type==='text/csv';
+  try{
+    let rows;
+    if(isCSV){
+      const text = await f.text();
+      rows = parseCSV_MG(text);
+    } else {
+      const ready = await _waitXlsxMG();
+      if(!ready){
+        _showToastMG('XLSX chưa load được — vui lòng dùng file CSV.', '#d83c2d');
+        return;
+      }
+      const buf = await f.arrayBuffer();
+      const wb = XLSX.read(buf, {type:'array', cellDates:true});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
+    }
+    const {infoFilled, gradesFilled} = _applyParsedRowsMG(rows);
+    recomputeAllMG();
+    fillCommentsMG(true);
+    if(gradesFilled === 0 && infoFilled === 0){
+      _showToastMG('Không nhận diện được dữ liệu trong file. Xem "Mẫu CSV" để biết format.', '#d83c2d');
+    } else {
+      _showToastMG(`Đã nhập: ${infoFilled} thông tin, ${gradesFilled}/16 năng lực`, '#5fb74f');
+    }
+  }catch(err){
+    console.error('[importExcelMG]', err);
+    _showToastMG('Lỗi đọc file: ' + (err.message || err), '#d83c2d');
+  } finally {
+    // reset để chọn lại cùng 1 file vẫn fire onchange
+    ev.target.value = '';
+  }
+}
+
+/* ─── Sample CSV — tải file mẫu để biết format ─── */
+function downloadSampleCSV_MG(){
+  const lines = [
+    'Họ và tên,Nguyễn An Khang',
+    'Lớp,Lá 1 – Trung tâm Phố Huế',
+    'Giới tính,Nam',
+    'Ngày đánh giá,'+ (function(){const d=new Date();return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()})(),
+    'Độ tuổi,5 tuổi',
+    'Giáo viên,Cô Mai',
+    '',
+    'Năng lực,Cấp độ',
+    'Năng lực chú ý,A',
+    'Năng lực quan sát,S',
+    'Năng lực ghi nhớ,A',
+    'Số và tính toán,B',
+    'Hình học không gian,A',
+    'Đo lường,A',
+    'Kiểu mẫu,B',
+    'Dữ liệu,B',
+    'Hiểu biết,A',
+    'Ứng dụng,B',
+    'Phân tích,A',
+    'Tổng hợp,B',
+    'Sự trôi chảy,B',
+    'Tính linh hoạt,A',
+    'Tính độc đáo,B',
+    'Tính chính xác,A',
+    '',
+    '# Cấp độ chấp nhận: S/A/B/C/L hoặc Vượt trội/Rất tốt/Tốt/Đang phát triển/Cần đồng hành',
+  ];
+  const csv = '﻿' + lines.join('\n');  // BOM để Excel mở UTF-8
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'wonderkids-maugiao-mau.csv';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  _showToastMG('Đã tải file CSV mẫu', '#3ea1d3');
+}
+
+/* ─── Drag-drop import: kéo file vào page bất kỳ ─── */
+(function setupDragDropMG(){
+  let dragCnt = 0;
+  document.addEventListener('dragenter', e=>{
+    if(!e.dataTransfer?.types?.includes('Files')) return;
+    dragCnt++; document.body.classList.add('drag-over-mg');
+    e.preventDefault();
+  });
+  document.addEventListener('dragleave', e=>{
+    dragCnt = Math.max(0, dragCnt-1);
+    if(dragCnt===0) document.body.classList.remove('drag-over-mg');
+  });
+  document.addEventListener('dragover', e=>{
+    if(e.dataTransfer?.types?.includes('Files')){ e.preventDefault(); e.dataTransfer.dropEffect='copy'; }
+  });
+  document.addEventListener('drop', e=>{
+    dragCnt = 0; document.body.classList.remove('drag-over-mg');
+    if(!e.dataTransfer?.files?.length) return;
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    importExcelMG({target:{files:[f], value:''}});
+  });
+})();
+
+/* ─── XLSX status indicator (toolbar) ─── */
+(function trackXlsxStatusMG(){
+  function update(){
+    const ind = document.getElementById('xlsx-ind-mg');
+    if(!ind) return;
+    if(window.__xlsxStatus==='ready'){ ind.textContent='✓ XLSX'; ind.style.color='#5fb74f'; }
+    else if(window.__xlsxStatus==='failed'){ ind.textContent='✕ chỉ CSV'; ind.style.color='#d83c2d'; }
+    else { ind.textContent='⌛'; ind.style.color='var(--ink-mute)'; }
+  }
+  document.addEventListener('xlsx-status', update);
+  update();
+})();
 
 /* ─── RESET FORM ─── */
 function resetFormMG(){

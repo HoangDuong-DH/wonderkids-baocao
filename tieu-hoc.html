@@ -471,6 +471,12 @@ body{
 }
 .tbl input.label-cell,.tbl textarea.label-cell{text-align:left}
 .tbl input:focus,.tbl select:focus,.tbl textarea:focus{background:#fff7e6;border-radius:4px}
+/* Điểm chuẩn cố định (CMS) — không cho sửa, hiển thị xám nhạt */
+.tbl input.fixed-max{
+  color:var(--c-ink-soft);font-weight:700;cursor:not-allowed;
+  background:rgba(0,0,0,.025);
+}
+.tbl input.fixed-max:focus{background:rgba(0,0,0,.025)}
 .tbl td{vertical-align:middle}
 .tbl .total td{background:var(--c-pill-bg);font-weight:800;color:var(--c-primary)}
 .tbl [data-pct]{
@@ -1754,29 +1760,29 @@ body.print-preview .hdr .mascot svg{display:none !important}
           <th style="width:60px">Tỷ lệ</th>
         </tr></thead>
         <tbody id="t-nl-body">
-          <tr data-row>
+          <tr data-row data-nl-fixed-max="34">
             <td class="left"><textarea class="label-cell" rows="1">Tư duy giải quyết vấn đề</textarea></td>
-            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+            <td><input data-n data-max value="34" readonly class="fixed-max"></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
-          <tr class="zebra" data-row>
+          <tr class="zebra" data-row data-nl-fixed-max="31">
             <td class="left"><textarea class="label-cell" rows="1">Tư duy logic và quan sát</textarea></td>
-            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+            <td><input data-n data-max value="31" readonly class="fixed-max"></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
-          <tr data-row>
+          <tr data-row data-nl-fixed-max="39">
             <td class="left"><textarea class="label-cell" rows="1">Tư duy phân tích và phân loại</textarea></td>
-            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+            <td><input data-n data-max value="39" readonly class="fixed-max"></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
-          <tr class="zebra" data-row>
+          <tr class="zebra" data-row data-nl-fixed-max="38">
             <td class="left"><textarea class="label-cell" rows="1">Tư duy số và ký hiệu</textarea></td>
-            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+            <td><input data-n data-max value="38" readonly class="fixed-max"></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
-          <tr data-row>
+          <tr data-row data-nl-fixed-max="43">
             <td class="left"><textarea class="label-cell" rows="1">Tư duy không gian và hình học</textarea></td>
-            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+            <td><input data-n data-max value="43" readonly class="fixed-max"></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
-          <tr class="zebra" data-row>
+          <tr class="zebra" data-row data-nl-fixed-max="24">
             <td class="left"><textarea class="label-cell" rows="1">Tư duy suy luận toán học</textarea></td>
-            <td><input data-n data-max></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
+            <td><input data-n data-max value="24" readonly class="fixed-max"></td><td data-cell="cur"><input data-n data-cur></td><td><span data-pct>—</span></td>
           </tr>
         </tbody>
         <tfoot><tr class="total"><td class="left" style="text-align:left">TỔNG</td><td data-sum-max>0</td><td data-sum-cur>0</td><td><span data-sum-pct>—</span></td></tr></tfoot>
@@ -3407,8 +3413,8 @@ const __MOCK_PROFILES = {
     ss: [['Dễ', 8, 8], ['Trung bình', 10, 9], ['Khó', 4, 4]],
     // qscore: tổng max=60, cur=55 (~92%)
     qscore: [5, 5, 5, 5, 5, 5, 5, 7, 6, 10],
-    // t-nl: chuẩn theo CMS, đạt cao
-    nl: [[30, 28], [25, 24], [35, 33], [30, 27], [25, 23], [20, 18]],
+    // t-nl: chuẩn CMS cố định 209đ (34/31/39/38/43/24), đạt cao ~91%
+    nl: [[34, 31], [31, 28], [39, 36], [38, 35], [43, 39], [24, 22]],
     // t-cd: 3 cấp độ tư duy đều mạnh
     cd: [['Dễ', 15, 14], ['Trung bình', 20, 18], ['Khó', 25, 23]],
     // QMatrix 20 câu: 19/20 đúng
@@ -3429,7 +3435,8 @@ const __MOCK_PROFILES = {
     ss: [['Dễ', 8, 7], ['Trung bình', 10, 6], ['Khó', 4, 1]],
     // qscore: 38/60 (~63%)
     qscore: [5, 4, 3, 5, 4, 3, 4, 5, 4, 7],
-    nl: [[30, 18], [25, 17], [35, 22], [30, 19], [25, 16], [20, 12]],
+    // 132/209 = 63%
+    nl: [[34, 21], [31, 20], [39, 25], [38, 24], [43, 27], [24, 15]],
     cd: [['Dễ', 15, 11], ['Trung bình', 20, 13], ['Khó', 25, 14]],
     // 13/20 đúng (X tập trung ở câu khó cuối)
     qmatrix: 'OOOXOOXOOXOXOOXXOXOX',
@@ -3450,7 +3457,8 @@ const __MOCK_PROFILES = {
     ss: [['Dễ', 8, 5], ['Trung bình', 10, 2], ['Khó', 4, 0]],
     // qscore: 18/60 (~30%)
     qscore: [2, 1, 3, 2, 1, 2, 1, 2, 1, 3],
-    nl: [[30, 8], [25, 9], [35, 10], [30, 8], [25, 7], [20, 3]],
+    // 62/209 = 30%
+    nl: [[34, 10], [31, 9], [39, 12], [38, 11], [43, 13], [24, 7]],
     cd: [['Dễ', 15, 8], ['Trung bình', 20, 5], ['Khó', 25, 2]],
     // 7/20 đúng
     qmatrix: 'OOXXOXXOXOXXXOXOXXXX',
@@ -3470,7 +3478,8 @@ const __MOCK_PROFILES = {
     ss: [['Dễ', 8, 7], ['Trung bình', 10, 8], ['Khó', 4, 2]],
     // Tư duy yếu: 18/60 (30%)
     qscore: [3, 3, 2, 2, 1, 2, 1, 2, 1, 1],
-    nl: [[30, 9], [25, 12], [35, 14], [30, 8], [25, 6], [20, 4]],
+    // 64/209 = 31% (tư duy yếu khi KTCB mạnh)
+    nl: [[34, 10], [31, 14], [39, 16], [38, 9], [43, 10], [24, 5]],
     cd: [['Dễ', 15, 9], ['Trung bình', 20, 6], ['Khó', 25, 3]],
     qmatrix: 'OOOOOOOOXOOOOOXOOOXX',
   },
@@ -3503,12 +3512,14 @@ function loadMockProfile(profileKey){
     const inp = document.querySelector(`[data-tu-cur="${i+1}"]`);
     if(inp) inp.value = cur;
   });
-  // 4. t-nl — chỉ fill max/cur, giữ label
+  // 4. t-nl — chỉ fill cur, max fix cứng theo CMS (data-nl-fixed-max)
   const nlRows = document.querySelectorAll('#t-nl tbody tr[data-row]');
   data.nl.forEach((d, i)=>{
     const r = nlRows[i]; if(!r) return;
     const mx=r.querySelector('[data-max]'), cu=r.querySelector('[data-cur]');
-    if(mx) mx.value=d[0]; if(cu) cu.value=d[1];
+    const fixed = r.getAttribute('data-nl-fixed-max');
+    if(mx) mx.value = fixed || d[0];   // ưu tiên giá trị fix cứng
+    if(cu) cu.value = d[1];
   });
   // 5. t-cd
   const cdRows = document.querySelectorAll('#t-cd tbody tr[data-row]');
@@ -3562,13 +3573,14 @@ function loadSample(){
   ]);
   // So sánh cấp độ — keep blank
   // Năng lực tư duy (6 lĩnh vực, label mới — bỏ prefix "Tư duy")
+  // Điểm chuẩn cố định CMS (tổng 209đ): 34/31/39/38/43/24
   fillRows('t-nl',[
-    ['Tư duy giải quyết vấn đề',30,0],
-    ['Tư duy logic và quan sát',25,1.67],
-    ['Tư duy phân tích và phân loại',35,1.67],
-    ['Tư duy số và ký hiệu',30,1.67],
-    ['Tư duy không gian và hình học',25,0],
-    ['Tư duy suy luận toán học',20,0],
+    ['Tư duy giải quyết vấn đề',34,0],
+    ['Tư duy logic và quan sát',31,2],
+    ['Tư duy phân tích và phân loại',39,2],
+    ['Tư duy số và ký hiệu',38,2],
+    ['Tư duy không gian và hình học',43,0],
+    ['Tư duy suy luận toán học',24,0],
   ]);
   // Restore desc-cell sau khi fillRows (vì fillRows chỉ touch label-cell + data inputs)
   RESTORE_LABELS();
@@ -3966,16 +3978,15 @@ function importWonderkids(rows){
 
   // ── Section 2: ĐÁNH GIÁ THEO LĨNH VỰC → t-nl
   // Chỉ fill số liệu, KHÔNG đè label (giữ DEFAULT_LABELS 'Tư duy ...' mới)
+  // KHÔNG đè điểm chuẩn (max) vì đã fix cứng theo CMS — chỉ fill điểm đạt (cur)
   const nlA=_findAnchor(rows, /đánh giá theo lĩnh vực/);
   if(nlA){
     const data=_readTable(rows, nlA.r, nlA.c, null, {labelCol:/phân loại/, stdCol:/điểm chuẩn/, actCol:/điểm thực tế/});
     if(data.length){
-      // Fill chuẩn/đạt theo thứ tự CSV (6 lĩnh vực), giữ nguyên label-cell hiện có
       const trs=document.querySelectorAll('#t-nl tbody tr[data-row]');
       data.forEach((d,i)=>{
         const r=trs[i]; if(!r) return;
-        const mx=r.querySelector('[data-max]'), cu=r.querySelector('[data-cur]');
-        if(mx && d.std!=null) mx.value=d.std;
+        const cu=r.querySelector('[data-cur]');
         if(cu && d.act!=null) cu.value=d.act;
         count++;
       });
@@ -4376,6 +4387,17 @@ else { saveNow(); localStorage.removeItem('wk-baocao-v2'); }
 //     từ saved state. Đảm bảo người dùng luôn thấy label mới.
 const __postLoadMigrated = __runLabelMigration();
 if(__postLoadMigrated > 0){ setTimeout(()=>{ try{ saveNow(); }catch(_){} }, 200); }
+
+// 4c) ENFORCE điểm chuẩn cố định ở t-nl (CMS chuẩn 209đ: 34/31/39/38/43/24)
+// loadSaved có thể restore giá trị cũ → ép lại theo data-nl-fixed-max
+function enforceFixedT_NL_Maxes(){
+  document.querySelectorAll('#t-nl tbody tr[data-nl-fixed-max]').forEach(tr=>{
+    const fixed = tr.getAttribute('data-nl-fixed-max');
+    const mx = tr.querySelector('[data-max]');
+    if(mx && fixed){ mx.value = fixed; }
+  });
+}
+enforceFixedT_NL_Maxes();
 
 refreshSummary();
 autoGrowAll();

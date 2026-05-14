@@ -1470,7 +1470,21 @@ body.print-preview .hdr .mascot svg{display:none !important}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
     Log
   </button>
-  <button onclick="resetForm()">
+  <span class="sep"></span>
+  <input type="file" id="json-input" accept=".json" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" onchange="importReportJSON(event)"/>
+  <button onclick="exportReportJSON()" title="Lưu báo cáo hiện tại ra file .json để backup hoặc gửi sang máy khác">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Lưu .json
+  </button>
+  <label for="json-input" title="Tải báo cáo từ file .json đã lưu" style="appearance:none;border:0;background:transparent;color:var(--c-ink);font:600 12.5px/1 var(--font-body);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+    Mở .json
+  </label>
+  <button onclick="startNewReport()" title="Lưu báo cáo hiện tại + bắt đầu nhập báo cáo mới (xóa sạch UI)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Báo cáo mới
+  </button>
+  <button onclick="resetForm()" title="Xóa nội dung UI (autosave vẫn lưu)">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
     Làm mới
   </button>
@@ -3367,7 +3381,106 @@ function resetForm(){
   if(yrs[0]) yrs[0].value='2025'; if(yrs[1]) yrs[1].value='2026';
   // restore default labels
   RESTORE_LABELS();
+  // BUG FIX: resetForm clear cả data-max readonly → ép lại điểm chuẩn cố định
+  if(typeof enforceFixedT_NL_Maxes === 'function') enforceFixedT_NL_Maxes();
+  // Restore qscore default max (10 câu tư duy: 5,5,5,5,5,5,5,7,7,11 = 60đ)
+  if(typeof __QSCORE_DEFAULT_MAX !== 'undefined'){
+    for(let i=1;i<=10;i++){
+      const mx=document.querySelector(`[data-tu-max="${i}"]`);
+      if(mx) mx.value = __QSCORE_DEFAULT_MAX[i-1];
+    }
+    if(typeof refreshQScore === 'function') refreshQScore();
+  }
   refreshSummary();
+  scheduleSave();
+}
+
+/* ─── EXPORT/IMPORT JSON — phục vụ multi-report workflow trên cùng 1 máy ─── */
+function exportReportJSON(){
+  // Snapshot toàn bộ form state (giống saveNow nhưng download file)
+  const data={
+    v:3, ts:new Date().toISOString(),
+    byId:{}, anonInputs:[], anonTextareas:[], selects:{}, checks:[]
+  };
+  document.querySelectorAll('.page input,.page textarea').forEach(el=>{
+    if(el.id) data.byId[el.id]=el.value;
+    else if(el.tagName==='INPUT') data.anonInputs.push(el.value);
+    else data.anonTextareas.push(el.value);
+  });
+  document.querySelectorAll('.page select').forEach((s,i)=>{ data.selects[s.id||'sel'+i]=s.value; });
+  document.querySelectorAll('.page [data-chk]').forEach((c,i)=>{ if(c.classList.contains('on')) data.checks.push(i); });
+  // Đặt tên file theo họ tên + lớp + ngày
+  const name = (document.getElementById('f-name')?.value || 'baocao').replace(/[\s\\/\\?<>:|"*]+/g,'_').slice(0,40) || 'baocao';
+  const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const fileName = `wonderkids_${name}_${today}.json`;
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = fileName;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  toast?.('Đã lưu báo cáo: ' + fileName, 'info');
+}
+function importReportJSON(ev){
+  const f = ev.target?.files?.[0]; if(!f){ return; }
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!data || typeof data !== 'object'){ throw new Error('File không hợp lệ'); }
+      if(!confirm('Tải báo cáo từ file sẽ đè dữ liệu hiện tại. Tiếp tục?')) { ev.target.value=''; return; }
+      // Áp vào DOM y hệt loadSaved
+      let iIdx=0, tIdx=0;
+      document.querySelectorAll('.page input,.page textarea').forEach(el=>{
+        if(el.id){ if(data.byId?.[el.id]!=null) el.value=data.byId[el.id]; }
+        else if(el.tagName==='INPUT'){ if(data.anonInputs?.[iIdx]!=null) el.value=data.anonInputs[iIdx]; iIdx++; }
+        else { if(data.anonTextareas?.[tIdx]!=null) el.value=data.anonTextareas[tIdx]; tIdx++; }
+      });
+      document.querySelectorAll('.page select').forEach((s,i)=>{
+        const k=s.id||'sel'+i;
+        if(data.selects?.[k]!=null){ s.value=data.selects[k]; s.setAttribute('data-level',s.value||''); }
+      });
+      document.querySelectorAll('.page [data-chk]').forEach((c,i)=>{
+        c.classList.toggle('on', (data.checks||[]).includes(i));
+      });
+      // Enforce điểm chuẩn cố định + recompute
+      if(typeof enforceFixedT_NL_Maxes === 'function') enforceFixedT_NL_Maxes();
+      refreshSummary();
+      autoGrowAll();
+      saveNow();
+      toast?.('Đã tải báo cáo từ file', 'info');
+    } catch(err){
+      toast?.('Lỗi đọc file JSON: ' + err.message, 'error');
+    } finally {
+      ev.target.value='';
+    }
+  };
+  reader.readAsText(f);
+}
+function startNewReport(){
+  if(!confirm('Lưu báo cáo hiện tại + bắt đầu báo cáo mới?\n\n(Hệ thống sẽ tải xuống .json backup trước khi xóa)')) return;
+  try{ exportReportJSON(); }catch(_){}
+  // Đợi download xong rồi reset
+  setTimeout(()=>{
+    document.querySelectorAll('.page input').forEach(i=>{ i.value=''; });
+    document.querySelectorAll('.page textarea').forEach(t=>t.value='');
+    document.querySelectorAll('.page select').forEach(s=>{s.selectedIndex=0;s.setAttribute('data-level','');});
+    document.querySelectorAll('.page [data-chk]').forEach(c=>c.classList.remove('on'));
+    const yrs=document.querySelectorAll('.hdr .pill input');
+    if(yrs[0]) yrs[0].value='2025'; if(yrs[1]) yrs[1].value='2026';
+    RESTORE_LABELS();
+    if(typeof enforceFixedT_NL_Maxes === 'function') enforceFixedT_NL_Maxes();
+    if(typeof __QSCORE_DEFAULT_MAX !== 'undefined'){
+      for(let i=1;i<=10;i++){
+        const mx=document.querySelector(`[data-tu-max="${i}"]`);
+        if(mx) mx.value = __QSCORE_DEFAULT_MAX[i-1];
+      }
+      if(typeof refreshQScore === 'function') refreshQScore();
+    }
+    refreshSummary();
+    saveNow();
+    toast?.('Đã bắt đầu báo cáo mới','info');
+  }, 600);
 }
 
 const DEFAULT_LABELS={

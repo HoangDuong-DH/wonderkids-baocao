@@ -80,22 +80,43 @@ body{
 /* Toolbar */
 .toolbar{
   position:fixed;top:14px;left:50%;transform:translateX(-50%);
-  display:flex;gap:6px;z-index:50;
+  display:flex;gap:4px;z-index:50;flex-wrap:wrap;
+  max-width:min(1180px, calc(100vw - 28px));justify-content:center;
   background:rgba(255,255,255,.88);backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
-  padding:6px;border-radius:999px;
+  padding:6px 8px;border-radius:18px;
   box-shadow:0 8px 24px rgba(120,60,10,.12),0 1px 0 rgba(255,255,255,.7) inset;
   border:1px solid rgba(243,129,31,.18);
 }
-.toolbar button{
+.toolbar button,
+.toolbar .tb-btn,
+.toolbar .tb-link{
   appearance:none;border:0;background:transparent;color:var(--c-ink);
   font:600 12.5px/1 var(--font-body);padding:8px 12px;border-radius:999px;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;
+  text-decoration:none;white-space:nowrap;
 }
-.toolbar button:hover{background:#fff2dd;color:var(--c-primary)}
-.toolbar button.primary{background:var(--c-primary);color:#fff}
+.toolbar button:hover,
+.toolbar .tb-btn:hover,
+.toolbar .tb-link:hover{background:#fff2dd;color:var(--c-primary)}
+/* Icon-only buttons (compact, square) */
+.toolbar .tb-icon{
+  padding:8px 9px;color:var(--c-ink-soft);
+}
+.toolbar .tb-icon:hover{background:#fff2dd;color:var(--c-primary)}
+.toolbar button.primary{background:var(--c-primary);color:#fff;padding:8px 14px}
 .toolbar button.primary:hover{background:var(--c-primary-2);color:#fff}
-.toolbar .sep{width:1px;height:18px;background:rgba(0,0,0,.08);align-self:center}
+.toolbar .sep{width:1px;height:18px;background:rgba(0,0,0,.08);align-self:center;margin:0 2px}
+/* Mock data select chuẩn hoá */
+.toolbar .tb-mock{
+  appearance:none;-webkit-appearance:none;
+  border:1px solid rgba(233,78,27,.2);
+  background:#fff7ec url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 10px center;
+  color:var(--c-ink);font:600 12.5px/1 var(--font-body);
+  padding:8px 26px 8px 12px;border-radius:999px;cursor:pointer;
+  transition:all .15s ease;
+}
+.toolbar .tb-mock:hover{background-color:#fff3da}
 
 /* page — flexible height, prioritize info */
 .page{
@@ -1445,57 +1466,64 @@ body.print-preview .hdr .mascot svg{display:none !important}
 </div>
 
 <div class="toolbar">
-  <a href="index.html" title="Quay về trang chọn báo cáo" style="text-decoration:none;color:inherit;font:600 12.5px/1 var(--font-body);padding:8px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease">
+  <!-- Nav -->
+  <a href="index.html" class="tb-link" title="Quay về trang chọn báo cáo">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Trang chính
   </a>
   <span class="sep"></span>
-  <label for="xlsx-input" class="tb-btn" title="Nhập CSV (khuyên dùng — nhanh, không cần mạng) hoặc XLSX" style="appearance:none;border:0;background:transparent;color:var(--c-ink);font:600 12.5px/1 var(--font-body);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
+
+  <!-- Nhập dữ liệu -->
+  <label for="xlsx-input" class="tb-btn" title="Nhập CSV (khuyên dùng) hoặc XLSX">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-    Nhập CSV / Excel
+    Nhập CSV/Excel
   </label>
   <input type="file" id="xlsx-input" accept=".xlsx,.xls,.csv" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" onchange="importExcel(event)"/>
-  <button onclick="loadSampleCSV()" title="Test import từ CSV nhúng sẵn (Thiên Khôi) — KHÔNG cần file ngoài, KHÔNG cần mạng">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    Test CSV mẫu
-  </button>
-  <select class="tb-mock" onchange="if(this.value){loadMockProfile(this.value);this.value=''}" title="Mock data theo 4 profile để test nhận xét auto" style="appearance:none;-webkit-appearance:none;border:0;background:#fff7ec url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23e94e1b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>&quot;) no-repeat right 10px center;color:var(--c-ink);font:600 12.5px/1 var(--font-body);padding:8px 26px 8px 12px;border-radius:999px;cursor:pointer;transition:all .15s ease;border:1px solid rgba(233,78,27,.2)">
-    <option value="">🧪 Mock data</option>
-    <option value="excellent">Xuất sắc (~90%)</option>
-    <option value="good">Khá (~65%)</option>
-    <option value="weak">Cần cố gắng (~30%)</option>
-    <option value="imbalanced">Mất cân đối (KTCB cao, Tư duy thấp)</option>
+  <select class="tb-mock" id="tb-testdata" onchange="(function(s){const v=s.value;s.value='';if(!v)return;if(v==='__sample__')loadSampleCSV();else loadMockProfile(v);})(this)" title="Dữ liệu test (CSV nội bộ + 4 mock profile)">
+    <option value="">🧪 Test data</option>
+    <optgroup label="── CSV nội bộ (offline) ──">
+      <option value="__sample__">CSV mẫu (Thiên Khôi)</option>
+    </optgroup>
+    <optgroup label="── Mock profile (~%) ──">
+      <option value="excellent">Xuất sắc (~90%)</option>
+      <option value="good">Khá (~65%)</option>
+      <option value="weak">Cần cố gắng (~30%)</option>
+      <option value="imbalanced">Mất cân đối</option>
+    </optgroup>
   </select>
-  <button onclick="document.getElementById('status-panel').classList.toggle('on')" title="Hiện/ẩn log import để debug">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-    Log
-  </button>
   <span class="sep"></span>
+
+  <!-- Quản lý báo cáo -->
   <input type="file" id="json-input" accept=".json" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" onchange="importReportJSON(event)"/>
-  <button onclick="exportReportJSON()" title="Lưu báo cáo hiện tại ra file .json để backup hoặc gửi sang máy khác">
+  <button onclick="exportReportJSON()" title="Lưu báo cáo hiện tại ra file .json">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-    Lưu .json
+    Lưu
   </button>
-  <label for="json-input" title="Tải báo cáo từ file .json đã lưu" style="appearance:none;border:0;background:transparent;color:var(--c-ink);font:600 12.5px/1 var(--font-body);padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
+  <label for="json-input" class="tb-btn" title="Mở báo cáo từ file .json">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-    Mở .json
+    Mở
   </label>
-  <button onclick="startNewReport()" title="Lưu báo cáo hiện tại + bắt đầu nhập báo cáo mới (xóa sạch UI)">
+  <button onclick="startNewReport()" title="Lưu hiện tại + bắt đầu báo cáo mới">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Báo cáo mới
-  </button>
-  <button onclick="resetForm()" title="Xóa nội dung UI (autosave vẫn lưu)">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-    Làm mới
-  </button>
-  <button onclick="forceRefresh()" title="Tải lại trang với cache mới nhất từ server (phòng trường hợp cache cũ làm bug)">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-    Cập nhật
+    Mới
   </button>
   <span class="sep"></span>
-  <button onclick="togglePrintPreview()" title="Xem trên màn hình ra giấy sẽ trông thế nào — không in thật">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-    Xem trước
+
+  <!-- Action icon-only (compact) -->
+  <button class="tb-icon" onclick="resetForm()" title="Xóa nội dung form (autosave vẫn lưu)" aria-label="Xóa form">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+  </button>
+  <button class="tb-icon" onclick="document.getElementById('status-panel').classList.toggle('on')" title="Hiện/ẩn log import (debug)" aria-label="Log">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+  </button>
+  <button class="tb-icon" onclick="forceRefresh()" title="Tải lại trang với cache mới nhất từ server" aria-label="Cập nhật cache">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+  </button>
+  <span class="sep"></span>
+
+  <!-- Output -->
+  <button class="tb-icon" onclick="togglePrintPreview()" title="Xem trước in/PDF" aria-label="Xem trước">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
   </button>
   <button onclick="doPrint()" class="primary" title="In/Xuất PDF: nhớ bật 'Background graphics' và tắt 'Headers and footers' trong dialog in">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>

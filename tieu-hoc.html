@@ -4399,6 +4399,62 @@ function enforceFixedT_NL_Maxes(){
 }
 enforceFixedT_NL_Maxes();
 
+// 4d) MIGRATION 165→209: với những user đã từng nhập điểm theo thang cũ
+// (max=30/25/35/30/25/20), localStorage giữ cur theo thang đó → sau khi
+// enforce max mới, % bị lệch. Scale cur theo tỉ lệ new_max/old_max để giữ
+// nguyên % đạt. Chỉ chạy 1 lần, dò saved state để xác định data thuộc
+// thang cũ (savedMax khớp OLD_MAX). Không chạm data đã ở thang mới.
+function migrateT_NL_To209(){
+  const FLAG = 'wk-t-nl-migrated-209';
+  if(localStorage.getItem(FLAG) === '1') return;
+  localStorage.setItem(FLAG, '1');  // set ngay để không retry vô hạn
+
+  const OLD_MAX = [30, 25, 35, 30, 25, 20];   // thang cũ (tổng 165)
+  const NEW_MAX = [34, 31, 39, 38, 43, 24];   // thang mới (tổng 209)
+
+  let saved;
+  try{ saved = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); }catch(_){ return; }
+  if(!saved || !Array.isArray(saved.anonInputs)) return;
+
+  // Map DOM anon-input → saved index (cùng thứ tự DOM khi saveNow chạy)
+  const allAnonInputs = [...document.querySelectorAll('.page input')].filter(el => !el.id);
+  const tnlRows = document.querySelectorAll('#t-nl tbody tr[data-row]');
+
+  let migrated = 0;
+  tnlRows.forEach((r, i)=>{
+    if(i >= 6) return;  // chỉ 6 dòng fix cứng
+    const mxEl = r.querySelector('[data-max]');
+    const cuEl = r.querySelector('[data-cur]');
+    if(!mxEl || !cuEl) return;
+    const mxIdx = allAnonInputs.indexOf(mxEl);
+    const cuIdx = allAnonInputs.indexOf(cuEl);
+    if(mxIdx < 0 || cuIdx < 0) return;
+    const savedMx = parseFloat(saved.anonInputs[mxIdx]);
+    const savedCu = parseFloat(saved.anonInputs[cuIdx]);
+    if(isNaN(savedMx) || isNaN(savedCu)) return;
+    if(savedCu === 0) return;
+    // Chỉ migrate khi saved max khớp THANG CŨ (sai số <0.5)
+    if(Math.abs(savedMx - OLD_MAX[i]) >= 0.5) return;
+    const scaled = Math.round(savedCu * NEW_MAX[i] / OLD_MAX[i] * 10) / 10;
+    cuEl.value = scaled;
+    migrated++;
+    console.log(`[migrate t-nl row ${i}] ${savedCu}/${OLD_MAX[i]} → ${scaled}/${NEW_MAX[i]} (${Math.round(savedCu/OLD_MAX[i]*100)}%)`);
+  });
+
+  if(migrated > 0){
+    setTimeout(()=>{
+      try{
+        saveNow();
+        if(typeof refreshSummary === 'function') refreshSummary();
+        if(typeof toast === 'function'){
+          toast(`Đã căn lại ${migrated} điểm đạt theo thang chuẩn mới (209đ).`, 'info');
+        }
+      }catch(_){}
+    }, 350);
+  }
+}
+migrateT_NL_To209();
+
 refreshSummary();
 autoGrowAll();
 

@@ -658,12 +658,30 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 }
 
 @media print{
+  /* Ẩn toàn bộ UI tương tác — không in ra giấy */
+  .toolbar,#drop-overlay-mg,#xlsx-input-mg,.auto-comment-btn-mg{display:none !important}
   body{background:#fff;padding:0}
-  .toolbar{display:none}
-  .page{margin:0;border-radius:0;box-shadow:none;width:100%}
+  .page{margin:0;border-radius:0;box-shadow:none;width:100%;max-width:100%}
   .bg-shapes{display:none}
+  /* Page break: không cắt giữa các block quan trọng */
+  .ability, .s7 .card, .s7-row, .info, .hero-grid, .nx-box{
+    break-inside:avoid !important;
+    page-break-inside:avoid !important;
+  }
+  /* Cho phép break trước section lớn để header section luôn đầu trang */
+  .detail-section, .s7, .s6{
+    break-inside:avoid-page;
+    page-break-inside:avoid;
+  }
+  .sec-h{break-after:avoid;page-break-after:avoid}
+  /* Hyperlink khi in: không show URL bằng (url) trong dấu ngoặc */
+  a[href]:after{content:none !important}
+  /* Mini radar svg in mịn hơn */
+  .ability .mini-radar svg{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  /* Foot bar gọn hơn khi in */
+  .foot-bar{padding:10px 24px;font-size:11px}
 }
-@page{size:A3 portrait;margin:6mm}
+@page{size:A4 portrait;margin:8mm 6mm}
 
 /* Click to cycle grade — hint cursor */
 .ability tbody td:last-child span{cursor:pointer;transition:transform .15s ease,filter .15s ease;user-select:none}
@@ -789,14 +807,14 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
       <input class="val" value="23/02/2025">
     </div>
     <div class="info-field">
-      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a6 6 0 0 1 6 6c0 4-6 14-6 14S6 12 6 8a6 6 0 0 1 6-6z"/></svg></span>
-      <span class="lbl">Độ tuổi</span>
-      <input class="val" value="4 tuổi">
+      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M16 2v4M8 2v4"/></svg></span>
+      <span class="lbl">Năm sinh</span>
+      <input class="val" id="f-yob" value="2021">
     </div>
     <div class="info-field">
-      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
-      <span class="lbl">Giáo viên</span>
-      <input class="val" placeholder="—">
+      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></span>
+      <span class="lbl">Bài test</span>
+      <input class="val" id="f-test" value="L3 Diagnostic Assessment">
     </div>
   </div>
 
@@ -1443,36 +1461,46 @@ function _showToastMG(msg, color){
 // Grades structure align với 4 nhóm năng lực: [3, 5, 4, 4] skills
 const __MOCK_MG = {
   excellent: {
-    name:'Mock — Bé Xuất sắc', sex:'Nam',
-    class:'Lá 1 — Trung tâm Phố Huế', age:'5 tuổi', teacher:'Cô Mai',
+    name:'Phạm Tuấn Dũng', sex:'Nam',
+    class:'Lá 1 — Trung tâm Phố Huế', yob:'2020', test:'L5 Diagnostic Assessment',
     grades:[['S','S','S'],['S','A','S','A','S'],['A','S','A','S'],['A','S','A','S']],
   },
   good: {
-    name:'Mock — Bé Khá', sex:'Nữ',
-    class:'Chồi 2 — Trung tâm Hai Bà Trưng', age:'4 tuổi', teacher:'Cô Lan',
+    name:'Nguyễn Minh Anh', sex:'Nữ',
+    class:'Chồi 2 — Trung tâm Hai Bà Trưng', yob:'2021', test:'L4 Diagnostic Assessment',
     grades:[['B','B','A'],['B','A','B','A','B'],['B','B','A','B'],['B','A','B','B']],
   },
   average: {
-    name:'Mock — Bé Trung bình', sex:'Nam',
-    class:'Mầm 3 — Trung tâm Đống Đa', age:'3 tuổi', teacher:'Cô Hương',
+    name:'Trần Bảo Khang', sex:'Nam',
+    class:'Mầm 3 — Trung tâm Đống Đa', yob:'2021', test:'L3 Diagnostic Assessment',
     grades:[['C','C','C'],['C','C','C','C','C'],['C','C','C','C'],['C','C','C','C']],
   },
   weak: {
-    name:'Mock — Bé Cần hỗ trợ', sex:'Nữ',
-    class:'Mầm 1 — Trung tâm Cầu Giấy', age:'3 tuổi', teacher:'Cô Trang',
+    name:'Lê Hà My', sex:'Nữ',
+    class:'Mầm 1 — Trung tâm Cầu Giấy', yob:'2022', test:'L3 Diagnostic Assessment',
     grades:[['L','C','L'],['L','L','C','L','C'],['L','C','L','L'],['L','L','L','L']],
   },
 };
 // Áp dụng 6 info-field theo thứ tự DOM: Họ tên / Lớp / Giới tính / Ngày đánh giá / Độ tuổi / Giáo viên
 function _applyMG_InfoFields(data){
   const fields = document.querySelectorAll('.info-field input.val, .info-field select.val');
-  // Map theo thứ tự HTML: 0=name, 1=class, 2=gender (select), 3=date, 4=age, 5=teacher
+  // Map theo thứ tự HTML mới: 0=name, 1=class, 2=gender, 3=date, 4=yob (năm sinh), 5=test (bài test)
   const today = new Date();
   const dd=String(today.getDate()).padStart(2,'0'),mm=String(today.getMonth()+1).padStart(2,'0');
   const todayStr = `${dd}/${mm}/${today.getFullYear()}`;
-  const vals = [data.name, data.class, data.sex, data.date || todayStr, data.age, data.teacher];
+  const vals = [data.name, data.class, data.sex, data.date || todayStr, data.yob || data.age, data.test || data.teacher];
   fields.forEach((f,i)=>{ if(vals[i]!=null && vals[i]!=='') f.value = vals[i]; });
   if(data.sex && typeof updateAvatar==='function') updateAvatar(data.sex);
+}
+// Convert % (0-100) → S/A/B/C/L theo NGƯỠNG MẦM NON Excel: S≥80, A 65-79, B 50-64, C 30-49, L<30
+function _pctToGradeMG(p){
+  if(p == null || isNaN(p)) return 'C';
+  const n = Number(p);
+  if(n >= 80) return 'S';
+  if(n >= 65) return 'A';
+  if(n >= 50) return 'B';
+  if(n >= 30) return 'C';
+  return 'L';
 }
 // Áp dụng grades [g1[], g2[], g3[], g4[]] vào 4 ability tables
 function _applyMG_Grades(grades){
@@ -1513,14 +1541,29 @@ const __SKILL_LOOKUP_MG = (function(){
   ];
   const map = {};
   groups.forEach((g,ab)=>g.forEach((name,sk)=>{ map[_normMG(name)] = {ab,sk,name}; }));
+  // Aliases — Excel WonderKids dùng tên ngắn không có prefix "Năng lực" / "Sự" / "Tính"
+  const aliases = [
+    ['chú ý', 0, 0], ['quan sát', 0, 1], ['ghi nhớ', 0, 2],
+    ['số & tính toán', 1, 0], ['số tính toán', 1, 0],
+    ['hình học', 1, 1], ['không gian', 1, 1],
+    ['trôi chảy', 3, 0], ['linh hoạt', 3, 1], ['độc đáo', 3, 2], ['chính xác', 3, 3],
+  ];
+  aliases.forEach(([n, ab, sk])=>{ map[_normMG(n)] = {ab, sk, name:groups[ab][sk]}; });
   return map;
 })();
 function _normMG(s){ return String(s==null?'':s).toLowerCase().replace(/\s+/g,' ').trim(); }
 function _parseGradeMG(v){
-  // Chấp nhận: chữ cái S/A/B/C/L hoặc tên đầy đủ (Vượt trội, Rất tốt, Tốt, Trung bình, Cần hỗ trợ)
-  // hoặc thang cũ (Xuất sắc, Khá, Đạt, Cần cố gắng)
+  // Chấp nhận:
+  //  - Chữ cái S/A/B/C/L thuần
+  //  - Format Excel WonderKids "3.2 (C)" / "10 (S)" → extract grade trong ngoặc
+  //  - Tên đầy đủ tiếng Việt (Vượt trội, Rất tốt, Tốt, Trung bình, Cần hỗ trợ)
+  //  - Thang cũ (Xuất sắc, Khá, Đạt, Cần cố gắng)
   if(v==null) return null;
-  const s = String(v).trim().toUpperCase();
+  const raw = String(v).trim();
+  // Pattern "x.x (G)" hoặc "x (G)" — ưu tiên highest
+  const m = raw.match(/\(\s*([SABCL])\s*\)/i);
+  if(m) return m[1].toUpperCase();
+  const s = raw.toUpperCase();
   if(['S','A','B','C','L'].includes(s)) return s;
   const n = _normMG(s);
   const NAME_MAP = {
@@ -1562,42 +1605,57 @@ function parseCSV_MG(text){
   return rows;
 }
 // Đọc rows (2D array) → fill info fields + 16 grade cells
+// Hỗ trợ format WonderKids Excel: label/value có thể scattered (TÊN col 0,
+// value col 1; NĂM SINH col 3, value col 5) — không đứng cạnh nhau.
 function _applyParsedRowsMG(rows){
   let infoFilled = 0, gradesFilled = 0;
   const INFO_KEYS = {
-    'họ và tên':'name','họ tên':'name','tên':'name',
-    'lớp':'class','trung tâm':'class','cơ sở':'class',
+    'họ và tên':'name','họ tên':'name','tên':'name','name':'name',
+    'lớp':'class','trung tâm':'class','cơ sở':'class','class':'class',
     'giới tính':'sex','gender':'sex',
     'ngày đánh giá':'date','ngày':'date','date':'date',
-    'độ tuổi':'age','tuổi':'age','age':'age',
+    'năm sinh':'yob','yob':'yob',
+    'bài test':'test','test':'test','assessment':'test','bài kiểm tra':'test',
     'giáo viên':'teacher','gv':'teacher','teacher':'teacher',
+    'độ tuổi':'age','tuổi':'age','age':'age',
   };
   const info = {};
-  // Sweep tất cả rows tìm cặp "label,value" cho info fields
+  // Sweep tất cả rows — KHÔNG chỉ check cell[0]&cell[1] mà QUÉT MỌI cell
+  // tìm label, rồi lấy value từ cell phi-rỗng tiếp theo cùng row.
   rows.forEach(r=>{
-    if(!r || r.length<2) return;
-    const lbl = _normMG(r[0]);
-    const val = String(r[1]||'').trim();
-    if(!lbl || !val) return;
-    if(INFO_KEYS[lbl]){
-      info[INFO_KEYS[lbl]] = val;
-      infoFilled++;
+    if(!r) return;
+    for(let i=0; i<r.length; i++){
+      const lbl = _normMG(r[i]);
+      if(!lbl) continue;
+      const key = INFO_KEYS[lbl];
+      if(!key || info[key]) continue;   // skip nếu đã có giá trị
+      // Tìm value trong các cell tiếp theo (skip empty)
+      for(let j=i+1; j<r.length; j++){
+        const v = r[j];
+        if(v != null && String(v).trim()){
+          info[key] = String(v).trim();
+          infoFilled++;
+          break;
+        }
+      }
     }
   });
   if(Object.keys(info).length){
     _applyMG_InfoFields(info);
   }
-  // Sweep tìm các dòng có grade
+  // Sweep tìm các dòng có skill name + grade
   const abilities = document.querySelectorAll('.ability');
+  const filledSkills = new Set();   // tránh fill 1 skill nhiều lần
   rows.forEach(r=>{
     if(!r || r.length<2) return;
-    // Tìm cột chứa skill name + cột chứa grade
     for(let i=0; i<r.length-1; i++){
       const skillKey = _normMG(r[i]);
       if(!skillKey) continue;
       const hit = __SKILL_LOOKUP_MG[skillKey];
       if(!hit) continue;
-      // Tìm grade ở các cột tiếp theo
+      const id = hit.ab+':'+hit.sk;
+      if(filledSkills.has(id)) continue;
+      // Tìm grade ở các cell tiếp theo — _parseGradeMG nhận cả "3.2 (C)"
       for(let j=i+1; j<r.length; j++){
         const g = _parseGradeMG(r[j]);
         if(g){
@@ -1607,11 +1665,11 @@ function _applyParsedRowsMG(rows){
             spans[hit.sk].textContent = __GRADE_NAME[g];
             spans[hit.sk].className = 'g'+g;
             gradesFilled++;
+            filledSkills.add(id);
           }
           break;
         }
       }
-      break;
     }
   });
   return {infoFilled, gradesFilled};
@@ -1673,32 +1731,34 @@ async function importExcelMG(ev){
 /* ─── Sample CSV — tải file mẫu để biết format ─── */
 function downloadSampleCSV_MG(){
   const lines = [
-    'Họ và tên,Nguyễn An Khang',
-    'Lớp,Lá 1 – Trung tâm Phố Huế',
+    'Tên,Phạm Tuấn Dũng',
+    'Lớp,Mầm non L3',
     'Giới tính,Nam',
+    'Năm sinh,2021',
+    'Bài test,L3 Diagnostic Assessment',
     'Ngày đánh giá,'+ (function(){const d=new Date();return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()})(),
-    'Độ tuổi,5 tuổi',
-    'Giáo viên,Cô Mai',
     '',
-    'Năng lực,Cấp độ',
-    'Năng lực chú ý,A',
-    'Năng lực quan sát,S',
-    'Năng lực ghi nhớ,A',
-    'Số và tính toán,B',
-    'Hình học không gian,A',
-    'Đo lường,A',
-    'Kiểu mẫu,B',
-    'Dữ liệu,B',
-    'Hiểu biết,A',
-    'Ứng dụng,B',
-    'Phân tích,A',
-    'Tổng hợp,B',
-    'Sự trôi chảy,B',
-    'Tính linh hoạt,A',
-    'Tính độc đáo,B',
-    'Tính chính xác,A',
+    '# NGƯỠNG MẦM NON: S≥80 | A 65-79 | B 50-64 | C 30-49 | L<30',
     '',
-    '# Cấp độ chấp nhận: S/A/B/C/L hoặc Vượt trội/Rất tốt/Tốt/Trung bình/Cần hỗ trợ',
+    'Năng lực con,Kết quả',
+    'Chú ý,3.2 (C)',
+    'Quan sát,5.7 (B)',
+    'Ghi nhớ,1.8 (C)',
+    'Số và tính toán,5.5 (C)',
+    'Hình học không gian,6.5 (C)',
+    'Đo lường,1.8 (C)',
+    'Kiểu mẫu,5.0 (S)',
+    'Dữ liệu,6.7 (C)',
+    'Hiểu biết,5.0 (S)',
+    'Ứng dụng,1.5 (L)',
+    'Phân tích,6.8 (B)',
+    'Tổng hợp,7.0 (A)',
+    'Trôi chảy,15.0 (S)',
+    'Linh hoạt,13.0 (S)',
+    'Độc đáo,12.0 (S)',
+    'Chính xác,9.0 (S)',
+    '',
+    '# Cấp độ chấp nhận: "3.2 (C)" hoặc "C" / "Trung bình" / "Cần hỗ trợ"',
   ];
   const csv = '﻿' + lines.join('\n');  // BOM để Excel mở UTF-8
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});

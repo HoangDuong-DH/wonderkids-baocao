@@ -1155,7 +1155,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
       </div>
 
       <div class="insight-panel channel-panel">
-        <h3><span class="chip">MODE</span>Kênh xử lý thông tin</h3>
+        <h3><span class="chip">HỖ TRỢ</span>Mức độ hỗ trợ bé cần khi làm bài</h3>
         <div class="insight-split">
           <div>
             <table class="insight-table" id="mg-channel-table">
@@ -1536,8 +1536,8 @@ const ANALYTICS_MG = {
     {level:'Trừu tượng cao', label:'Không có mẫu, tự tạo', questions:'3, 6, 8, 13, 14', max:70, score:60, pct:86},
   ],
   channel:[
-    {label:'Trực quan (nhìn hình tự làm)', questions:'1, 2, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14', max:150, score:102, pct:68},
-    {label:'Nghe-hiểu (qua lời GV đọc)', questions:'3, 8', max:20, score:3, pct:15},
+    {label:'Tự làm hoàn toàn (chỉ cần đọc đề 1 lần)', questions:'1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14', max:160, score:103, pct:64},
+    {label:'Cần lắng nghe chuỗi thông tin', questions:'3', max:10, score:5, pct:52},
   ],
   bloom:[
     {label:'KHÓ (Sáng tạo + Tổng hợp)', count:3, questions:'11, 13, 14', max:60, score:57, pct:95},
@@ -1670,7 +1670,7 @@ function renderChannelAnalyticsMG(){
     const rows = ANALYTICS_MG.channel;
     const w=520,h=220,left=154,barW=250,top=42,rowH=62;
     let html = `<rect x="0" y="0" width="${w}" height="${h}" rx="12" fill="#fffaf0"/>`;
-    html += `<text x="16" y="24" font-size="12" font-weight="900" fill="#1f4f7a">So sánh hiệu quả tiếp nhận</text>`;
+    html += `<text x="16" y="24" font-size="12" font-weight="900" fill="#1f4f7a">So sánh mức độ hỗ trợ bé cần khi làm bài</text>`;
     [30,50,65,85].forEach(t=>{
       const x=left+barW*t/100;
       html += `<line x1="${x}" y1="34" x2="${x}" y2="164" stroke="#ecdcb8" stroke-dasharray="3 3"/>`;
@@ -1679,7 +1679,7 @@ function renderChannelAnalyticsMG(){
     rows.slice(0,2).forEach((d,i)=>{
       const p=Math.max(0,Math.min(100,Number(d.pct)||0));
       const y=top+i*rowH;
-      const label=i===0?'TRỰC QUAN':'NGHE-HIỂU';
+      const label=i===0?'TỰ LÀM':'CẦN HƯỚNG DẪN';
       html += `<text x="16" y="${y+16}" font-size="12" font-weight="900" fill="#3a2a14">${label}</text>`;
       html += `<text x="16" y="${y+33}" font-size="9.5" font-weight="700" fill="#7b6244">${_escHtmlMG(d.score)}/${_escHtmlMG(d.max)} điểm</text>`;
       html += `<rect x="${left}" y="${y}" width="${barW}" height="24" rx="12" fill="#f0e2bf"/>`;
@@ -1695,7 +1695,7 @@ function renderChannelAnalyticsMG(){
     if(rows.length >= 2){
       const gap = Math.round(Math.abs((rows[0].pct||0)-(rows[1].pct||0)));
       const stronger = (rows[0].pct||0) >= (rows[1].pct||0) ? rows[0] : rows[1];
-      hi.innerHTML = `<p><b>Điểm nổi bật:</b> kênh <b>${_escHtmlMG(stronger.label)}</b> đạt ${Math.round(stronger.pct)}%, chênh ${gap} điểm % so với kênh còn lại.</p>`;
+      hi.innerHTML = `<p><b>Điểm nổi bật:</b> <b>${_escHtmlMG(stronger.label)}</b> đạt ${Math.round(stronger.pct)}%, chênh ${gap} điểm % so với phần còn lại.</p>`;
     } else hi.innerHTML = '<p><b>Điểm nổi bật:</b> —</p>';
   }
 }
@@ -1752,7 +1752,7 @@ function renderAnalyticsMG(){
   // A11y: screen reader friendly labels
   _setChartA11yMG('mg-unit-chart', 'Biểu đồ tỷ lệ đạt theo 5 đơn vị đánh giá A-E');
   _setChartA11yMG('mg-abstract-chart', 'Biểu đồ năng lực theo 3 mức độ trừu tượng');
-  _setChartA11yMG('mg-channel-chart', 'So sánh hiệu quả kênh trực quan và nghe-hiểu');
+  _setChartA11yMG('mg-channel-chart', 'So sánh mức độ hỗ trợ bé cần khi làm bài: tự làm vs cần hướng dẫn');
   _setChartA11yMG('mg-bloom-chart', 'Năng lực theo 3 cấp độ Bloom: Khó, Trung bình, Dễ');
   const total = ANALYTICS_MG.unitTotal || {};
   const allUnits = ANALYTICS_MG.units || [];
@@ -2740,7 +2740,11 @@ function _readMetricRowsMG(rows, headerIdx, startCol, type){
 function _applyAnalyticsRowsMG(rows){
   const unit = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,['KẾT QUẢ ĐÁNH GIÁ THEO CÂU HỎI RIÊNG BIỆT','ĐÁNH GIÁ THEO ĐƠN VỊ RIÊNG BIỆT','ĐƠN VỊ RIÊNG BIỆT'],5,['ĐƠN VỊ','UNIT','NHÓM']), 5, 'unit');
   const abs = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,['SO SÁNH THEO ĐỘ TRỪU TƯỢNG','ĐỘ TRỪU TƯỢNG','ABSTRACT'],5,['MỨC ĐỘ','LEVEL']), 5, 'abstract');
-  const channel = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,['SO SÁNH KÊNH XỬ LÝ','KÊNH XỬ LÝ THÔNG TIN','KÊNH TIẾP NHẬN','KÊNH XỬ LÝ'],5,['PHÂN LOẠI','KÊNH','LOẠI']), 5, 'channel');
+  // Format v2: title đổi từ "KÊNH XỬ LÝ" → "MỨC ĐỘ HỖ TRỢ" — accept cả 2
+  const channel = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,[
+    'SO SÁNH MỨC ĐỘ HỖ TRỢ','MỨC ĐỘ HỖ TRỢ CẦN THIẾT','MỨC ĐỘ HỖ TRỢ',
+    'SO SÁNH KÊNH XỬ LÝ','KÊNH XỬ LÝ THÔNG TIN','KÊNH TIẾP NHẬN','KÊNH XỬ LÝ'
+  ],5,['PHÂN LOẠI','MỨC ĐỘ','KÊNH','LOẠI']), 5, 'channel');
   const bloom = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,['SO SÁNH NĂNG LỰC THEO CẤP ĐỘ BLOOM','CẤP ĐỘ BLOOM','BLOOM'],5,['PHÂN LOẠI','CẤP ĐỘ','BLOOM']), 5, 'bloom');
   let filled = 0;
   if(unit.length){ ANALYTICS_MG.units = unit; filled += unit.length; }

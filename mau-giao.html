@@ -240,7 +240,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 .s1-desc b{color:var(--ink);font-weight:700}
 /* HERO GRID: cards 2x2 trái + radar phải — section 1 tổng quan */
 .hero-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  display:grid;grid-template-columns:1.85fr 1fr;gap:20px;
   align-items:stretch;margin-top:8px;
 }
 .hero-radar{
@@ -255,7 +255,17 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 .hero-radar .radar-chart{width:100%;height:300px}
 
 /* S1-CARDS REDESIGN — 2x2 grid với card hiện đại hơn */
-.s1-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:stretch}
+.s1-cards{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-content:stretch}
+/* Legend dưới 4 cards: 5 mức S/A/B/C/L theo template */
+.s1-legend{display:flex;flex-wrap:wrap;gap:14px 22px;justify-content:flex-start;
+  margin-top:12px;font:600 10.5px/1 var(--font-body);color:var(--ink-soft);letter-spacing:.04em}
+.s1-legend .lg{display:inline-flex;align-items:center;gap:6px}
+.s1-legend .lg::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;flex-shrink:0}
+.s1-legend .lg.s{color:var(--g-S)}
+.s1-legend .lg.a{color:var(--g-A)}
+.s1-legend .lg.b{color:var(--g-B)}
+.s1-legend .lg.c{color:var(--g-C)}
+.s1-legend .lg.l{color:var(--g-L)}
 .s1-card{
   background:#fff;border:1.5px solid var(--hair-soft);
   border-radius:16px;padding:14px;
@@ -754,9 +764,10 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   <!-- ─── SECTION 1: TỔNG QUAN (HERO — cards 2x2 + radar side-by-side) ─── -->
   <div class="sec hero-sec">
     <div class="sec-h"><span class="num">1</span>Tổng quan năng lực tư duy</div>
-    <p class="s1-desc" contenteditable="true">Bé đang ở mức <b>đang phát triển</b> ở các năng lực tư duy. Bé có điểm mạnh hơn ở phần <b>kiểu mẫu và dữ liệu</b>.</p>
+    <p class="s1-desc" contenteditable="true">Bé đang ở mức <b>trung bình</b> ở các năng lực tư duy. Bé có điểm mạnh hơn ở phần <b>kiểu mẫu và dữ liệu</b>.</p>
 
     <div class="hero-grid">
+      <div class="s1-col">
       <div class="s1-cards">
         <div class="s1-card" data-card="1">
           <span class="head">
@@ -766,7 +777,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">Đang phát triển</span>
+            <span class="lbl">Trung bình</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -778,7 +789,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">Đang phát triển</span>
+            <span class="lbl">Trung bình</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -790,7 +801,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">Đang phát triển</span>
+            <span class="lbl">Trung bình</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -802,10 +813,18 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <span class="grade-circle">L</span>
           <span class="meta">
             <span class="pct">25%</span>
-            <span class="lbl">Cần đồng hành</span>
+            <span class="lbl">Cần hỗ trợ</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
+      </div>
+      <div class="s1-legend">
+        <span class="lg s">Vượt trội (S)</span>
+        <span class="lg a">Rất tốt (A)</span>
+        <span class="lg b">Tốt (B)</span>
+        <span class="lg c">Trung bình (C)</span>
+        <span class="lg l">Cần hỗ trợ (L)</span>
+      </div>
       </div>
       <div class="hero-radar">
         <div class="hero-radar-ttl">🎯 Hình dáng năng lực</div>
@@ -829,15 +848,15 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
             <span class="ico eye"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span>
             <span class="ttl"><small>Nhóm 01</small>Tư duy cơ bản</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">Đang phát triển</span>
+            <span class="mval">Trung bình</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC">Trung bình</span></td></tr>
+              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC">Trung bình</span></td></tr>
+              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">Trung bình</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -848,15 +867,15 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
             <span class="ico calc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h4"/></svg></span>
             <span class="ttl"><small>Nhóm 02</small>Tư duy toán học</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">Đang phát triển</span>
+            <span class="mval">Trung bình</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
+              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
+              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC">Trung bình</span></td></tr>
               <tr><td>Kiểu mẫu</td><td contenteditable="true">Khả năng nhận diện và dự đoán mối quan hệ mang tính quy luật của đồ vật.</td><td><span class="gB">Tốt</span></td></tr>
               <tr><td>Dữ liệu</td><td contenteditable="true">Khả năng thu thập các nguồn lực khác nhau và sắp xếp theo đặc điểm của chúng.</td><td><span class="gB">Tốt</span></td></tr>
             </tbody>
@@ -869,16 +888,16 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
             <span class="ico brain"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 4 7 7c-2 0-4 2-4 4 0 2 1 3 2 4-1 1-1 3 0 4 0 2 2 4 4 4 0 1 1 2 3 2s3-1 3-2c2 0 4-2 4-4 1-1 1-3 0-4 1-1 2-2 2-4 0-2-2-4-4-4 0-3-2-5-5-5z"/></svg></span>
             <span class="ttl"><small>Nhóm 03</small>Tư duy logic</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">Đang phát triển</span>
+            <span class="mval">Trung bình</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC">Trung bình</span></td></tr>
+              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
+              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC">Trung bình</span></td></tr>
+              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">Trung bình</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -889,46 +908,100 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
             <span class="ico bulb"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
             <span class="ttl"><small>Nhóm 04</small>Tư duy sáng tạo</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">Cần đồng hành</span>
+            <span class="mval">Cần hỗ trợ</span>
             <span class="grade-big">L</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">Cần đồng hành</span></td></tr>
+              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
+              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
+              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
+              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
-  <!-- ─── SECTION 5: NHẬN XÉT & ĐỊNH HƯỚNG ─── -->
+  <!-- ─── SECTION 3: NHẬN XÉT CHUNG ─── -->
   <div class="s6">
-    <div class="sec-h"><span class="num">4</span>Nhận xét chung &amp; Định hướng
-      <button class="auto-comment-btn-mg" onclick="fillCommentsMG(true)" title="Sinh nhận xét và định hướng tự động từ kết quả đánh giá">🪄 Tự động nhận xét</button>
+    <div class="sec-h"><span class="num">3</span>Nhận xét chung
+      <button class="auto-comment-btn-mg" onclick="fillCommentsMG(true)" title="Sinh nhận xét tự động từ kết quả đánh giá">🪄 Tự động nhận xét</button>
     </div>
     <div class="nx-box">
       <div class="nx-block">
-        <div class="nx-lbl">Nhận xét:</div>
         <div class="nx-body" contenteditable="true"><p>Bé <b>Phạm Hoàng Bách</b> đang ở giai đoạn xây dựng nền tảng tư duy. Bé thể hiện <b>khả năng quan sát, ghi nhớ và chú ý ổn định</b>, đặc biệt có điểm sáng ở phần <b>kiểu mẫu và dữ liệu</b> của tư duy toán học.</p><p>Bé cần được hỗ trợ thêm về <b>số và tính toán cơ bản, hình học không gian</b> cùng các năng lực ứng dụng – sáng tạo. Khi được rèn luyện đều đặn qua hoạt động trực quan và trò chơi, bé hoàn toàn có thể tiến bộ rõ rệt trong 1 – 3 tháng tới.</p></div>
-      </div>
-      <div class="nx-block">
-        <div class="nx-lbl">Định hướng chung:</div>
-        <ol class="nx-list">
-          <li contenteditable="true"><b>Củng cố nền tảng kiến thức cơ bản:</b> tập trung vào các kỹ năng nền tảng như <b>Phép cộng &amp; phép trừ, Giải quyết vấn đề, Suy luận toán học</b> và rèn luyện qua các bài tập/học cụ trực quan để giúp con nắm vững các khái niệm cơ bản.</li>
-          <li contenteditable="true"><b>Phát triển tư duy toán học:</b> con cần rèn luyện thêm khả năng suy luận logic, giải quyết các bài toán nhiều bước và phát triển khả năng giải thích chi tiết trong quá trình giải quyết.</li>
-          <li contenteditable="true"><b>Khuyến khích sáng tạo và biểu đạt:</b> tạo không gian để bé đề xuất nhiều ý tưởng, kể chuyện, vẽ, sáng chế từ vật liệu sẵn có và động viên các góc nhìn khác biệt.</li>
-        </ol>
       </div>
     </div>
   </div>
 
-  <!-- ─── SECTION 7 removed (merged into section 6) ─── -->
+  <!-- ─── SECTION 7: ĐỊNH HƯỚNG PHÁT TRIỂN (TẠI LỚP / TẠI NHÀ + family illustration) ─── -->
+  <div class="s7">
+    <div class="sec-h"><span class="num">7</span>Định hướng phát triển</div>
+    <div class="s7-row">
+      <div class="card lop">
+        <h4><span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6M9 11h.01M15 11h.01"/></svg></span>Tại lớp</h4>
+        <ul>
+          <li><span class="b"></span><span contenteditable="true">Tăng hoạt động nhận diện số, đếm, so sánh số lượng.</span></li>
+          <li><span class="b"></span><span contenteditable="true">Rèn tư duy không gian qua xếp hình, ghép khối, trò trí vị trí.</span></li>
+          <li><span class="b"></span><span contenteditable="true">Cho bé luyện bài tập quy luật, kiểu mẫu và phân loại dữ liệu.</span></li>
+          <li><span class="b"></span><span contenteditable="true">Khuyến khích bé giải thích "vì sao con chọn đáp án này".</span></li>
+          <li><span class="b"></span><span contenteditable="true">Tăng hoạt động sáng tạo mở: vẽ tiếp hình, kể chuyện theo tranh, tạo sản phẩm từ hình mẫu.</span></li>
+        </ul>
+      </div>
+      <div class="card nha">
+        <h4><span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v11h14V10"/></svg></span>Tại nhà</h4>
+        <ul>
+          <li><span class="b"></span><span contenteditable="true">Chơi trò tìm quy luật với màu sắc, đồ vật, trái cây.</span></li>
+          <li><span class="b"></span><span contenteditable="true">Cho bé đếm đồ vật trong sinh hoạt hằng ngày.</span></li>
+          <li><span class="b"></span><span contenteditable="true">Hỏi bé các câu đơn giản như "cái nào giống nhau?", "cái nào khác?", "vì sao?".</span></li>
+          <li><span class="b"></span><span contenteditable="true">Khuyến khích bé vẽ, kể chuyện và đặt tên cho sản phẩm.</span></li>
+          <li><span class="b"></span><span contenteditable="true">Ưu tiên động viên quá trình suy nghĩ hơn là khen đúng sai.</span></li>
+        </ul>
+      </div>
+      <div class="scene" aria-hidden="true">
+        <svg width="200" height="160" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- ground -->
+          <ellipse cx="100" cy="148" rx="86" ry="8" fill="#f0c878" opacity=".5"/>
+          <!-- parent -->
+          <circle cx="62" cy="62" r="20" fill="#ffd9b0"/>
+          <path d="M44 52c2-10 10-16 18-16s16 6 18 16c-2 4-8 6-18 6s-16-2-18-6z" fill="#5a3a1a"/>
+          <rect x="46" y="80" width="32" height="50" rx="10" fill="#3ea1d3"/>
+          <rect x="46" y="80" width="32" height="20" fill="#2980b3"/>
+          <!-- arm around child -->
+          <path d="M78 96c8 0 16 4 20 8" stroke="#ffd9b0" stroke-width="10" stroke-linecap="round" fill="none"/>
+          <!-- child -->
+          <circle cx="118" cy="78" r="16" fill="#ffe0c0"/>
+          <path d="M104 70c2-8 8-12 14-12s12 4 14 12c-2 2-6 4-14 4s-12-2-14-4z" fill="#3a2818"/>
+          <rect x="106" y="92" width="24" height="40" rx="8" fill="#f08526"/>
+          <!-- book -->
+          <rect x="88" y="116" width="48" height="14" rx="2" fill="#fff" stroke="#df5728" stroke-width="1.5"/>
+          <line x1="112" y1="116" x2="112" y2="130" stroke="#df5728" stroke-width="1"/>
+          <!-- heart above -->
+          <path d="M150 32 a6 6 0 0 1 12 0 a6 6 0 0 1 12 0 c0 8-12 16-12 16s-12-8-12-16z" fill="#e9709a"/>
+        </svg>
+      </div>
+    </div>
+  </div>
 
-  <!-- ─── FOOTER removed ─── -->
+  <!-- ─── FOOTER ─── -->
+  <div class="foot-bar">
+    <div class="msg"><b>Cảm ơn Quý phụ huynh</b><br>đã tin tưởng đồng hành cùng WonderKids!</div>
+    <div class="item p">
+      <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16.5v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 3.2 2H6.2a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7 9.7a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg></span>
+      1900 9999 80
+    </div>
+    <div class="item w">
+      <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span>
+      wonderkids.edu.vn
+    </div>
+    <div class="item f">
+      <span class="ico"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9V15h-2.5v-3h2.5V9.7c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 3h-2.3v6.9A10 10 0 0 0 22 12z"/></svg></span>
+      /wonderkids.edu.vn
+    </div>
+    <span class="wm">WONDERKIDS</span>
+  </div>
 </div>
 
 <script>
@@ -1074,8 +1147,8 @@ const __GRADE_NEXT = {S:'A',A:'B',B:'C',C:'L',L:'S'};
 const __GRADE_RADAR_PCT = {S:95,A:80,B:65,C:50,L:25};
 
 // Tên mức theo ngôn ngữ developmental (phù hợp tuổi mẫu giáo 3-5, mềm mại hơn)
-// "Đang phát triển" thay "Đạt", "Cần đồng hành" thay "Cần cố gắng" — growth mindset
-const __GRADE_NAME = {S:'Vượt trội', A:'Rất tốt', B:'Tốt', C:'Đang phát triển', L:'Cần đồng hành'};
+// Theo template chính thức WonderKids: Vượt trội (S) / Rất tốt (A) / Tốt (B) / Trung bình (C) / Cần hỗ trợ (L)
+const __GRADE_NAME = {S:'Vượt trội', A:'Rất tốt', B:'Tốt', C:'Trung bình', L:'Cần hỗ trợ'};
 
 function _abilityGrade(abilityEl){
   // Đọc grade từ CSS class (gS/gA/gB/gC/gL) thay vì textContent (vì giờ text là tên dài như "Đạt"/"Cần cố gắng")
@@ -1294,7 +1367,7 @@ const __SKILL_LOOKUP_MG = (function(){
 })();
 function _normMG(s){ return String(s==null?'':s).toLowerCase().replace(/\s+/g,' ').trim(); }
 function _parseGradeMG(v){
-  // Chấp nhận: chữ cái S/A/B/C/L hoặc tên đầy đủ (Vượt trội, Rất tốt, Tốt, Đang phát triển, Cần đồng hành)
+  // Chấp nhận: chữ cái S/A/B/C/L hoặc tên đầy đủ (Vượt trội, Rất tốt, Tốt, Trung bình, Cần hỗ trợ)
   // hoặc thang cũ (Xuất sắc, Khá, Đạt, Cần cố gắng)
   if(v==null) return null;
   const s = String(v).trim().toUpperCase();
@@ -1475,7 +1548,7 @@ function downloadSampleCSV_MG(){
     'Tính độc đáo,B',
     'Tính chính xác,A',
     '',
-    '# Cấp độ chấp nhận: S/A/B/C/L hoặc Vượt trội/Rất tốt/Tốt/Đang phát triển/Cần đồng hành',
+    '# Cấp độ chấp nhận: S/A/B/C/L hoặc Vượt trội/Rất tốt/Tốt/Trung bình/Cần hỗ trợ',
   ];
   const csv = '﻿' + lines.join('\n');  // BOM để Excel mở UTF-8
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});

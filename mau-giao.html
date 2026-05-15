@@ -420,12 +420,14 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   font:700 9.5px/1.2 var(--font-body);color:var(--ink-mute);
   letter-spacing:.08em;text-transform:uppercase;text-align:center;
 }
-.ability .mini-radar svg{width:220px;height:auto;aspect-ratio:220/140;display:block}
+.ability .mini-radar svg{width:230px;height:auto;aspect-ratio:235/145;display:block}
+/* Labels: ĐỒNG NHẤT size để tránh shift khi active đổi → tránh clip */
 .ability .mini-radar .mr-axis{
-  font:700 12.5px/1 var(--font-body);fill:var(--ink-soft);
+  font:700 12px/1 var(--font-body);fill:var(--ink-soft);
   letter-spacing:.02em;
 }
-.ability .mini-radar .mr-axis.active{fill:var(--orange-deep);font-size:14.5px;font-weight:800}
+/* Active: chỉ khác MÀU + BOLD, không đổi size → vị trí label ổn định */
+.ability .mini-radar .mr-axis.active{fill:var(--orange-deep);font-weight:900}
 .ability .left{
   background:#fff7e2;padding:14px 14px;text-align:center;
   display:flex;flex-direction:column;align-items:center;gap:6px;
@@ -898,7 +900,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           </table>
           <div class="mini-radar">
             <div class="mr-ttl">Hình dáng năng lực</div>
-            <svg class="mini-radar-svg" data-mr-idx="0" viewBox="-45 -5 220 140"></svg>
+            <svg class="mini-radar-svg" data-mr-idx="0" viewBox="-50 -5 235 145"></svg>
           </div>
         </div>
 
@@ -923,7 +925,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           </table>
           <div class="mini-radar">
             <div class="mr-ttl">Hình dáng năng lực</div>
-            <svg class="mini-radar-svg" data-mr-idx="1" viewBox="-45 -5 220 140"></svg>
+            <svg class="mini-radar-svg" data-mr-idx="1" viewBox="-50 -5 235 145"></svg>
           </div>
         </div>
 
@@ -947,7 +949,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           </table>
           <div class="mini-radar">
             <div class="mr-ttl">Hình dáng năng lực</div>
-            <svg class="mini-radar-svg" data-mr-idx="2" viewBox="-45 -5 220 140"></svg>
+            <svg class="mini-radar-svg" data-mr-idx="2" viewBox="-50 -5 235 145"></svg>
           </div>
         </div>
 
@@ -971,7 +973,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           </table>
           <div class="mini-radar">
             <div class="mr-ttl">Hình dáng năng lực</div>
-            <svg class="mini-radar-svg" data-mr-idx="3" viewBox="-45 -5 220 140"></svg>
+            <svg class="mini-radar-svg" data-mr-idx="3" viewBox="-50 -5 235 145"></svg>
           </div>
         </div>
       </div>

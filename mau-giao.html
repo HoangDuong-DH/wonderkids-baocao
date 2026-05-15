@@ -1769,9 +1769,8 @@ function renderAnalyticsMG(){
   set('mg-kpi-focus-sub', weak?.label ? `${weak.label} · ${Math.round(weak.pct)}%` : '');
   const note = document.getElementById('mg-profile-note');
   if(note){
-    note.innerHTML = bloomBest && best && weak
-      ? `Pattern hiện tại cho thấy <b>${_escHtmlMG(bloomBest.label)}</b> là vùng bật lên mạnh nhất, trong khi <b>${_escHtmlMG(weak.label)}</b> nên được luyện bằng hoạt động trực quan ngắn, lặp lại và ít áp lực.`
-      : '';
+    // Smart note: profile-aware + age-aware + conversational tone cho phụ huynh
+    note.innerHTML = (typeof _smartNoteMG === 'function') ? _smartNoteMG() : '';
   }
 }
 renderAnalyticsMG();
@@ -1952,6 +1951,190 @@ recomputeAllMG();
    - Age-aware (Năm sinh) — gợi ý theo lứa tuổi 3/4/5
    - Tone-aware — Spiky cần balance, NEEDS_SUPPORT cần động viên
    ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   ACTIVITY BANK — Rule-based 16 skill × 2 location (TẠI LỚP / TẠI NHÀ)
+   Mỗi skill yếu → gợi ý hoạt động cụ thể, phù hợp tuổi mẫu giáo.
+   Cover 80%+ trường hợp: 16 skills × 6 profiles = 96 combos hoá thành
+   3-5 bullet items mỗi side, sát data của bé.
+   ═══════════════════════════════════════════════════════════════ */
+const __ACTIVITY_BANK_MG = {
+  // NHÓM 1: Tư duy cơ bản
+  attention: {
+    lop:'Trò chơi <b>"Đèn xanh đèn đỏ"</b> rèn tập trung 5-10 phút theo hiệu lệnh giáo viên.',
+    nha:'Đọc sách tranh 10 phút/ngày, hỏi bé <i>"con thấy gì trong tranh?"</i> để tập chú ý chi tiết.',
+  },
+  observation: {
+    lop:'Trò <b>"Bé thám tử"</b> — quan sát tranh 30 giây rồi đậy lại, hỏi chi tiết bé nhớ được.',
+    nha:'Đi siêu thị: bé tìm <b>3 đồ vật cùng màu</b> hoặc cùng hình dạng.',
+  },
+  memory: {
+    lop:'Trò <b>"Ghép đôi trí nhớ"</b> — lật thẻ úp tìm cặp giống nhau.',
+    nha:'Kể chuyện trước khi ngủ, hôm sau hỏi bé về <b>tên nhân vật và tình tiết</b>.',
+  },
+  // NHÓM 2: Tư duy toán học
+  number: {
+    lop:'Đếm đồ chơi trong rổ, so sánh <b>"nhiều hơn / ít hơn"</b> qua trò chơi cụ thể.',
+    nha:'Đếm bánh kẹo trước giờ ăn — bé chia đều cho mọi người trong nhà.',
+  },
+  geometry: {
+    lop:'Ghép <b>hình khối Lego / puzzle hình học</b> đơn giản, gọi tên hình tròn / vuông / tam giác.',
+    nha:'Sắp xếp đồ trong nhà — dùng từ <i>"trên / dưới / cạnh / trong"</i> khi nói chuyện hàng ngày.',
+  },
+  measurement: {
+    lop:'So sánh chiều cao tháp xếp hình giữa các bạn, đo bằng <b>gang tay hoặc bút chì</b>.',
+    nha:'Đánh dấu chiều cao bé trên tường mỗi tháng, đo bàn chân khi mua giày.',
+  },
+  pattern: {
+    lop:'Trò <b>"Tiếp tục quy luật"</b> — bé hoàn thành dãy hình/màu xen kẽ (vd: đỏ-xanh-đỏ-...).',
+    nha:'Cùng bé sắp xếp bút màu theo quy luật, hoặc vẽ hình lặp trên giấy.',
+  },
+  data: {
+    lop:'Phân loại đồ chơi theo <b>nhiều thuộc tính</b> (màu, hình, kích thước, công dụng).',
+    nha:'Cùng bé phân loại đồ trong tủ lạnh: rau / trái cây / sữa / nước.',
+  },
+  // NHÓM 3: Tư duy logic
+  understanding: {
+    lop:'Đọc <b>tranh truyện 4 ô</b>, bé sắp xếp đúng thứ tự câu chuyện.',
+    nha:'Xem phim hoạt hình ngắn rồi hỏi <i>"vì sao nhân vật làm vậy?"</i>',
+  },
+  application: {
+    lop:'Bé dùng đồ chơi <b>xây "ngôi nhà"</b> theo mô tả bằng lời của giáo viên.',
+    nha:'Hướng dẫn bé tự mặc áo, gấp quần áo — <b>ứng dụng từng bước</b> theo trình tự.',
+  },
+  analysis: {
+    lop:'So sánh 2 con vật / 2 bức tranh: <b>giống / khác chỗ nào?</b>',
+    nha:'Phân tích đồ ăn cùng bé: cái nào ngọt, cái nào mặn, cái nào chua — kích thích phân biệt thuộc tính.',
+  },
+  synthesis: {
+    lop:'Bé tự <b>tạo câu chuyện</b> từ 3 đồ vật ngẫu nhiên giáo viên đưa.',
+    nha:'Cùng bé nấu món đơn giản — bé tự chọn 2-3 nguyên liệu kết hợp.',
+  },
+  // NHÓM 4: Tư duy sáng tạo
+  fluency: {
+    lop:'Trò <b>"Còn cách nào khác?"</b> — bé liệt kê nhiều giải pháp cho 1 vấn đề.',
+    nha:'Đặt 1 câu hỏi mở mỗi tối: <i>"Nếu là siêu nhân con sẽ làm gì?"</i>',
+  },
+  flexibility: {
+    lop:'Vẽ tranh bằng <b>nhiều dụng cụ khác nhau</b> (bút, ngón tay, lá cây, bông gòn).',
+    nha:'Đổi cách chơi 1 đồ chơi quen — Lego không phải để xây, dùng làm "chén ăn cơm tưởng tượng".',
+  },
+  originality: {
+    lop:'Bé <b>tạo nhân vật tưởng tượng</b> (máy móc, sinh vật mới) và đặt tên + vai trò.',
+    nha:'Cho bé tự thiết kế bữa ăn lạ: <i>"kem chấm muối", "sốt mì với chuối"</i> — khuyến khích phá khuôn.',
+  },
+  precision: {
+    lop:'Tô màu trong khung, ghép tranh chi tiết nhỏ — rèn sự tỉ mỉ.',
+    nha:'Cùng bé gấp <b>origami đơn giản</b> — chú ý từng nếp gấp.',
+  },
+};
+
+// General activities — chung mọi profile, để pad đủ 5 items mỗi side
+const __ACTIVITY_GENERAL_MG = {
+  lop:[
+    'Khuyến khích bé <b>giải thích "vì sao con chọn câu này?"</b> sau mỗi bài tập.',
+    'Tạo môi trường chơi an toàn, <b>không so sánh</b> bé với bạn khác.',
+    'Dùng hoạt động trực quan (hình ảnh, đồ vật thật) thay vì giải thích bằng lời dài.',
+  ],
+  nha:[
+    'Dành <b>15-20 phút mỗi ngày</b> để chơi cùng bé — chất lượng quan trọng hơn thời lượng.',
+    'Ưu tiên <b>động viên quá trình suy nghĩ</b>, hạn chế khen "giỏi quá" — thay bằng "con thử nghĩ rất kỹ đấy".',
+    'Đọc sách tranh cùng bé mỗi tối — hỏi 1-2 câu mở thay vì kể hết.',
+  ],
+};
+
+function autoDirectionLocationMG(){
+  const A = _analyzeProfileMG();
+  // Top 3 skill yếu nhất — ưu tiên gợi ý cá nhân theo bé
+  const weakKeys = A.weakSkills.slice(0, 3).map(s => s.dataKey).filter(Boolean);
+  const lopItems = [], nhaItems = [];
+  const usedLop = new Set(), usedNha = new Set();
+
+  // Phase 1: gợi ý theo skill yếu cụ thể
+  weakKeys.forEach(key => {
+    const act = __ACTIVITY_BANK_MG[key];
+    if(act?.lop && !usedLop.has(act.lop)){ lopItems.push(act.lop); usedLop.add(act.lop); }
+    if(act?.nha && !usedNha.has(act.nha)){ nhaItems.push(act.nha); usedNha.add(act.nha); }
+  });
+
+  // Phase 2: nếu bé phát triển tốt mọi mặt (weakSkills empty) → pick từ NHÓM YẾU nhất
+  if(weakKeys.length === 0 && A.groupGrades){
+    const weakGroup = [...A.groupGrades].sort((a,b)=>(a.grade==='S'?5:a.grade==='A'?4:a.grade==='B'?3:a.grade==='C'?2:1) - (b.grade==='S'?5:b.grade==='A'?4:b.grade==='B'?3:b.grade==='C'?2:1))[0];
+    if(weakGroup){
+      // Pick 2 skills của weakGroup từ activity bank
+      const skillsInGroup = A.allSkills.filter(s => s.groupIdx === weakGroup.abilityIdx).slice(0, 2);
+      skillsInGroup.forEach(s => {
+        const act = __ACTIVITY_BANK_MG[s.dataKey];
+        if(act?.lop && !usedLop.has(act.lop)){ lopItems.push(act.lop); usedLop.add(act.lop); }
+        if(act?.nha && !usedNha.has(act.nha)){ nhaItems.push(act.nha); usedNha.add(act.nha); }
+      });
+    }
+  }
+
+  // Phase 3: pad với general activities tới đủ 5 items
+  __ACTIVITY_GENERAL_MG.lop.forEach(a => { if(lopItems.length < 5) lopItems.push(a); });
+  __ACTIVITY_GENERAL_MG.nha.forEach(a => { if(nhaItems.length < 5) nhaItems.push(a); });
+
+  // Render vào DOM
+  const lopUl = document.querySelector('.s7 .card.lop ul');
+  const nhaUl = document.querySelector('.s7 .card.nha ul');
+  const renderItem = txt => `<li><span class="b"></span><span contenteditable="true">${txt}</span></li>`;
+  if(lopUl) lopUl.innerHTML = lopItems.slice(0, 5).map(renderItem).join('');
+  if(nhaUl) nhaUl.innerHTML = nhaItems.slice(0, 5).map(renderItem).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SMART NOTE — Profile-aware text cho "Tóm tắt điểm nổi bật"
+   6 templates × age-aware, ngôn ngữ conversational cho phụ huynh
+   ═══════════════════════════════════════════════════════════════ */
+function _smartNoteMG(){
+  const A = _analyzeProfileMG();
+  const allUnits = ANALYTICS_MG.units || [];
+  const best = [...allUnits].sort((a,b)=>(b.pct||0)-(a.pct||0))[0];
+  const weak = [...allUnits].sort((a,b)=>(a.pct||0)-(b.pct||0))[0];
+  if(!best || !weak) return '';
+
+  const bestLbl = _escHtmlMG(best.label);
+  const weakLbl = _escHtmlMG(weak.label);
+  const bestPct = Math.round(best.pct);
+  const weakPct = Math.round(weak.pct);
+
+  const tpl = {
+    EXCELLENT_BALANCED:
+      `🌟 Bé đang phát triển <b>rất tốt</b> ở mọi lĩnh vực — đặc biệt nổi bật ở <b>${bestLbl}</b> (${bestPct}%). ` +
+      `Phụ huynh có thể thử cho bé hoạt động <b>sâu hơn</b>: dự án sáng tạo dài hơi, câu đố nâng cao, đọc truyện đa chương.`,
+    SPIKY_HIGH:
+      `🎯 Bé có <b>dấu hiệu phát triển sớm</b> ở <b>${bestLbl}</b> (${bestPct}%) — rất ấn tượng! ` +
+      `Đồng thời <b>${weakLbl}</b> mới ${weakPct}% — đây là phần nền cần được bồi đắp <b>qua trò chơi</b>, không cần ép. ` +
+      `<i>Chênh lệch này là bình thường ở trẻ phát triển sớm.</i>`,
+    STABLE_GOOD:
+      `✨ Bé có nền tảng <b>khá ổn</b>. Mạnh ở <b>${bestLbl}</b> (${bestPct}%), cần luyện thêm <b>${weakLbl}</b> qua các ` +
+      `hoạt động vui chơi đa giác quan để bé tiếp tục bứt phá.`,
+    BUILDING:
+      `🌱 Bé đang ở giai đoạn <b>xây nền tảng</b>. Đã có điểm sáng ở <b>${bestLbl}</b> (${bestPct}%). ` +
+      `<b>${weakLbl}</b> (${weakPct}%) cần được luyện đều qua trò chơi ngắn, lặp lại đều đặn — <b>không tạo áp lực</b>.`,
+    SPIKY_LOW:
+      `💎 Bé đã có <b>điểm sáng riêng</b> ở <b>${bestLbl}</b> (${bestPct}%) — đây là "cửa vào" rất tốt. ` +
+      `Hãy dùng <b>điều bé thích</b> để dần khám phá <b>${weakLbl}</b> — vd lồng ghép qua trò chơi yêu thích.`,
+    NEEDS_SUPPORT:
+      `💛 Bé đang <b>cần đồng hành thêm</b>. Mỗi đứa trẻ có nhịp phát triển riêng — phụ huynh và giáo viên kiên nhẫn ` +
+      `cùng bé qua <b>trò chơi đơn giản, vui vẻ</b>. Bé sẽ tiến bộ <b>tự nhiên</b> trong vài tháng tới khi được ` +
+      `khích lệ và thấu hiểu.`,
+  };
+
+  let text = tpl[A.profile] || tpl.BUILDING;
+  // Add age tag nếu có Năm sinh
+  if(A.age && A.age >= 3 && A.age <= 6){
+    const ageNotes = {
+      3:'<br><small style="color:var(--ink-soft)">👶 Tuổi ${age}: ưu tiên chơi tự do, không ép cấu trúc.</small>',
+      4:'<br><small style="color:var(--ink-soft)">👦 Tuổi 4: bắt đầu hoạt động có quy luật nhẹ.</small>',
+      5:'<br><small style="color:var(--ink-soft)">🎒 Tuổi ${age}: giai đoạn chuẩn bị tiểu học, rèn tính tự lập.</small>',
+    };
+    const k = A.age >= 5 ? 5 : A.age;
+    text += (ageNotes[k] || '').replace('${age}', A.age);
+  }
+  return text;
+}
+
 function _analyzeProfileMG(){
   const abilities = document.querySelectorAll('.ability');
   const groupGrades = __GROUP_MAP.map(g=>({...g, grade: _abilityGrade(abilities[g.abilityIdx])}));
@@ -1970,7 +2153,7 @@ function _analyzeProfileMG(){
   else if(avgScore >= 2.3) profile = 'BUILDING';
   else profile = 'NEEDS_SUPPORT';
 
-  // 16 skills riêng lẻ
+  // 16 skills riêng lẻ — capture cả data-skill để lookup activity bank
   const allSkills = [];
   abilities.forEach((ab, abIdx)=>{
     const rows = ab.querySelectorAll('tbody tr');
@@ -1980,11 +2163,13 @@ function _analyzeProfileMG(){
       const name = (tds[0]?.textContent || '').trim();
       const gradeSpan = tds[tds.length-1].querySelector('span');
       if(!gradeSpan || !name) return;
+      const dataKey = gradeSpan.dataset?.skill || '';
       const m = gradeSpan.className.match(/g([SABCL])/);
       if(!m) return;
       allSkills.push({
         name, grade:m[1], score:__GRADE_SCORE[m[1]],
-        groupIdx:abIdx, groupTitle:__GROUP_MAP[abIdx]?.title || ''
+        groupIdx:abIdx, groupTitle:__GROUP_MAP[abIdx]?.title || '',
+        dataKey,  // ← để map vào __ACTIVITY_BANK_MG
       });
     });
   });
@@ -2117,6 +2302,11 @@ function fillCommentsMG(force){
   if(body){ body.innerHTML = autoCommentMG(); }
   const list = document.querySelector('.s6 .nx-list');
   if(list){ list.innerHTML = autoDirectionMG(); }
+  // Rule-based fill TẠI LỚP / TẠI NHÀ theo skill yếu cụ thể của bé
+  if(typeof autoDirectionLocationMG === 'function') autoDirectionLocationMG();
+  // Update smart note ở "Tóm tắt điểm nổi bật"
+  const note = document.getElementById('mg-profile-note');
+  if(note && typeof _smartNoteMG === 'function') note.innerHTML = _smartNoteMG();
   if(typeof scheduleSaveMG==='function') scheduleSaveMG();
   if(force) _showToastMG('✨ Đã sinh nhận xét tự động');
 }

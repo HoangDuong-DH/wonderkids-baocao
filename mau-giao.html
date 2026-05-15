@@ -1391,54 +1391,173 @@ document.addEventListener('click', e=>{
 recomputeAllMG();
 
 /* ─── AUTO-COMMENT GENERATOR ─── */
-function autoCommentMG(){
-  const nameInputs = document.querySelectorAll('.info-field input.val');
-  const fullName = (nameInputs[0]?.value || 'bé').trim() || 'bé';
+/* ═══════════════════════════════════════════════════════════════
+   PROFILE ANALYZER — phân tích đa dạng case để sinh nhận xét phù hợp
+   - 6 profile types theo (avgScore × spread) thay vì chỉ avgScore
+   - Skill-level detail (16 năng lực con), không chỉ 4 nhóm
+   - Age-aware (Năm sinh) — gợi ý theo lứa tuổi 3/4/5
+   - Tone-aware — Spiky cần balance, NEEDS_SUPPORT cần động viên
+   ═══════════════════════════════════════════════════════════════ */
+function _analyzeProfileMG(){
   const abilities = document.querySelectorAll('.ability');
-  const groupGrades = __GROUP_MAP.map((g,i)=>({
-    title: g.title,
-    grade: _abilityGrade(abilities[i]),
-  }));
-  const allScores = groupGrades.map(g=>__GRADE_SCORE[g.grade]);
-  const avgScore = allScores.reduce((a,b)=>a+b,0)/allScores.length;
-  let stage = '';
-  if(avgScore >= 4.5) stage = 'rất xuất sắc';
-  else if(avgScore >= 3.5) stage = 'rất tốt';
-  else if(avgScore >= 2.5) stage = 'phát triển ổn định';
-  else if(avgScore >= 1.5) stage = 'đang xây dựng nền tảng';
-  else stage = 'cần được hỗ trợ thêm trong thời gian tới';
-  const strengths = groupGrades.filter(g=>['S','A','B'].includes(g.grade));
-  const weaknesses = groupGrades.filter(g=>['C','L'].includes(g.grade));
+  const groupGrades = __GROUP_MAP.map((g,i)=>({...g, grade: _abilityGrade(abilities[i])}));
+  const scores = groupGrades.map(g=>__GRADE_SCORE[g.grade]);
+  const avgScore = scores.reduce((a,b)=>a+b,0)/scores.length;
+  const maxScore = Math.max(...scores);
+  const minScore = Math.min(...scores);
+  const spread = maxScore - minScore;
+
+  // 6 PROFILE TYPES — nhận diện chính xác cho từng case
+  let profile;
+  if(avgScore >= 4.3 && minScore >= 4) profile = 'EXCELLENT_BALANCED';
+  else if(spread >= 3 && maxScore >= 4) profile = 'SPIKY_HIGH';     // có S/A + có L → tài năng sớm
+  else if(spread >= 2 && maxScore >= 3 && avgScore < 2.5) profile = 'SPIKY_LOW';
+  else if(avgScore >= 3.3) profile = 'STABLE_GOOD';
+  else if(avgScore >= 2.3) profile = 'BUILDING';
+  else profile = 'NEEDS_SUPPORT';
+
+  // 16 skills riêng lẻ
+  const allSkills = [];
+  abilities.forEach((ab, abIdx)=>{
+    const rows = ab.querySelectorAll('tbody tr');
+    rows.forEach(row=>{
+      const tds = row.querySelectorAll('td');
+      if(tds.length < 3) return;
+      const name = (tds[0]?.textContent || '').trim();
+      const gradeSpan = tds[tds.length-1].querySelector('span');
+      if(!gradeSpan || !name) return;
+      const m = gradeSpan.className.match(/g([SABCL])/);
+      if(!m) return;
+      allSkills.push({
+        name, grade:m[1], score:__GRADE_SCORE[m[1]],
+        groupIdx:abIdx, groupTitle:__GROUP_MAP[abIdx].title
+      });
+    });
+  });
+  const strongSkills = allSkills.filter(s=>['S','A'].includes(s.grade)).sort((a,b)=>b.score-a.score);
+  const weakSkills   = allSkills.filter(s=>['L','C'].includes(s.grade)).sort((a,b)=>a.score-b.score);
+
+  // Tuổi từ Năm sinh
+  const yob = parseInt((document.getElementById('f-yob')?.value || '').match(/\d{4}/)?.[0], 10);
+  const age = yob ? (new Date().getFullYear() - yob) : null;
+
+  return {profile, groupGrades, allSkills, strongSkills, weakSkills,
+          avgScore, maxScore, minScore, spread, age, yob};
+}
+
+function autoCommentMG(){
+  const A = _analyzeProfileMG();
+  const nameInputs = document.querySelectorAll('.info-field input.val');
+  const fullName = (nameInputs[0]?.value || 'Bé').trim() || 'Bé';
+
+  // Stage description PER PROFILE — không chỉ theo avgScore
+  const stages = {
+    EXCELLENT_BALANCED: 'phát triển <b>vượt trội đều</b> ở mọi lĩnh vực tư duy',
+    SPIKY_HIGH: 'có <b>dấu hiệu phát triển sớm</b> ở một số lĩnh vực, đồng thời cần được củng cố nền tảng ở các lĩnh vực khác',
+    STABLE_GOOD: '<b>phát triển ổn định</b>, có nền tảng tư duy tốt',
+    BUILDING: 'đang ở giai đoạn <b>xây dựng nền tảng</b> tư duy',
+    SPIKY_LOW: 'đang xây nền tảng và <b>đã có những điểm sáng riêng</b>',
+    NEEDS_SUPPORT: '<b>cần được đồng hành thêm</b> để phát triển các nền tảng tư duy',
+  };
+
   let html = '';
-  html += `<p>Bé <b>${fullName}</b> đang ở giai đoạn <b>${stage}</b> trong phát triển tư duy.</p>`;
-  if(strengths.length){
-    const list = strengths.map(g=>`<b>${g.title}</b> (mức ${__GRADE_NAME[g.grade] || g.grade})`).join(', ');
-    html += `<p><b>🌟 Điểm sáng:</b> Bé thể hiện tốt ở ${list}. Đây là nền tảng đáng khích lệ — phụ huynh có thể tiếp tục duy trì qua các hoạt động vui chơi đa dạng.</p>`;
+  html += `<p>Bé <b>${_esc(fullName)}</b> đang ${stages[A.profile]}.</p>`;
+
+  // ĐIỂM SÁNG — top 3 skills CỤ THỂ, ngôn ngữ theo profile
+  if(A.strongSkills.length > 0){
+    const top = A.strongSkills.slice(0, 3);
+    const list = top.map(s=>`<b>${_esc(s.name)}</b> (${__GRADE_NAME[s.grade]})`).join(', ');
+    if(A.profile === 'SPIKY_HIGH' || A.profile === 'EXCELLENT_BALANCED'){
+      html += `<p><b>🌟 Năng lực nổi bật:</b> Bé thể hiện rất tốt ở ${list}. Đây là thế mạnh để phát triển sâu qua các hoạt động chuyên đề phù hợp.</p>`;
+    } else if(A.profile === 'SPIKY_LOW'){
+      html += `<p><b>🌟 Điểm sáng đáng khích lệ:</b> Dù còn nhiều lĩnh vực cần luyện tập, bé đã có những điểm sáng ở ${list}. Đây là động lực để bé tiếp tục cố gắng.</p>`;
+    } else {
+      html += `<p><b>🌟 Điểm sáng:</b> Bé có những điểm tích cực ở ${list}.</p>`;
+    }
   }
-  if(weaknesses.length){
-    const list = weaknesses.map(g=>`<b>${g.title}</b> (mức ${__GRADE_NAME[g.grade] || g.grade})`).join(', ');
-    html += `<p><b>📌 Cần củng cố:</b> Bé chưa thực sự vững ở ${list}. Đây là cơ hội để phụ huynh đồng hành cùng bé qua các hoạt động thực tế hằng ngày.</p>`;
+
+  // CẦN PHÁT TRIỂN — top 3 weak skills, tone theo profile
+  if(A.weakSkills.length > 0){
+    const top = A.weakSkills.slice(0, 3);
+    const list = top.map(s=>`<b>${_esc(s.name)}</b>`).join(', ');
+    if(A.profile === 'NEEDS_SUPPORT'){
+      html += `<p><b>💛 Cần đồng hành thêm:</b> Bé cần được hỗ trợ ở ${list}. Phụ huynh và giáo viên kiên nhẫn cùng bé luyện qua trò chơi vui — tiến bộ sẽ đến tự nhiên.</p>`;
+    } else if(A.profile === 'SPIKY_HIGH'){
+      html += `<p><b>📌 Khuyến nghị bồi đắp nền tảng:</b> Bé chưa vững ở ${list}. Đây là phần nền cần được bổ sung để hỗ trợ cho các năng lực nổi bật ở trên.</p>`;
+    } else {
+      html += `<p><b>📌 Cơ hội phát triển:</b> Bé chưa thực sự vững ở ${list}. Đây là những lĩnh vực ưu tiên trong giai đoạn tới.</p>`;
+    }
   }
-  html += `<p><b>✨ Lời nhắn:</b> Mỗi đứa trẻ có nhịp phát triển riêng. Sau 1-3 tháng luyện tập đều đặn cùng phụ huynh và giáo viên, bé hoàn toàn có thể tiến bộ rõ rệt. Quan trọng nhất là giữ tinh thần thoải mái, vui chơi và khám phá cùng bé!</p>`;
+
+  // Profile-specific notes
+  if(A.profile === 'SPIKY_HIGH'){
+    html += `<p><b>💡 Lưu ý đặc biệt:</b> Sự chênh lệch giữa các năng lực (cao thấp) là dấu hiệu thường gặp ở trẻ phát triển sớm. <b>Không nên ép học</b> các lĩnh vực yếu — hãy hỗ trợ tự nhiên qua hoạt động vui chơi để bé tự thích thú khám phá.</p>`;
+  } else if(A.profile === 'EXCELLENT_BALANCED'){
+    html += `<p><b>💡 Lưu ý:</b> Bé đã có nền tảng vững vàng. Phụ huynh có thể đưa bé tiếp xúc các hoạt động <b>thử thách cao hơn</b> như câu đố nâng cao, dự án sáng tạo dài hơi để duy trì hứng thú học hỏi.</p>`;
+  }
+
+  // Age-specific note (nếu có năm sinh)
+  if(A.age && A.age >= 3 && A.age <= 7){
+    let ageNote = '';
+    if(A.age <= 3) ageNote = `Ở tuổi ${A.age}, ưu tiên cao nhất là vui chơi và giao tiếp tự nhiên — kết quả này chỉ là điểm khởi đầu để định hướng hoạt động.`;
+    else if(A.age === 4) ageNote = `Ở tuổi 4, bé bắt đầu sẵn sàng với những hoạt động có cấu trúc nhẹ. Giữ cân bằng giữa học và chơi.`;
+    else if(A.age >= 5) ageNote = `Ở tuổi ${A.age}, đây là giai đoạn quan trọng chuẩn bị nền tảng cho tiểu học. Tập trung phát triển tính tự lập và tư duy độc lập.`;
+    html += `<p><b>👶 Theo lứa tuổi:</b> ${ageNote}</p>`;
+  }
+
+  // Closing — chung
+  html += `<p><b>✨ Lời nhắn:</b> Mỗi đứa trẻ có nhịp phát triển riêng. Sự đồng hành kiên nhẫn của phụ huynh và giáo viên là yếu tố quan trọng nhất giúp bé tiến bộ.</p>`;
   return html;
 }
 
 function autoDirectionMG(){
-  const abilities = document.querySelectorAll('.ability');
-  const weakGroups = __GROUP_MAP.map((g,i)=>({...g, grade: _abilityGrade(abilities[i])}))
-                                 .filter(g=>['C','L'].includes(g.grade));
+  const A = _analyzeProfileMG();
   let items = '';
-  if(weakGroups.length){
-    weakGroups.forEach(g=>{
-      items += `<li><b>${g.title}:</b> ${g.suggestions}.</li>`;
-    });
+
+  // 1. Suggestions theo NHÓM YẾU + đính kèm skill cụ thể
+  const weakGroups = A.groupGrades.filter(g=>['C','L'].includes(g.grade));
+  if(weakGroups.length === 0){
+    items += `<li><b>Phát triển toàn diện:</b> Bé đạt mức ổn định ở tất cả nhóm năng lực. Tiếp tục đa dạng hoạt động vui chơi, đọc sách, vận động để bé duy trì đà phát triển.</li>`;
   } else {
-    items += `<li>Bé đang phát triển tốt ở mọi nhóm năng lực. Phụ huynh có thể tiếp tục đa dạng các hoạt động vui chơi để bé tiếp tục bứt phá.</li>`;
+    weakGroups.forEach(g => {
+      const skillsInGroup = A.weakSkills.filter(s=>s.groupIdx===g.abilityIdx).slice(0,2);
+      const skillNote = skillsInGroup.length
+        ? ` (đặc biệt ${skillsInGroup.map(s=>`<i>${_esc(s.name)}</i>`).join(' và ')})`
+        : '';
+      items += `<li><b>${_esc(g.title)}${skillNote}:</b> ${g.suggestions}.</li>`;
+    });
   }
-  items += `<li><b>Duy trì thói quen học mà chơi:</b> dành 15-20 phút mỗi ngày cùng bé qua các trò chơi tư duy phù hợp lứa tuổi, không tạo áp lực thành tích.</li>`;
-  items += `<li><b>Khuyến khích trải nghiệm thực tế:</b> đưa bé tham gia hoạt động ngoài trời, thí nghiệm nhỏ, làm việc nhà đơn giản để bé học qua quan sát và thực hành.</li>`;
+
+  // 2. Profile-specific direction
+  if(A.profile === 'SPIKY_HIGH'){
+    items += `<li><b>Cân bằng phát triển:</b> Không ép học các lĩnh vực bé yếu — lồng ghép qua trò chơi để bé tự nhiên tiếp cận. Phát huy mạnh ở các lĩnh vực bé giỏi để giữ động lực học hỏi.</li>`;
+  } else if(A.profile === 'NEEDS_SUPPORT'){
+    items += `<li><b>Tạo môi trường khích lệ:</b> Khen ngợi mọi nỗ lực, không so sánh với trẻ khác. Bắt đầu từ những hoạt động vui chơi đơn giản, tăng dần độ phức tạp khi bé sẵn sàng.</li>`;
+  } else if(A.profile === 'EXCELLENT_BALANCED'){
+    items += `<li><b>Phát triển sâu:</b> Có thể thử các thử thách cao hơn — câu đố nâng cao, dự án sáng tạo dài hơi, đọc hiểu chuyên đề để bé tiếp tục bứt phá.</li>`;
+  } else if(A.profile === 'SPIKY_LOW'){
+    items += `<li><b>Bắt đầu từ điểm mạnh:</b> Dùng các lĩnh vực bé giỏi làm "cửa vào" để gợi mở các kỹ năng khác — ví dụ qua trò chơi yêu thích để dần học kỹ năng cần củng cố.</li>`;
+  }
+
+  // 3. Tuổi-aware gợi ý
+  if(A.age){
+    if(A.age <= 3){
+      items += `<li><b>Phù hợp tuổi ${A.age}:</b> Ưu tiên vui chơi tự do, đồ chơi đa giác quan, đọc sách tranh — tránh ép học có cấu trúc.</li>`;
+    } else if(A.age === 4){
+      items += `<li><b>Phù hợp tuổi 4:</b> Bé có thể bắt đầu hoạt động có quy luật nhẹ — xếp hình theo mẫu, đếm đồ vật, kể chuyện theo tranh.</li>`;
+    } else if(A.age >= 5){
+      items += `<li><b>Phù hợp tuổi ${A.age} (chuẩn bị tiểu học):</b> Tăng cường tự lập trong sinh hoạt, làm quen chữ số/chữ cái qua trò chơi, rèn khả năng tập trung 15-20 phút.</li>`;
+    }
+  }
+
+  // 4. Hằng định cho mọi case
+  items += `<li><b>Học mà chơi 15-20 phút/ngày:</b> Dành thời gian chất lượng cùng bé qua trò chơi tư duy phù hợp, không tạo áp lực thành tích.</li>`;
+  items += `<li><b>Khuyến khích trải nghiệm thực tế:</b> Hoạt động ngoài trời, thí nghiệm nhỏ, làm việc nhà đơn giản — bé học qua quan sát và thực hành.</li>`;
   return items;
 }
+
+/* Helper: escape HTML để tránh XSS nếu name có ký tự đặc biệt */
+function _esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function fillCommentsMG(force){
   const body = document.querySelector('.s6 .nx-body');

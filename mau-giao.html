@@ -298,16 +298,16 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 
 .s1-card .head{
   grid-column:1 / -1;grid-row:1;
-  display:flex;align-items:center;gap:10px;
-  margin-top:3px;min-width:0;
+  display:flex;align-items:flex-start;gap:9px;
+  margin-top:4px;min-width:0;
 }
 .s1-card .head .ico{
-  width:40px;height:40px;border-radius:11px;
+  width:34px;height:34px;border-radius:10px;
   background:var(--g-C-bg);color:var(--g-C);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  transition:background .2s ease,color .2s ease;
+  transition:background .2s ease,color .2s ease;margin-top:2px;
 }
-.s1-card .head .ico svg{width:22px;height:22px}
+.s1-card .head .ico svg{width:19px;height:19px}
 .s1-card[data-grade="S"] .head .ico{background:var(--g-S-bg);color:var(--g-S)}
 .s1-card[data-grade="A"] .head .ico{background:var(--g-A-bg);color:var(--g-A)}
 .s1-card[data-grade="B"] .head .ico{background:var(--g-B-bg);color:var(--g-B)}
@@ -658,30 +658,67 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 }
 
 @media print{
-  /* Ẩn toàn bộ UI tương tác — không in ra giấy */
+  /* ─────── Hide tương tác ─────── */
   .toolbar,#drop-overlay-mg,#xlsx-input-mg,.auto-comment-btn-mg{display:none !important}
-  body{background:#fff;padding:0}
-  .page{margin:0;border-radius:0;box-shadow:none;width:100%;max-width:100%}
+  body{background:#fff;padding:0;margin:0}
+  /* Page: cố định width 1200px để khớp design — A3 portrait đủ chỗ */
+  .page{margin:0 !important;border-radius:0 !important;box-shadow:none !important;width:1200px !important;max-width:1200px !important}
   .bg-shapes{display:none}
-  /* Page break: không cắt giữa các block quan trọng */
-  .ability, .s7 .card, .s7-row, .info, .hero-grid, .nx-box{
+  /* PRESERVE COLORS — quan trọng cho bar fills, grade circles, mini radar */
+  *{print-color-adjust:exact !important;-webkit-print-color-adjust:exact !important}
+
+  /* ─────── Page break: không cắt giữa block ─────── */
+  .ability,.s7 .card,.s7-row,.info,.hero-grid,.nx-box,.s1-card{
     break-inside:avoid !important;
     page-break-inside:avoid !important;
   }
-  /* Cho phép break trước section lớn để header section luôn đầu trang */
-  .detail-section, .s7, .s6{
-    break-inside:avoid-page;
-    page-break-inside:avoid;
-  }
+  .detail-section,.s7,.s6{break-inside:avoid-page;page-break-inside:avoid}
   .sec-h{break-after:avoid;page-break-after:avoid}
-  /* Hyperlink khi in: không show URL bằng (url) trong dấu ngoặc */
   a[href]:after{content:none !important}
-  /* Mini radar svg in mịn hơn */
-  .ability .mini-radar svg{print-color-adjust:exact;-webkit-print-color-adjust:exact}
-  /* Foot bar gọn hơn khi in */
-  .foot-bar{padding:10px 24px;font-size:11px}
+
+  /* ─────── Section 1: ép cards stay horizontal trên A3 ─────── */
+  .hero-grid{grid-template-columns:1.85fr 1fr !important;gap:14px !important}
+  .s1-cards{grid-template-columns:1fr 1fr 1fr 1fr !important;gap:8px !important}
+  .s1-card{min-width:0 !important;padding:14px 10px !important}
+  .s1-card .head{flex-wrap:nowrap !important}
+  .s1-card .head .ttl b{font-size:13px !important;line-height:1.25 !important;
+    word-break:keep-all;overflow-wrap:break-word}
+  .s1-card .head .ttl small{font-size:8.5px !important;line-height:1.2 !important}
+  .s1-card .grade-circle{width:48px !important;height:48px !important;
+    font:800 22px/48px var(--font-display) !important}
+  .s1-card .meta .pct{font-size:20px !important}
+  .s1-card .meta .lbl{font-size:10px !important}
+  .s1-card .bar{height:10px !important}
+  .s1-legend{font-size:9.5px !important;gap:5px 14px !important;padding:6px 10px !important}
+  .hero-radar{padding:10px !important}
+  .hero-radar .radar-chart{max-height:300px !important}
+
+  /* ─────── Section 2: ability blocks giữ 3-col ─────── */
+  .ability{grid-template-columns:130px 1fr 200px !important}
+  .ability .left{padding:10px !important}
+  .ability .left .ttl{font-size:11.5px !important}
+  .ability .left .grade-big{font-size:32px !important}
+  .ability tbody td{padding:6px 8px !important;font-size:10.5px !important;line-height:1.4}
+  .ability tbody td:nth-child(2){font-size:10.5px !important;max-width:none !important}
+  .ability .mini-radar{padding:8px !important}
+  .ability .mini-radar svg{width:190px !important}
+  .ability .mini-radar .mr-axis{font-size:10.5px !important}
+  .ability .mini-radar .mr-axis.active{font-size:11px !important}
+
+  /* ─────── Section 7 + nhận xét ─────── */
+  .s7-row{grid-template-columns:1fr 1fr 180px !important;gap:14px !important}
+  .s7 .card{padding:12px !important}
+  .s7 .card h4{font-size:13px !important}
+  .s7 .card li{font-size:11px !important;line-height:1.45}
+  .s7 .scene svg{max-width:180px !important}
+  .nx-box{padding:14px 18px !important}
+  .nx-body{font-size:11.5px !important;line-height:1.55}
+
+  /* ─────── Footer ─────── */
+  .foot-bar{padding:10px 24px !important;font-size:11px !important}
 }
-@page{size:A4 portrait;margin:8mm 6mm}
+/* A3 portrait đủ chỗ cho 1200px content design + giữ aspect ratio đẹp */
+@page{size:A3 portrait;margin:10mm 8mm}
 
 /* Click to cycle grade — hint cursor */
 .ability tbody td:last-child span{cursor:pointer;transition:transform .15s ease,filter .15s ease;user-select:none}
@@ -730,8 +767,8 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
     <option value="">🧪 Mock data</option>
     <option value="excellent">Xuất sắc (toàn S/A)</option>
     <option value="good">Tốt (B/A đều)</option>
-    <option value="average">Trung bình (C đều)</option>
-    <option value="weak">Cần hỗ trợ (L nhiều)</option>
+    <option value="average">Đang phát triển (C đều)</option>
+    <option value="weak">Cần đồng hành (L nhiều)</option>
   </select>
   <button onclick="resetFormMG()" title="Xóa toàn bộ và reset về mặc định">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
@@ -834,7 +871,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">Trung bình</span>
+            <span class="lbl">Đang phát triển</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -846,7 +883,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">Trung bình</span>
+            <span class="lbl">Đang phát triển</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -858,7 +895,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <span class="grade-circle">C</span>
           <span class="meta">
             <span class="pct">50%</span>
-            <span class="lbl">Trung bình</span>
+            <span class="lbl">Đang phát triển</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -870,7 +907,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <span class="grade-circle">L</span>
           <span class="meta">
             <span class="pct">25%</span>
-            <span class="lbl">Cần hỗ trợ</span>
+            <span class="lbl">Cần đồng hành</span>
           </span>
           <span class="bar"><i></i></span>
         </div>
@@ -879,8 +916,8 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
         <span class="lg s">Vượt trội (S)</span>
         <span class="lg a">Rất tốt (A)</span>
         <span class="lg b">Tốt (B)</span>
-        <span class="lg c">Trung bình (C)</span>
-        <span class="lg l">Cần hỗ trợ (L)</span>
+        <span class="lg c">Đang phát triển (C)</span>
+        <span class="lg l">Cần đồng hành (L)</span>
       </div>
       </div>
       <div class="hero-radar">
@@ -905,15 +942,15 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
             <span class="ico eye"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zM12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span>
             <span class="ttl"><small>Nhóm 01</small>Tư duy cơ bản</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">Trung bình</span>
+            <span class="mval">Đang phát triển</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC">Trung bình</span></td></tr>
-              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC">Trung bình</span></td></tr>
-              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">Trung bình</span></td></tr>
+              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">Đang phát triển</span></td></tr>
             </tbody>
           </table>
           <div class="mini-radar">
@@ -928,15 +965,15 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
             <span class="ico calc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h4"/></svg></span>
             <span class="ttl"><small>Nhóm 02</small>Tư duy toán học</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">Trung bình</span>
+            <span class="mval">Đang phát triển</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
-              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
-              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC">Trung bình</span></td></tr>
+              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL">Cần đồng hành</span></td></tr>
+              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL">Cần đồng hành</span></td></tr>
+              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC">Đang phát triển</span></td></tr>
               <tr><td>Kiểu mẫu</td><td contenteditable="true">Khả năng nhận diện và dự đoán mối quan hệ mang tính quy luật của đồ vật.</td><td><span class="gB">Tốt</span></td></tr>
               <tr><td>Dữ liệu</td><td contenteditable="true">Khả năng thu thập các nguồn lực khác nhau và sắp xếp theo đặc điểm của chúng.</td><td><span class="gB">Tốt</span></td></tr>
             </tbody>
@@ -953,16 +990,16 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
             <span class="ico brain"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 4 7 7c-2 0-4 2-4 4 0 2 1 3 2 4-1 1-1 3 0 4 0 2 2 4 4 4 0 1 1 2 3 2s3-1 3-2c2 0 4-2 4-4 1-1 1-3 0-4 1-1 2-2 2-4 0-2-2-4-4-4 0-3-2-5-5-5z"/></svg></span>
             <span class="ttl"><small>Nhóm 03</small>Tư duy logic</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">Trung bình</span>
+            <span class="mval">Đang phát triển</span>
             <span class="grade-big">C</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC">Trung bình</span></td></tr>
-              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
-              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC">Trung bình</span></td></tr>
-              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">Trung bình</span></td></tr>
+              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL">Cần đồng hành</span></td></tr>
+              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">Đang phát triển</span></td></tr>
             </tbody>
           </table>
           <div class="mini-radar">
@@ -977,16 +1014,16 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
             <span class="ico bulb"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21h6v-1H9v1zm3-19a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
             <span class="ttl"><small>Nhóm 04</small>Tư duy sáng tạo</span>
             <span class="mlbl">Mức đánh giá</span>
-            <span class="mval">Cần hỗ trợ</span>
+            <span class="mval">Cần đồng hành</span>
             <span class="grade-big">L</span>
           </div>
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
-              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
-              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
-              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
+              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL">Cần đồng hành</span></td></tr>
+              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL">Cần đồng hành</span></td></tr>
+              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL">Cần đồng hành</span></td></tr>
+              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">Cần đồng hành</span></td></tr>
             </tbody>
           </table>
           <div class="mini-radar">
@@ -1314,8 +1351,10 @@ const __GRADE_NEXT = {S:'A',A:'B',B:'C',C:'L',L:'S'};
 const __GRADE_RADAR_PCT = {S:95,A:80,B:65,C:50,L:25};
 
 // Tên mức theo ngôn ngữ developmental (phù hợp tuổi mẫu giáo 3-5, mềm mại hơn)
-// Theo template chính thức WonderKids: Vượt trội (S) / Rất tốt (A) / Tốt (B) / Trung bình (C) / Cần hỗ trợ (L)
-const __GRADE_NAME = {S:'Vượt trội', A:'Rất tốt', B:'Tốt', C:'Trung bình', L:'Cần hỗ trợ'};
+// Ngôn ngữ developmental phù hợp trẻ mẫu giáo 3-5 tuổi — growth-mindset
+// "Đang phát triển" thay "Đang phát triển" (tránh judgement), "Cần đồng hành" thay
+// "Cần đồng hành" (ấm áp hơn, nhấn vào sự đồng hành của phụ huynh + giáo viên)
+const __GRADE_NAME = {S:'Vượt trội', A:'Rất tốt', B:'Tốt', C:'Đang phát triển', L:'Cần đồng hành'};
 
 function _abilityGrade(abilityEl){
   // Đọc grade từ CSS class (gS/gA/gB/gC/gL) thay vì textContent (vì giờ text là tên dài như "Đạt"/"Cần cố gắng")
@@ -1675,7 +1714,7 @@ function _parseGradeMG(v){
   // Chấp nhận:
   //  - Chữ cái S/A/B/C/L thuần
   //  - Format Excel WonderKids "3.2 (C)" / "10 (S)" → extract grade trong ngoặc
-  //  - Tên đầy đủ tiếng Việt (Vượt trội, Rất tốt, Tốt, Trung bình, Cần hỗ trợ)
+  //  - Tên đầy đủ tiếng Việt (Vượt trội, Rất tốt, Tốt, Đang phát triển, Cần đồng hành)
   //  - Thang cũ (Xuất sắc, Khá, Đạt, Cần cố gắng)
   if(v==null) return null;
   const raw = String(v).trim();
@@ -1877,7 +1916,7 @@ function downloadSampleCSV_MG(){
     'Độc đáo,12.0 (S)',
     'Chính xác,9.0 (S)',
     '',
-    '# Cấp độ chấp nhận: "3.2 (C)" hoặc "C" / "Trung bình" / "Cần hỗ trợ"',
+    '# Cấp độ chấp nhận: "3.2 (C)" hoặc "C" / "Đang phát triển" / "Cần đồng hành"',
   ];
   const csv = '﻿' + lines.join('\n');  // BOM để Excel mở UTF-8
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});

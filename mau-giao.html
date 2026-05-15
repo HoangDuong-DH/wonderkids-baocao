@@ -397,8 +397,24 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   background:#fff;border:2px solid var(--hair-soft);
   border-radius:16px;overflow:hidden;
   box-shadow:0 4px 0 #fcecc4;
-  display:grid;grid-template-columns:160px 1fr;
+  display:grid;grid-template-columns:150px 1fr 150px;
 }
+/* Mini radar bên phải mỗi ability — đánh dấu axis hiện tại */
+.ability .mini-radar{
+  background:#fffaf0;border-left:1.5px solid var(--hair-soft);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 6px;gap:4px;
+}
+.ability .mini-radar .mr-ttl{
+  font:700 9px/1.1 var(--font-body);color:var(--ink-mute);
+  letter-spacing:.08em;text-transform:uppercase;text-align:center;
+}
+.ability .mini-radar svg{width:120px;height:120px}
+.ability .mini-radar .lbl{
+  font:700 8.5px/1.1 var(--font-body);fill:var(--ink-mute);
+  letter-spacing:.04em;
+}
+.ability .mini-radar .lbl.active{fill:var(--orange-deep);font-weight:800}
 .ability .left{
   background:#fff7e2;padding:14px 14px;text-align:center;
   display:flex;flex-direction:column;align-items:center;gap:6px;
@@ -839,7 +855,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 
   <!-- ─── SECTION 4: CHI TIẾT NĂNG LỰC (full-width) ─── -->
   <div class="detail-section">
-    <div class="sec-h"><span class="num">3</span>Kết quả đánh giá chi tiết</div>
+    <div class="sec-h"><span class="num">2</span>Kết quả đánh giá chi tiết</div>
     <div class="s2-full">
       <div class="s2">
         <!-- TƯ DUY CƠ BẢN -->
@@ -859,6 +875,10 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
               <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">Trung bình</span></td></tr>
             </tbody>
           </table>
+          <div class="mini-radar">
+            <div class="mr-ttl">Hình dáng năng lực</div>
+            <svg class="mini-radar-svg" data-mr-idx="0" viewBox="-30 -20 180 180"></svg>
+          </div>
         </div>
 
         <!-- TƯ DUY TOÁN HỌC -->
@@ -880,6 +900,10 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
               <tr><td>Dữ liệu</td><td contenteditable="true">Khả năng thu thập các nguồn lực khác nhau và sắp xếp theo đặc điểm của chúng.</td><td><span class="gB">Tốt</span></td></tr>
             </tbody>
           </table>
+          <div class="mini-radar">
+            <div class="mr-ttl">Hình dáng năng lực</div>
+            <svg class="mini-radar-svg" data-mr-idx="1" viewBox="-30 -20 180 180"></svg>
+          </div>
         </div>
 
         <!-- TƯ DUY LOGIC -->
@@ -900,6 +924,10 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
               <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">Trung bình</span></td></tr>
             </tbody>
           </table>
+          <div class="mini-radar">
+            <div class="mr-ttl">Hình dáng năng lực</div>
+            <svg class="mini-radar-svg" data-mr-idx="2" viewBox="-30 -20 180 180"></svg>
+          </div>
         </div>
 
         <!-- TƯ DUY SÁNG TẠO -->
@@ -920,6 +948,10 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
               <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">Cần hỗ trợ</span></td></tr>
             </tbody>
           </table>
+          <div class="mini-radar">
+            <div class="mr-ttl">Hình dáng năng lực</div>
+            <svg class="mini-radar-svg" data-mr-idx="3" viewBox="-30 -20 180 180"></svg>
+          </div>
         </div>
       </div>
     </div>
@@ -1065,6 +1097,57 @@ function renderRadar(){
 }
 renderRadar();
 
+/* ─── Mini radars cho từng ability block — highlight axis tương ứng ─── */
+function renderMiniRadars(){
+  const data = RADAR_DATA.child;       // [55, 50, 50, 22] hoặc giá trị mới
+  const labels = ['CƠ BẢN','TOÁN HỌC','LOGIC','SÁNG TẠO'];  // short version
+  const N=4;
+  const cx=60, cy=60, R=42;
+  const ang=i=> -Math.PI/2 + i*(2*Math.PI/N);
+  const pt=(i,v)=>{
+    const r=R*(v/100);
+    return [cx+r*Math.cos(ang(i)), cy+r*Math.sin(ang(i))];
+  };
+  document.querySelectorAll('.mini-radar-svg').forEach(svg=>{
+    const activeIdx = +svg.dataset.mrIdx || 0;
+    let html = '';
+    // bg ring
+    const bgPts=[];
+    for(let i=0;i<N;i++){ const [x,y]=pt(i,100); bgPts.push(`${x},${y}`); }
+    html += `<polygon points="${bgPts.join(' ')}" fill="#fff7e2" stroke="none"/>`;
+    // grid rings (25/50/75/100)
+    for(let k=1;k<=4;k++){
+      const pts=[];
+      for(let i=0;i<N;i++){ const [x,y]=pt(i, k*25); pts.push(`${x},${y}`); }
+      html += `<polygon points="${pts.join(' ')}" fill="none" stroke="#f0dcb0" stroke-width=".8" stroke-dasharray="${k===4?'':'2 2'}"/>`;
+    }
+    // axes
+    for(let i=0;i<N;i++){
+      const [x,y]=pt(i,100);
+      html += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#f0dcb0" stroke-width=".8"/>`;
+    }
+    // child polygon — fill amber
+    const pts = data.map((v,i)=>pt(i,v).join(',')).join(' ');
+    html += `<polygon points="${pts}" fill="#f5b84a" fill-opacity=".4" stroke="#f08526" stroke-width="1.8" stroke-linejoin="round"/>`;
+    // active vertex dot (chỉ axis tương ứng)
+    {
+      const [x,y]=pt(activeIdx, data[activeIdx]);
+      html += `<circle cx="${x}" cy="${y}" r="3.5" fill="#df5728" stroke="#fff" stroke-width="1.5"/>`;
+    }
+    // labels at vertices — active label đậm + đỏ cam
+    for(let i=0;i<N;i++){
+      const [lx,ly]=pt(i, 122);
+      let anchor='middle';
+      if(i===1) anchor='start';
+      if(i===3) anchor='end';
+      const cls = (i===activeIdx) ? 'lbl active' : 'lbl';
+      html += `<text class="${cls}" x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle">${labels[i]}</text>`;
+    }
+    svg.innerHTML = html;
+  });
+}
+renderMiniRadars();
+
 /* ─── Donut: distribution of detail-skill levels ─── */
 /* Detail bars đã GỘP vào ability tables (CSS pseudo-element bar trong td cuối)
    → không cần render riêng. Stub renderDonut() để giữ tương thích với recomputeAllMG. */
@@ -1199,10 +1282,11 @@ function recomputeAllMG(){
     // Sync s1-card
     if(cards[idx]) _setS1Card(cards[idx], grade);
   });
-  // Update radar + donut
+  // Update radar (lớn + mini) + donut
   if(typeof RADAR_DATA!=='undefined' && typeof renderRadar==='function'){
     RADAR_DATA.child = [...abilities].map(ab=>__GRADE_RADAR_PCT[_abilityGrade(ab)] || 50);
     renderRadar();
+    if(typeof renderMiniRadars==='function') renderMiniRadars();
   }
   if(typeof renderDonut==='function') renderDonut();
 }

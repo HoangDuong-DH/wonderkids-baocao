@@ -159,14 +159,18 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 .hdr-title{text-align:right !important}
 .hdr-title h1{font-size:42px !important}
 .hdr-title h2{font-size:18px !important}
-.brand{display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
 .brand-mark{
-  width:60px;height:60px;background:var(--orange);border-radius:16px;
+  width:72px;height:72px;background:#fff8e0;border-radius:18px;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  box-shadow:0 4px 0 rgba(180,80,20,.18);
+  box-shadow:0 4px 0 rgba(180,80,20,.14);border:2px solid #fce8b8;
 }
-.brand-lbl .name{display:block;font:700 19px/1 var(--font-display);color:var(--orange-deep);letter-spacing:.06em}
-.brand-lbl .tag{display:block;font:500 9.5px/1.4 var(--font-body);color:var(--ink-soft);margin-top:5px}
+.brand-mark svg{width:54px;height:54px}
+.brand-lbl{line-height:1}
+.brand-lbl .name{display:block;font:800 22px/1 var(--font-display);letter-spacing:.04em}
+.brand-lbl .name .w{color:var(--amber-deep)}
+.brand-lbl .name .k{color:var(--orange-deep)}
+.brand-lbl .tag{display:block;font:500 10px/1.4 var(--font-body);color:var(--ink-soft);margin-top:6px;letter-spacing:.02em}
 
 .hdr-title{text-align:center}
 .hdr-title h1{
@@ -240,7 +244,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 .s1-desc b{color:var(--ink);font-weight:700}
 /* HERO GRID: cards 2x2 trái + radar phải — section 1 tổng quan */
 .hero-grid{
-  display:grid;grid-template-columns:1.55fr 1fr;gap:18px;
+  display:grid;grid-template-columns:1.85fr 1fr;gap:18px;
   align-items:stretch;margin-top:8px;
 }
 .hero-radar{
@@ -271,10 +275,10 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 .s1-legend .lg.l{color:var(--g-L)}
 .s1-card{
   background:#fff;border:1.5px solid var(--hair-soft);
-  border-radius:14px;padding:12px 10px 12px 12px;
+  border-radius:16px;padding:16px 14px;
   display:grid;grid-template-columns:auto 1fr;
   grid-template-rows:auto auto auto;
-  column-gap:10px;row-gap:6px;
+  column-gap:12px;row-gap:10px;
   box-shadow:0 4px 0 #fcecc4;
   position:relative;overflow:hidden;
   transition:transform .2s ease,box-shadow .2s ease;
@@ -294,31 +298,31 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 
 .s1-card .head{
   grid-column:1 / -1;grid-row:1;
-  display:flex;align-items:center;gap:8px;
-  margin-top:2px;min-width:0;
+  display:flex;align-items:center;gap:10px;
+  margin-top:3px;min-width:0;
 }
 .s1-card .head .ico{
-  width:32px;height:32px;border-radius:9px;
+  width:40px;height:40px;border-radius:11px;
   background:var(--g-C-bg);color:var(--g-C);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
   transition:background .2s ease,color .2s ease;
 }
-.s1-card .head .ico svg{width:18px;height:18px}
+.s1-card .head .ico svg{width:22px;height:22px}
 .s1-card[data-grade="S"] .head .ico{background:var(--g-S-bg);color:var(--g-S)}
 .s1-card[data-grade="A"] .head .ico{background:var(--g-A-bg);color:var(--g-A)}
 .s1-card[data-grade="B"] .head .ico{background:var(--g-B-bg);color:var(--g-B)}
 .s1-card[data-grade="C"] .head .ico{background:var(--g-C-bg);color:var(--g-C)}
 .s1-card[data-grade="L"] .head .ico{background:var(--g-L-bg);color:var(--g-L)}
 .s1-card .head .ttl{flex:1;min-width:0;overflow:hidden}
-.s1-card .head .ttl small{display:block;font:600 8.5px/1 var(--font-body);color:var(--ink-mute);letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
-.s1-card .head .ttl b{display:block;font:700 12px/1.2 var(--font-display);color:var(--ink);word-break:keep-all;overflow-wrap:break-word}
+.s1-card .head .ttl small{display:block;font:600 9.5px/1 var(--font-body);color:var(--ink-mute);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
+.s1-card .head .ttl b{display:block;font:700 14px/1.2 var(--font-display);color:var(--ink);word-break:keep-all;overflow-wrap:break-word}
 
 /* Grade circle big focal point */
 .s1-card .grade-circle{
   grid-column:1;grid-row:2;align-self:center;
-  width:48px;height:48px;border-radius:50%;
+  width:60px;height:60px;border-radius:50%;
   background:var(--g-C);color:#fff;
-  font:800 22px/48px var(--font-display);
+  font:800 28px/60px var(--font-display);
   text-align:center;letter-spacing:-.02em;
   box-shadow:0 3px 0 rgba(0,0,0,.08);
   transition:background .2s ease;
@@ -332,21 +336,21 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 /* Meta: percentage + level label */
 .s1-card .meta{
   grid-column:2;grid-row:2;
-  display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;
+  display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0;
 }
-.s1-card .meta .pct{font:800 19px/1 var(--font-display);color:var(--g-C);transition:color .2s ease}
+.s1-card .meta .pct{font:800 26px/1 var(--font-display);color:var(--g-C);transition:color .2s ease;letter-spacing:-.01em}
 .s1-card[data-grade="S"] .meta .pct{color:var(--g-S)}
 .s1-card[data-grade="A"] .meta .pct{color:var(--g-A)}
 .s1-card[data-grade="B"] .meta .pct{color:var(--g-B)}
 .s1-card[data-grade="C"] .meta .pct{color:var(--g-C)}
 .s1-card[data-grade="L"] .meta .pct{color:var(--g-L)}
-.s1-card .meta .lbl{font:700 10px/1.2 var(--font-body);color:var(--ink-mute);letter-spacing:.04em;word-break:keep-all;overflow-wrap:break-word}
+.s1-card .meta .lbl{font:700 12px/1.25 var(--font-body);color:var(--ink-mute);letter-spacing:.04em;word-break:keep-all;overflow-wrap:break-word}
 
 /* Progress bar full width — bigger and visible */
 .s1-card .bar{
   grid-column:1 / -1;grid-row:3;
-  width:100%;height:10px;border-radius:99px;background:#f3e7c5;overflow:hidden;
-  margin-top:2px;
+  width:100%;height:13px;border-radius:99px;background:#f3e7c5;overflow:hidden;
+  margin-top:4px;
 }
 .s1-card .bar i{
   display:block;height:100%;border-radius:99px;
@@ -730,13 +734,20 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   <div class="hdr">
     <div class="brand">
       <div class="brand-mark">
-        <svg width="38" height="38" viewBox="0 0 32 32" fill="none">
-          <path d="M4 7 L9 25 L14 13 L18 25 L23 7" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <path d="M26 22 q2 -1 0 -3 q-3 -2 -1 -5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <!-- WonderKids logo: W ghép 4 mảnh puzzle, 2 vàng (trái) + 2 cam (phải) -->
+        <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Left-outer yellow piece -->
+          <path d="M14 10 L34 10 L46 84 Q44 92 38 90 Q32 92 32 86 L24 86 Q22 90 18 88 Q14 88 14 82 Z" fill="#f5c225" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- Left-inner yellow piece -->
+          <path d="M40 10 L52 10 L60 86 Q58 92 52 90 Q46 92 46 86 L38 86 Q36 90 32 88 Q28 86 30 80 Z" fill="#f5b817" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- Right-inner orange piece -->
+          <path d="M58 10 L70 10 L80 80 Q82 86 78 88 Q74 90 72 86 L64 86 Q62 92 56 90 Q50 92 52 86 Z" fill="#ec5d22" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- Right-outer orange piece -->
+          <path d="M76 10 L96 10 L96 82 Q96 88 92 88 Q88 90 86 86 L78 86 Q76 92 70 90 Q64 90 66 84 Z" fill="#e94e1b" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
         </svg>
       </div>
       <div class="brand-lbl">
-        <span class="name">WONDERKIDS</span>
+        <span class="name"><span class="w">WONDER</span><span class="k">KIDS</span></span>
         <span class="tag">Tư duy tốt – Tương lai tươi sáng</span>
       </div>
     </div>

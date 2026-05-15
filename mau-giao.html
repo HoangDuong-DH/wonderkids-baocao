@@ -2582,8 +2582,7 @@ function _applyMG_Grades(grades){
   });
 }
 function loadMockProfileMG(key){
-  // R7: Confirm nếu có data user-typed để tránh wipe vô tình
-  if(!_confirmDestructiveMG('Tải mock data')) return;
+  // Silent flow — không confirm để mock data switch nhanh
   if(!_beginLoadMG()) return;
   try{
     const data = __MOCK_MG[key]; if(!data) return;
@@ -2837,8 +2836,7 @@ async function _waitXlsxMG(maxMs=6000){
 async function importExcelMG(ev){
   const f = ev.target?.files?.[0];
   if(!f){ return; }
-  // R7: Confirm nếu có data đã chỉnh sửa (trừ snapshot-restore fallback bên dưới)
-  if(!_confirmDestructiveMG('Nhập file '+f.name)){ ev.target.value=''; return; }
+  // Silent flow — snapshot rollback đã bảo vệ khi import fail
   if(!_beginLoadMG()){ if(ev?.target) ev.target.value=''; return; }
   const name = f.name.toLowerCase();
   const isCSV = name.endsWith('.csv') || f.type==='text/csv';
@@ -2978,40 +2976,64 @@ function _endLoadMG(){
   document.body.style.cursor = '';
 }
 
+/* ─── DEFAULT s7 HTML — capture trước khi cleanSlate dirty chúng ───
+   Đảm bảo cleanSlate restore về đúng default state (5+5 items),
+   không leave residue từ lần load trước. */
+const __DEFAULT_S7_LOP_HTML_MG = (function(){
+  const ul = document.querySelector('.s7 .card.lop ul');
+  return ul ? ul.innerHTML : '';
+})();
+const __DEFAULT_S7_NHA_HTML_MG = (function(){
+  const ul = document.querySelector('.s7 .card.nha ul');
+  return ul ? ul.innerHTML : '';
+})();
+
 /* ─── CLEAN SLATE — reset triệt để, dùng chung cho resetFormMG + mọi data load ───
    Idempotent: gọi nhiều lần vẫn cho cùng kết quả. Ngăn residue khi chuyển data.
    ─────────────────────────────────────────────────────────────────────────── */
 function _cleanSlateMG(){
-  // 1) Reset info fields về rỗng (giữ select gender)
-  document.querySelectorAll('.info-field input.val[data-field]').forEach(inp=>{ inp.value=''; });
+  // 1) Reset info fields về rỗng (trừ gender select — giữ nguyên)
+  document.querySelectorAll('.info-field input.val[data-field]').forEach(inp=>{
+    if(inp.dataset.field === 'sex') return;  // skip gender, dùng reset bằng select bên dưới
+    inp.value='';
+  });
   // 2) Reset gender select về Nam + avatar tương ứng
   const sexSel = document.getElementById('gender-select');
   if(sexSel){ sexSel.value='Nam'; if(typeof updateAvatar==='function') updateAvatar('Nam'); }
-  // 3) Reset 16 grade cells về C (default) + class
-  document.querySelectorAll('.ability tbody td:last-child span').forEach(s=>{
+  // 3) Reset 16 grade cells về C (default) + class + data-skill giữ nguyên
+  document.querySelectorAll('.ability tbody td:last-child span[data-skill]').forEach(s=>{
     s.textContent = __GRADE_NAME.C;
+    // Preserve data-skill, chỉ reset color class
     s.className = 'gC';
   });
-  // 4) Reset class-level data-grade trên ability container nếu có
-  document.querySelectorAll('.ability').forEach(ab=>{ ab.classList.remove('gS','gA','gB','gC','gL'); ab.classList.add('gC'); });
-  // 5) Clear contenteditable nội dung mô tả (nếu user đã sửa) — giữ default
-  // Bỏ qua vì default text được set inline, user sửa chỉ phần text → reset bằng innerHTML khó
-  // 6) Clear comment containers (nx-body, nx-list)
+  // 4) Reset class-level grade trên ability container
+  document.querySelectorAll('.ability').forEach(ab=>{
+    ab.classList.remove('gS','gA','gB','gC','gL');
+    ab.classList.add('gC');
+  });
+  // 5) Reset comment containers (nhận xét + định hướng chung) về placeholder
   const body = document.querySelector('.s6 .nx-body');
   if(body) body.innerHTML = '<p>Nhập điểm và bấm "🪄 Tự động nhận xét" để sinh nhận xét.</p>';
   const list = document.querySelector('.s6 .nx-list');
   if(list) list.innerHTML = '<li>Nhập điểm và bấm "🪄 Tự động nhận xét" để sinh định hướng.</li>';
+  // 6) Reset TẠI LỚP / TẠI NHÀ về default HTML đã capture (5+5 items)
+  //    → quan trọng để chuyển data không leave residue activities cũ
+  const lopUl = document.querySelector('.s7 .card.lop ul');
+  if(lopUl && __DEFAULT_S7_LOP_HTML_MG) lopUl.innerHTML = __DEFAULT_S7_LOP_HTML_MG;
+  const nhaUl = document.querySelector('.s7 .card.nha ul');
+  if(nhaUl && __DEFAULT_S7_NHA_HTML_MG) nhaUl.innerHTML = __DEFAULT_S7_NHA_HTML_MG;
+  // 7) Reset analytics data + KPI cluster + smart note về default
   Object.assign(ANALYTICS_MG, JSON.parse(JSON.stringify(DEFAULT_ANALYTICS_MG)));
   if(typeof renderAnalyticsMG === 'function') renderAnalyticsMG();
-  // 7) Recompute mọi thứ
+  // 8) Recompute mọi thứ (radar lớn + 4 mini radars + cards)
   if(typeof recomputeAllMG === 'function') recomputeAllMG();
 }
 
 function resetFormMG(){
-  if(!confirm('Xóa toàn bộ data đã nhập và reset về mặc định?')) return;
+  // Silent reset — không confirm, snapshot rollback có sẵn trong workflow Mở .xlsx
   _cleanSlateMG();
   scheduleSaveMG();
-  _showToastMG('Đã reset form', '#3ea1d3');
+  _showToastMG('Đã làm mới form', '#3ea1d3');
 }
 
 /* ─── FORCE REFRESH (bust cache) ─── */

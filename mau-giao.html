@@ -402,7 +402,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   background:#fff;border:2px solid var(--hair-soft);
   border-radius:16px;overflow:hidden;
   box-shadow:0 4px 0 #fcecc4;
-  display:grid;grid-template-columns:140px 1fr 165px;
+  display:grid;grid-template-columns:140px 1fr 230px;
 }
 /* Mini radar bên phải mỗi ability — đánh dấu axis hiện tại
    Design: clean shape không có text label (vì ability block đã chỉ rõ nhóm)
@@ -410,18 +410,18 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 .ability .mini-radar{
   background:#fffaf0;border-left:1.5px solid var(--hair-soft);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:12px 8px;gap:6px;
+  padding:14px 10px;gap:8px;
 }
 .ability .mini-radar .mr-ttl{
-  font:700 8.5px/1.2 var(--font-body);color:var(--ink-mute);
+  font:700 9.5px/1.2 var(--font-body);color:var(--ink-mute);
   letter-spacing:.08em;text-transform:uppercase;text-align:center;
 }
-.ability .mini-radar svg{width:130px;height:130px;display:block}
+.ability .mini-radar svg{width:200px;height:170px;display:block}
 .ability .mini-radar .mr-axis{
-  font:700 7.5px/1 var(--font-body);fill:var(--ink-mute);
+  font:700 9px/1 var(--font-body);fill:var(--ink-mute);
   letter-spacing:.02em;
 }
-.ability .mini-radar .mr-axis.active{fill:var(--orange-deep);font-size:8.5px;font-weight:800}
+.ability .mini-radar .mr-axis.active{fill:var(--orange-deep);font-size:10px;font-weight:800}
 .ability .left{
   background:#fff7e2;padding:14px 14px;text-align:center;
   display:flex;flex-direction:column;align-items:center;gap:6px;
@@ -461,6 +461,8 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   padding:8px 10px;border-bottom:1px solid #f5e9c8;color:var(--ink-soft);
   vertical-align:top;
 }
+/* Nội dung (middle col): không cho text trải dài quá → max-width compact */
+.ability tbody td:nth-child(2){max-width:340px;line-height:1.45;font-size:11.5px}
 .ability tbody td:first-child{font:700 11.5px/1.3 var(--font-display);color:var(--ink);width:150px;white-space:normal;word-break:keep-all;overflow-wrap:break-word}
 .ability tbody td:last-child{text-align:left;width:210px;padding:6px 12px !important;vertical-align:middle}
 .ability tbody tr:last-child td{border-bottom:0}
@@ -595,7 +597,8 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 
 /* ───── Section 7 — Directions ───── */
 .s7{padding:0 44px;margin-top:22px;position:relative}
-.s7-row{display:grid;grid-template-columns:1fr 1fr 200px;gap:18px;align-items:stretch}
+.s7-row{display:grid;grid-template-columns:1fr 1fr 220px;gap:18px;align-items:stretch}
+.s7 .scene svg{display:block;width:100%;height:auto;max-width:220px}
 .s7 .card{
   background:#fff;border:2px solid var(--hair-soft);
   border-radius:16px;padding:14px 18px;
@@ -1000,25 +1003,59 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
         </ul>
       </div>
       <div class="scene" aria-hidden="true">
-        <svg width="200" height="160" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- ground -->
-          <ellipse cx="100" cy="148" rx="86" ry="8" fill="#f0c878" opacity=".5"/>
-          <!-- parent -->
-          <circle cx="62" cy="62" r="20" fill="#ffd9b0"/>
-          <path d="M44 52c2-10 10-16 18-16s16 6 18 16c-2 4-8 6-18 6s-16-2-18-6z" fill="#5a3a1a"/>
-          <rect x="46" y="80" width="32" height="50" rx="10" fill="#3ea1d3"/>
-          <rect x="46" y="80" width="32" height="20" fill="#2980b3"/>
-          <!-- arm around child -->
-          <path d="M78 96c8 0 16 4 20 8" stroke="#ffd9b0" stroke-width="10" stroke-linecap="round" fill="none"/>
-          <!-- child -->
-          <circle cx="118" cy="78" r="16" fill="#ffe0c0"/>
-          <path d="M104 70c2-8 8-12 14-12s12 4 14 12c-2 2-6 4-14 4s-12-2-14-4z" fill="#3a2818"/>
-          <rect x="106" y="92" width="24" height="40" rx="8" fill="#f08526"/>
-          <!-- book -->
-          <rect x="88" y="116" width="48" height="14" rx="2" fill="#fff" stroke="#df5728" stroke-width="1.5"/>
-          <line x1="112" y1="116" x2="112" y2="130" stroke="#df5728" stroke-width="1"/>
-          <!-- heart above -->
-          <path d="M150 32 a6 6 0 0 1 12 0 a6 6 0 0 1 12 0 c0 8-12 16-12 16s-12-8-12-16z" fill="#e9709a"/>
+        <svg width="200" height="180" viewBox="0 0 200 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Soft circle background -->
+          <circle cx="100" cy="92" r="78" fill="#fff3da" opacity=".55"/>
+          <!-- Sparkles -->
+          <g fill="#f5b84a">
+            <circle cx="32" cy="40" r="2.5"/>
+            <circle cx="172" cy="36" r="3"/>
+            <circle cx="178" cy="92" r="2"/>
+            <circle cx="22" cy="98" r="2"/>
+          </g>
+          <!-- Heart above -->
+          <path d="M100 28c-3-7-14-7-14 1 0 8 14 16 14 16s14-8 14-16c0-8-11-8-14-1z" fill="#e9709a"/>
+          <path d="M100 28c-3-7-14-7-14 1 0 8 14 16 14 16s14-8 14-16c0-8-11-8-14-1z" stroke="#d4587c" stroke-width="1" fill="none"/>
+          <!-- Small heart sparkle -->
+          <path d="M138 56c-1.5-3-6-3-6 .5 0 3 6 7 6 7s6-4 6-7c0-3.5-4.5-3.5-6-.5z" fill="#f5a4c4"/>
+
+          <!-- ===== Parent (left) ===== -->
+          <!-- Body -->
+          <path d="M50 165 L50 122 Q50 100 70 100 L86 100 Q106 100 106 122 L106 165 Z" fill="#3ea1d3"/>
+          <!-- Neck -->
+          <rect x="70" y="86" width="16" height="10" fill="#ffd9b0"/>
+          <!-- Head -->
+          <circle cx="78" cy="74" r="20" fill="#ffd9b0"/>
+          <!-- Hair -->
+          <path d="M58 70 Q58 50 78 50 Q98 50 98 70 Q92 64 86 66 Q78 60 70 66 Q64 64 58 70 Z" fill="#5a3a1a"/>
+          <!-- Eyes -->
+          <circle cx="72" cy="76" r="1.8" fill="#3a2818"/>
+          <circle cx="84" cy="76" r="1.8" fill="#3a2818"/>
+          <!-- Smile -->
+          <path d="M73 84 Q78 88 83 84" stroke="#3a2818" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+          <!-- Arm reaching to child -->
+          <path d="M104 122 Q120 118 134 125" stroke="#ffd9b0" stroke-width="14" stroke-linecap="round" fill="none"/>
+
+          <!-- ===== Child (right, smaller) ===== -->
+          <!-- Body -->
+          <path d="M114 165 L114 132 Q114 116 128 116 L142 116 Q156 116 156 132 L156 165 Z" fill="#f08526"/>
+          <!-- Neck -->
+          <rect x="130" y="104" width="12" height="8" fill="#ffe0c0"/>
+          <!-- Head -->
+          <circle cx="136" cy="94" r="16" fill="#ffe0c0"/>
+          <!-- Hair -->
+          <path d="M120 92 Q120 76 136 76 Q152 76 152 92 Q146 86 140 88 Q136 84 130 88 Q124 86 120 92 Z" fill="#3a2818"/>
+          <!-- Eyes -->
+          <circle cx="131" cy="96" r="1.4" fill="#3a2818"/>
+          <circle cx="141" cy="96" r="1.4" fill="#3a2818"/>
+          <!-- Cheek blush -->
+          <circle cx="126" cy="102" r="2" fill="#f5a4c4" opacity=".6"/>
+          <circle cx="146" cy="102" r="2" fill="#f5a4c4" opacity=".6"/>
+          <!-- Smile -->
+          <path d="M132 102 Q136 105 140 102" stroke="#3a2818" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+
+          <!-- Ground -->
+          <ellipse cx="100" cy="170" rx="76" ry="5" fill="#f0c878" opacity=".5"/>
         </svg>
       </div>
     </div>

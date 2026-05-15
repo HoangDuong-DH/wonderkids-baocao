@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -120,6 +121,59 @@ body{
   cursor:pointer;transition:all .15s ease;
 }
 .toolbar .tb-mock:hover{background-color:#fff3da}
+/* Save indicator pill — visible, animated */
+.save-pill{
+  display:inline-flex;align-items:center;
+  font:700 10.5px/1 var(--font-body);color:#a89070;
+  padding:5px 10px;border-radius:99px;
+  background:#fff7ec;border:1px solid rgba(243,129,31,.15);
+  letter-spacing:.03em;transition:all .2s ease;
+}
+.save-pill[data-state="saving"]{color:#e89818;background:#fff3d2;animation:save-pulse 1s ease-in-out infinite}
+.save-pill[data-state="saved"]{color:#3a9b3a;background:#e5f6e1;border-color:rgba(95,183,79,.3)}
+.save-pill[data-state="error"]{color:#df5728;background:#fbdcc1;border-color:rgba(223,87,40,.3)}
+@keyframes save-pulse{0%,100%{opacity:.7}50%{opacity:1}}
+
+/* ── VISUAL POLISH ── */
+/* Subtle page-load fade-in cho .page + sections */
+.page{animation:wkFadeIn .35s ease-out}
+@keyframes wkFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Grade circle: gentle pulse khi value đổi (via data-grade attr change) */
+.s1-card .grade-circle{transition:background .3s ease,transform .25s cubic-bezier(.34,1.56,.64,1)}
+.s1-card:hover .grade-circle{transform:scale(1.06)}
+
+/* Ability grade chip: hover invite click */
+.ability tbody td:last-child span{
+  cursor:pointer;transition:transform .15s ease,filter .15s ease,box-shadow .2s ease;
+  user-select:none;
+}
+.ability tbody td:last-child span:hover{transform:scale(1.04);filter:brightness(1.06)}
+
+/* Focus ring rõ ràng cho keyboard nav (accessibility) */
+.page input:focus-visible,
+.page select:focus-visible,
+.page textarea:focus-visible,
+.page [contenteditable="true"]:focus-visible{
+  outline:2px solid var(--orange);outline-offset:2px;border-radius:6px;
+}
+
+/* Card section transitions */
+.s1-card,.ability,.s7 .card,.info,.nx-box,.hero-radar{
+  transition:transform .2s ease,box-shadow .25s ease,border-color .2s ease;
+}
+.ability:hover{box-shadow:0 6px 16px rgba(180,90,20,.10),0 4px 0 #fcecc4}
+
+/* Mini-radar: gentle hover */
+.ability .mini-radar svg{transition:filter .25s ease}
+.ability:hover .mini-radar svg{filter:drop-shadow(0 2px 6px rgba(243,129,31,.18))}
+
+/* Confirm dialog styling thừa kế từ browser — nhưng add visual cue cho destructive buttons */
+.toolbar button.tb-mock,.toolbar button[onclick*="resetFormMG"]{position:relative}
+
+/* Save pill animation khi từ saving → saved */
+.save-pill[data-state="saved"]{animation:saveSettle .4s ease-out}
+@keyframes saveSettle{0%{transform:scale(1.08)}100%{transform:scale(1)}}
 
 /* Drag-drop overlay full screen */
 #drop-overlay-mg{
@@ -131,6 +185,17 @@ body{
 }
 body.drag-over-mg #drop-overlay-mg{display:flex}
 @media print{ #drop-overlay-mg{display:none !important} }
+#screen-warning-mg{
+  display:none;position:fixed;left:10px;right:10px;bottom:10px;z-index:997;
+  background:#3a2a14;color:#fff;border-radius:12px;padding:10px 14px;
+  font:600 12px/1.4 var(--font-body);box-shadow:0 10px 26px rgba(0,0,0,.2);
+}
+@media (max-width:900px){
+  #screen-warning-mg{display:block}
+  body{overflow-x:auto}
+  .toolbar{left:8px;right:8px;transform:none;overflow-x:auto;justify-content:flex-start}
+}
+@media print{ #screen-warning-mg{display:none !important} }
 
 /* Page */
 .page{
@@ -577,6 +642,69 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 .donut-row.C .pill,.donut-row.C .bar i{background:var(--g-C)}
 .donut-row.L .pill,.donut-row.L .bar i{background:var(--g-L)}
 
+/* ───── Section 2 — Insight analytics from Excel matrix ───── */
+.insight-section{padding:0 44px;margin-top:22px;position:relative}
+.insight-section .sec-h{margin-bottom:12px}
+.insight-grid{display:flex;flex-direction:column;gap:14px}
+.insight-panel{
+  background:#fff;border:2px solid var(--hair-soft);border-radius:16px;
+  box-shadow:0 4px 0 #fcecc4;padding:14px 16px;min-width:0;overflow:hidden;
+}
+.insight-panel.wide{grid-column:1 / -1}
+.insight-panel h3{
+  margin:0 0 10px;font:800 13.5px/1.2 var(--font-display);
+  color:var(--orange-deep);letter-spacing:.03em;display:flex;align-items:center;gap:8px;
+}
+.insight-panel h3 .chip{
+  font:800 10px/1 var(--font-body);color:#fff;background:var(--navy);
+  padding:4px 8px;border-radius:999px;letter-spacing:.08em;
+}
+.insight-split{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:14px;align-items:start}
+.insight-table{width:100%;border-collapse:separate;border-spacing:0;font:600 10.8px/1.35 var(--font-body);overflow:hidden;border-radius:10px;border:1px solid var(--hair-soft);table-layout:fixed}
+.insight-table th{
+  background:#1f4f7a;color:#fff;text-transform:uppercase;letter-spacing:.04em;
+  padding:7px 8px;text-align:left;border-right:1px solid rgba(255,255,255,.2)
+}
+.insight-table th:last-child{border-right:0;text-align:center}
+.insight-table td{padding:7px 8px;border-bottom:1px solid #f0e2bf;border-right:1px solid #f3e7c5;color:var(--ink);overflow-wrap:break-word;word-break:normal}
+.insight-table td:last-child{border-right:0;text-align:center}
+.insight-table tr:last-child td{border-bottom:0}
+.insight-table .code{font:800 16px/1 var(--font-display);color:#1f4f7a;text-align:center;background:#eef6fb;white-space:nowrap}
+.insight-table .muted{font-weight:500;color:var(--ink-soft);font-style:italic}
+.insight-table .num{text-align:center;font:800 12px/1 var(--font-display);color:#0b25b8;background:transparent;white-space:nowrap}
+.pct-badge{display:inline-block;min-width:42px;padding:4px 8px;border-radius:999px;color:#fff;font:800 11px/1 var(--font-display);white-space:nowrap}
+.pct-badge.hot{background:#df5728}.pct-badge.low{background:#f08526}.pct-badge.mid{background:#f5b84a;color:#3a2a14}.pct-badge.good{background:#3ea1d3}.pct-badge.strong{background:#5fb74f}
+.insight-chart{width:100%;height:auto;min-height:170px;display:block;background:#fffaf0;border:1px dashed var(--hair);border-radius:12px}
+.insight-note{margin:10px 0 0;font:600 11.5px/1.5 var(--font-body);color:var(--ink-soft)}
+.insight-note b{color:var(--orange-deep)}
+.insight-help{
+  margin-top:10px;background:#fffaf0;border:1px dashed var(--hair);
+  border-radius:10px;padding:9px 11px;font:600 10.8px/1.55 var(--font-body);
+  color:var(--ink-soft);
+}
+.insight-help b{color:var(--orange-deep)}
+.insight-help p{margin:0 0 5px}
+.insight-help p:last-child{margin-bottom:0}
+.micro-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.kpi{
+  background:#fff8e6;border:1px solid var(--hair-soft);border-radius:10px;
+  padding:8px;text-align:center;min-width:0;
+}
+.kpi small{display:block;font:700 8.5px/1.2 var(--font-body);color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em}
+.kpi b{display:block;font:800 18px/1 var(--font-display);color:var(--orange-deep);margin-top:4px}
+.ai-summary-panel{margin-top:14px;min-height:0}
+.ai-summary-panel .kpi-strip{margin-top:0}
+.ai-summary-panel .insight-note{margin-top:12px;max-width:920px}
+.metric-panel .insight-split{grid-template-columns:minmax(480px,1fr) minmax(360px,.9fr)}
+.channel-panel{grid-column:1 / -1}
+.channel-panel .insight-split{grid-template-columns:minmax(480px,1fr) minmax(420px,.95fr);align-items:start}
+.channel-panel .insight-table th:nth-child(1){width:58%}
+.channel-panel .insight-table th:nth-child(2){width:22%}
+.channel-panel .insight-table th:nth-child(3){width:20%}
+.channel-panel .insight-table .muted{font-size:9.7px;line-height:1.35}
+.channel-panel .insight-chart{min-height:190px}
+
 /* ───── Section 6 — Nhận xét & Định hướng ───── */
 .s6{padding:0 44px;margin-top:22px;position:relative}
 .s6 .nx-box{
@@ -662,13 +790,13 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   .toolbar,#drop-overlay-mg,#xlsx-input-mg,.auto-comment-btn-mg{display:none !important}
   body{background:#fff;padding:0;margin:0}
   /* Page: cố định width 1200px để khớp design — A3 portrait đủ chỗ */
-  .page{margin:0 !important;border-radius:0 !important;box-shadow:none !important;width:1200px !important;max-width:1200px !important}
+  .page{margin:0 !important;border-radius:0 !important;box-shadow:none !important;width:1200px !important;max-width:1200px !important;overflow:visible !important}
   .bg-shapes{display:none}
   /* PRESERVE COLORS — quan trọng cho bar fills, grade circles, mini radar */
   *{print-color-adjust:exact !important;-webkit-print-color-adjust:exact !important}
 
   /* ─────── Page break: không cắt giữa block ─────── */
-  .ability,.s7 .card,.s7-row,.info,.hero-grid,.nx-box,.s1-card{
+  .ability,.s7 .card,.s7-row,.info,.hero-grid,.nx-box,.s1-card,.insight-panel{
     break-inside:avoid !important;
     page-break-inside:avoid !important;
   }
@@ -704,6 +832,17 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   .ability .mini-radar svg{width:190px !important}
   .ability .mini-radar .mr-axis{font-size:10.5px !important}
   .ability .mini-radar .mr-axis.active{font-size:11px !important}
+
+  /* ─────── Section 2 insight compact print ─────── */
+  .insight-grid{gap:12px !important}
+  .insight-panel{padding:10px 12px !important}
+  .insight-panel h3{font-size:12px !important;margin-bottom:8px !important}
+  .insight-table{font-size:9.5px !important}
+  .insight-table th,.insight-table td{padding:5px 6px !important}
+  .insight-chart{min-height:160px !important}
+  .kpi-strip{gap:6px !important}
+  .kpi{padding:6px !important}
+  .kpi b{font-size:15px !important}
 
   /* ─────── Section 7 + nhận xét ─────── */
   .s7-row{grid-template-columns:1fr 1fr 180px !important;gap:14px !important}
@@ -747,17 +886,19 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 <!-- File input ẩn + Drop overlay full-screen cho kéo-thả import -->
 <input type="file" id="xlsx-input-mg" accept=".csv,.xlsx,.xls" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" onchange="importExcelMG(event)"/>
 <div id="drop-overlay-mg">📥 Thả file CSV / XLSX vào đây…</div>
+<div id="screen-warning-mg">Mẫu báo cáo tối ưu cho desktop và in PDF A3. Trên màn nhỏ, hãy xoay ngang hoặc dùng máy tính để kiểm tra bố cục trước khi gửi phụ huynh.</div>
 
 <div class="toolbar">
   <a href="index.html" title="Quay về trang chọn báo cáo">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Trang chính
   </a>
-  <label for="xlsx-input-mg" title="Nhập CSV (nhanh) hoặc XLSX — đè điểm 16 năng lực + thông tin học viên" style="appearance:none;border:0;background:transparent;color:var(--ink);font:600 12.5px/1 Be Vietnam Pro,sans-serif;padding:8px 12px;border-radius:99px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
+  <label for="xlsx-input-mg" title="Nhập CSV (offline ổn định) hoặc XLSX (cần tải thư viện từ CDN)" style="appearance:none;border:0;background:transparent;color:var(--ink);font:600 12.5px/1 Be Vietnam Pro,sans-serif;padding:8px 12px;border-radius:99px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease;">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     Nhập CSV/Excel
     <span id="xlsx-ind-mg" style="font-size:10px;color:var(--ink-mute);font-weight:500">⌛</span>
   </label>
+  <span id="save-ind-mg" class="save-pill" title="Autosave trên máy này — data giữ kể cả khi đóng tab">● Chưa lưu</span>
   <button onclick="downloadSampleCSV_MG()" title="Tải file CSV mẫu để biết format" style="font:600 12.5px/1 Be Vietnam Pro,sans-serif">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
     Mẫu CSV
@@ -779,7 +920,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
     Cập nhật
   </button>
   <span class="sep"></span>
-  <button onclick="window.print()" class="primary" title="In/Xuất PDF: nhớ bật 'Background graphics' trong dialog in">
+  <button onclick="window.print()" class="primary" title="In/Xuất PDF A3 portrait: nhớ bật 'Background graphics' trong dialog in">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
     In / Xuất PDF
   </button>
@@ -823,17 +964,17 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
     <div class="info-field">
       <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
       <span class="lbl">Họ và tên</span>
-      <input class="val" value="Phạm Hoàng Bách">
+      <input class="val" data-field="name" value="Phạm Hoàng Bách">
     </div>
     <div class="info-field">
       <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 7v11h-6v-7H9v7H3V10z"/></svg></span>
       <span class="lbl">Lớp</span>
-      <input class="val" value="Trung tâm – Phố Huế">
+      <input class="val" data-field="class" value="Trung tâm – Phố Huế">
     </div>
     <div class="info-field">
       <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="8" r="5"/><path d="M9 14 v6 M15 14 v6 M9 18 h6"/></svg></span>
       <span class="lbl">Giới tính</span>
-      <select class="val" id="gender-select" onchange="updateAvatar(this.value)">
+      <select class="val" id="gender-select" data-field="sex" onchange="updateAvatar(this.value)">
         <option value="Nam">Nam</option>
         <option value="Nữ">Nữ</option>
       </select>
@@ -841,17 +982,17 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
     <div class="info-field">
       <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
       <span class="lbl">Ngày đánh giá</span>
-      <input class="val" value="23/02/2025">
+      <input class="val" data-field="date" value="23/02/2025">
     </div>
     <div class="info-field">
       <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M16 2v4M8 2v4"/></svg></span>
       <span class="lbl">Năm sinh</span>
-      <input class="val" id="f-yob" value="2021">
+      <input class="val" id="f-yob" data-field="yob" value="2021">
     </div>
     <div class="info-field">
       <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></span>
       <span class="lbl">Bài test</span>
-      <input class="val" id="f-test" value="L3 Diagnostic Assessment">
+      <input class="val" id="f-test" data-field="test" value="L3 Diagnostic Assessment">
     </div>
   </div>
 
@@ -931,9 +1072,78 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 
   </div>
 
-  <!-- ─── SECTION 4: CHI TIẾT NĂNG LỰC (full-width) ─── -->
+  <!-- ─── SECTION 2: PHÂN TÍCH CẤU TRÚC BÀI ĐÁNH GIÁ ─── -->
+  <div class="insight-section">
+    <div class="sec-h"><span class="num">2</span>Phân tích cấu trúc bài đánh giá</div>
+    <div class="insight-grid">
+      <div class="insight-panel wide">
+        <h3><span class="chip">A-E</span>Đánh giá theo đơn vị riêng biệt</h3>
+        <div class="insight-split">
+          <table class="insight-table" id="mg-unit-table">
+            <thead><tr><th>Đơn vị</th><th>Phân loại</th><th>Chuẩn</th><th>Thực tế</th><th>Tỷ lệ</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div>
+            <svg id="mg-unit-chart" class="insight-chart" viewBox="0 0 360 230"></svg>
+            <p class="insight-note" id="mg-unit-note"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-panel metric-panel">
+        <h3><span class="chip">ABS</span>So sánh theo độ trừu tượng</h3>
+        <div class="insight-split">
+          <div>
+            <table class="insight-table" id="mg-abstract-table">
+              <thead><tr><th>Mức độ</th><th>Cách xử lý</th><th>Thực tế</th><th>Tỷ lệ</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            <div class="insight-help" id="mg-abstract-highlight">
+              <p><b>Điểm nổi bật:</b> —</p>
+            </div>
+          </div>
+          <svg id="mg-abstract-chart" class="insight-chart" viewBox="0 0 360 220"></svg>
+        </div>
+      </div>
+
+      <div class="insight-panel channel-panel">
+        <h3><span class="chip">MODE</span>Kênh xử lý thông tin</h3>
+        <div class="insight-split">
+          <div>
+            <table class="insight-table" id="mg-channel-table">
+              <thead><tr><th>Phân loại</th><th>Thực tế</th><th>Tỷ lệ</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            <div class="insight-help" id="mg-channel-highlight">
+              <p><b>Điểm nổi bật:</b> —</p>
+            </div>
+          </div>
+          <svg id="mg-channel-chart" class="insight-chart" viewBox="0 0 520 220"></svg>
+        </div>
+      </div>
+
+      <div class="insight-panel metric-panel">
+        <h3><span class="chip">BLOOM</span>Năng lực theo cấp độ Bloom</h3>
+        <div class="insight-split">
+          <div>
+            <table class="insight-table" id="mg-bloom-table">
+              <thead><tr><th>Cấp độ</th><th>Số câu</th><th>Tỷ lệ</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            <div class="insight-help" id="mg-bloom-highlight">
+              <p><b>Điểm nổi bật:</b> —</p>
+            </div>
+          </div>
+          <svg id="mg-bloom-chart" class="insight-chart" viewBox="0 0 360 240"></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── SECTION 3: CHI TIẾT NĂNG LỰC (full-width) ─── -->
   <div class="detail-section">
-    <div class="sec-h"><span class="num">2</span>Kết quả đánh giá chi tiết</div>
+    <div class="sec-h"><span class="num">3</span>Kết quả đánh giá chi tiết</div>
     <div class="s2-full">
       <div class="s2">
         <!-- TƯ DUY CƠ BẢN -->
@@ -948,9 +1158,9 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Năng lực chú ý</td><td contenteditable="true">Khả năng tập trung quan sát để giải quyết vấn đề.</td><td><span class="gC" data-skill="attention">Đang phát triển</span></td></tr>
+              <tr><td>Năng lực quan sát</td><td contenteditable="true">Khả năng quan sát tỉ mỉ một sự vật nào đó.</td><td><span class="gC" data-skill="observation">Đang phát triển</span></td></tr>
+              <tr><td>Năng lực ghi nhớ</td><td contenteditable="true">Khả năng ghi nhớ một thông tin mới về sự vật, sự việc.</td><td><span class="gC" data-skill="memory">Đang phát triển</span></td></tr>
             </tbody>
           </table>
           <div class="mini-radar">
@@ -971,11 +1181,11 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Kiểu mẫu</td><td contenteditable="true">Khả năng nhận diện và dự đoán mối quan hệ mang tính quy luật của đồ vật.</td><td><span class="gB">Tốt</span></td></tr>
-              <tr><td>Dữ liệu</td><td contenteditable="true">Khả năng thu thập các nguồn lực khác nhau và sắp xếp theo đặc điểm của chúng.</td><td><span class="gB">Tốt</span></td></tr>
+              <tr><td>Số và tính toán</td><td contenteditable="true">Khả năng hiểu những khái niệm về tính toán cơ bản, hiểu được ý nghĩa của toán học trong đời sống.</td><td><span class="gL" data-skill="number">Cần đồng hành</span></td></tr>
+              <tr><td>Hình học không gian</td><td contenteditable="true">Khả năng nhận biết vị trí và hướng trong không gian và hiểu biết về hình dạng.</td><td><span class="gL" data-skill="geometry">Cần đồng hành</span></td></tr>
+              <tr><td>Đo lường</td><td contenteditable="true">Khả năng thể hiện số lượng bằng cách sử dụng số và so sánh các đồ vật với nhau.</td><td><span class="gC" data-skill="measurement">Đang phát triển</span></td></tr>
+              <tr><td>Kiểu mẫu</td><td contenteditable="true">Khả năng nhận diện và dự đoán mối quan hệ mang tính quy luật của đồ vật.</td><td><span class="gB" data-skill="pattern">Tốt</span></td></tr>
+              <tr><td>Dữ liệu</td><td contenteditable="true">Khả năng thu thập các nguồn lực khác nhau và sắp xếp theo đặc điểm của chúng.</td><td><span class="gB" data-skill="data">Tốt</span></td></tr>
             </tbody>
           </table>
           <div class="mini-radar">
@@ -996,10 +1206,10 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC">Đang phát triển</span></td></tr>
-              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC">Đang phát triển</span></td></tr>
+              <tr><td>Hiểu biết</td><td contenteditable="true">Khả năng phân tích những dữ kiện liên quan và hiểu rõ vấn đề cần giải quyết.</td><td><span class="gC" data-skill="understanding">Đang phát triển</span></td></tr>
+              <tr><td>Ứng dụng</td><td contenteditable="true">Khả năng vận dụng linh hoạt những vấn đề đã học vào thực hành thực tế.</td><td><span class="gL" data-skill="application">Cần đồng hành</span></td></tr>
+              <tr><td>Phân tích</td><td contenteditable="true">Năng lực so sánh các thuộc tính và khái quát hóa vấn đề.</td><td><span class="gC" data-skill="analysis">Đang phát triển</span></td></tr>
+              <tr><td>Tổng hợp</td><td contenteditable="true">Khả năng phân tích tình huống và giải quyết toán có lời văn.</td><td><span class="gC" data-skill="synthesis">Đang phát triển</span></td></tr>
             </tbody>
           </table>
           <div class="mini-radar">
@@ -1020,10 +1230,10 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
           <table>
             <thead><tr><th>Năng lực chi tiết</th><th>Nội dung</th><th>Cấp độ</th></tr></thead>
             <tbody>
-              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL">Cần đồng hành</span></td></tr>
-              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL">Cần đồng hành</span></td></tr>
+              <tr><td>Sự trôi chảy</td><td contenteditable="true">Khả năng thể hiện nhiều ý tưởng mới lạ.</td><td><span class="gL" data-skill="fluency">Cần đồng hành</span></td></tr>
+              <tr><td>Tính linh hoạt</td><td contenteditable="true">Khả năng tìm và giải quyết vấn đề và những ý tưởng đa dạng bằng cách áp dụng một đối tượng thống nhất.</td><td><span class="gL" data-skill="flexibility">Cần đồng hành</span></td></tr>
+              <tr><td>Tính độc đáo</td><td contenteditable="true">Khả năng đưa ra một ý tưởng độc đáo và mới lạ hoặc hoàn toàn khác biệt.</td><td><span class="gL" data-skill="originality">Cần đồng hành</span></td></tr>
+              <tr><td>Tính chính xác</td><td contenteditable="true">Khả năng bổ sung thêm những điểm chi tiết của ý tưởng có tính phức tạp cao.</td><td><span class="gL" data-skill="precision">Cần đồng hành</span></td></tr>
             </tbody>
           </table>
           <div class="mini-radar">
@@ -1034,9 +1244,9 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
       </div>
     </div>
   </div>
-  <!-- ─── SECTION 3: NHẬN XÉT CHUNG ─── -->
+  <!-- ─── SECTION 4: NHẬN XÉT CHUNG ─── -->
   <div class="s6">
-    <div class="sec-h"><span class="num">3</span>Nhận xét chung
+    <div class="sec-h"><span class="num">4</span>Nhận xét chung
       <button class="auto-comment-btn-mg" onclick="fillCommentsMG(true)" title="Sinh nhận xét tự động từ kết quả đánh giá">🪄 Tự động nhận xét</button>
     </div>
     <div class="nx-box">
@@ -1044,11 +1254,20 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
         <div class="nx-body" contenteditable="true"><p>Bé <b>Phạm Hoàng Bách</b> đang ở giai đoạn xây dựng nền tảng tư duy. Bé thể hiện <b>khả năng quan sát, ghi nhớ và chú ý ổn định</b>, đặc biệt có điểm sáng ở phần <b>kiểu mẫu và dữ liệu</b> của tư duy toán học.</p><p>Bé cần được hỗ trợ thêm về <b>số và tính toán cơ bản, hình học không gian</b> cùng các năng lực ứng dụng – sáng tạo. Khi được rèn luyện đều đặn qua hoạt động trực quan và trò chơi, bé hoàn toàn có thể tiến bộ rõ rệt trong 1 – 3 tháng tới.</p></div>
       </div>
     </div>
+    <div class="insight-panel ai-summary-panel">
+      <h3><span class="chip">DATA</span>Tóm tắt điểm nổi bật</h3>
+      <div class="kpi-strip">
+        <div class="kpi"><small>Tổng điểm</small><b id="mg-kpi-total">—</b></div>
+        <div class="kpi"><small>Mạnh nhất</small><b id="mg-kpi-best">—</b></div>
+        <div class="kpi"><small>Cần ưu tiên</small><b id="mg-kpi-focus">—</b></div>
+      </div>
+      <p class="insight-note" id="mg-profile-note"></p>
+    </div>
   </div>
 
-  <!-- ─── SECTION 7: ĐỊNH HƯỚNG PHÁT TRIỂN (TẠI LỚP / TẠI NHÀ + family illustration) ─── -->
+  <!-- ─── SECTION 5: ĐỊNH HƯỚNG PHÁT TRIỂN (TẠI LỚP / TẠI NHÀ + family illustration) ─── -->
   <div class="s7">
-    <div class="sec-h"><span class="num">7</span>Định hướng phát triển</div>
+    <div class="sec-h"><span class="num">5</span>Định hướng phát triển</div>
     <div class="s7-row">
       <div class="card lop">
         <h4><span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6M9 11h.01M15 11h.01"/></svg></span>Tại lớp</h4>
@@ -1253,6 +1472,234 @@ function renderMiniRadars(){
 }
 renderMiniRadars();
 
+/* ─── Excel insight analytics: units, abstraction, channel, Bloom ─── */
+const ANALYTICS_MG = {
+  units:[
+    {unit:'A', label:'Chú ý & Quan sát', questions:'1, 2, 3, 10', max:40, score:19, pct:48},
+    {unit:'B', label:'Ghi nhớ & Trình tự', questions:'3, 6', max:20, score:13, pct:65},
+    {unit:'C', label:'Phân loại & Tổng hợp', questions:'4, 5', max:20, score:7, pct:35},
+    {unit:'D', label:'Số, Đếm & Không gian', questions:'7, 8, 9, 12', max:40, score:15, pct:38},
+    {unit:'E', label:'Quy luật & Sáng tạo', questions:'11, 13, 14', max:60, score:57, pct:95},
+  ],
+  unitTotal:{max:180, score:111, pct:62},
+  abstract:[
+    {level:'Trực quan cụ thể', label:'Thấy hình → làm ngay', questions:'1, 9, 10, 12', max:40, score:24, pct:60},
+    {level:'Trừu tượng có gợi ý', label:'Có ví dụ + cần suy luận', questions:'2, 4, 5, 7, 11', max:50, score:31, pct:62},
+    {level:'Trừu tượng cao', label:'Không có mẫu, tự tạo', questions:'3, 6, 8, 13, 14', max:70, score:60, pct:86},
+  ],
+  channel:[
+    {label:'Trực quan (nhìn hình tự làm)', questions:'1, 2, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14', max:150, score:102, pct:68},
+    {label:'Nghe-hiểu (qua lời GV đọc)', questions:'3, 8', max:20, score:3, pct:15},
+  ],
+  bloom:[
+    {label:'KHÓ (Sáng tạo + Tổng hợp)', count:3, questions:'11, 13, 14', max:60, score:57, pct:95},
+    {label:'TRUNG BÌNH (Phân tích + Áp dụng)', count:6, questions:'3, 4, 5, 6, 7, 9', max:60, score:28, pct:47},
+    {label:'DỄ (Nhận biết + Ghi nhớ)', count:5, questions:'1, 2, 8, 10, 12', max:50, score:23, pct:46},
+  ],
+};
+const DEFAULT_ANALYTICS_MG = JSON.parse(JSON.stringify(ANALYTICS_MG));
+function _escHtmlMG(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function _numMG(v){
+  if(v == null || v === '—') return null;
+  const raw = String(v).trim();
+  if(!raw) return null;
+  const n = parseFloat(raw.replace('%','').replace(',','.'));
+  if(isNaN(n)) return null;
+  return raw.includes('%') ? n : (n > 0 && n <= 1 ? n * 100 : n);
+}
+function _pctBadgeClassMG(p){
+  p = Number(p) || 0;
+  if(p >= 85) return 'strong';
+  if(p >= 65) return 'good';
+  if(p >= 50) return 'mid';
+  if(p >= 30) return 'low';
+  return 'hot';
+}
+function _pctColorMG(p){
+  p = Number(p) || 0;
+  if(p >= 85) return '#5fb74f';
+  if(p >= 65) return '#3ea1d3';
+  if(p >= 50) return '#f5b84a';
+  if(p >= 30) return '#f08526';
+  return '#df5728';
+}
+function _pctBadgeMG(p){
+  const n = Math.round(Number(p) || 0);
+  return `<span class="pct-badge ${_pctBadgeClassMG(n)}">${n}%</span>`;
+}
+function _scoreFromPctMG(max, pct){
+  const m = Number(max) || 0;
+  return Math.round(m * (Number(pct) || 0) / 100);
+}
+function _setPctRowsMG(rows, pcts){
+  rows.forEach((r,i)=>{
+    if(pcts[i] == null) return;
+    r.pct = pcts[i];
+    if(r.max != null) r.score = _scoreFromPctMG(r.max, r.pct);
+  });
+  return rows;
+}
+function _chartLabelMG(r){
+  const raw = String(r.unit || r.level || r.label || '');
+  if(r.unit) return 'Đơn vị ' + r.unit;
+  if(raw.includes('Trực quan cụ thể')) return 'Cụ thể';
+  if(raw.includes('Trừu tượng có gợi ý')) return 'Có gợi ý';
+  if(raw.includes('Trừu tượng cao')) return 'Tự tạo';
+  if(raw.includes('TRUNG BÌNH')) return 'Trung bình';
+  if(raw.includes('KHÓ')) return 'Khó';
+  if(raw.includes('DỄ')) return 'Dễ';
+  return raw.length > 22 ? raw.slice(0, 21) + '…' : raw;
+}
+function _rowUnitMG(r){
+  return `<tr><td class="code">${_escHtmlMG(r.unit)}</td><td>${_escHtmlMG(r.label)}</td><td class="num">${r.max ?? '—'}</td><td class="num">${r.score ?? '—'}</td><td>${_pctBadgeMG(r.pct)}</td></tr>`;
+}
+function _rowCompactMG(label, sub, score, pct){
+  return `<tr><td>${_escHtmlMG(label)}</td><td class="muted">${_escHtmlMG(sub)}</td><td class="num">${score ?? '—'}</td><td>${_pctBadgeMG(pct)}</td></tr>`;
+}
+function _barSvgMG(rows, opts={}){
+  const w=360, h=opts.h||220, left=118, top=22, rowH=opts.rowH||31, barW=190;
+  let html = `<rect x="0" y="0" width="${w}" height="${h}" rx="12" fill="#fffaf0"/>`;
+  html += `<line x1="${left}" y1="${h-26}" x2="${left+barW}" y2="${h-26}" stroke="#e8d7ad"/>`;
+  [50,65,85].forEach(t=>{
+    const x=left+barW*t/100;
+    html += `<line x1="${x}" y1="12" x2="${x}" y2="${h-26}" stroke="#ead9b5" stroke-dasharray="3 3"/>`;
+    html += `<text x="${x}" y="${h-10}" text-anchor="middle" font-size="9" font-weight="700" fill="#a89070">${t}</text>`;
+  });
+  rows.forEach((r,i)=>{
+    const y=top+i*rowH;
+    const p=Math.max(0,Math.min(100,Number(r.pct)||0));
+    html += `<text x="10" y="${y+14}" font-size="10.5" font-weight="800" fill="#3a2a14">${_escHtmlMG(_chartLabelMG(r))}</text>`;
+    html += `<rect x="${left}" y="${y}" width="${barW}" height="16" rx="8" fill="#f0e2bf"/>`;
+    html += `<rect x="${left}" y="${y}" width="${barW*p/100}" height="16" rx="8" fill="${_pctColorMG(p)}"/>`;
+    html += `<text x="${left+barW+12}" y="${y+13}" font-size="12" font-weight="900" fill="${_pctColorMG(p)}">${Math.round(p)}%</text>`;
+  });
+  return html;
+}
+function renderUnitAnalyticsMG(){
+  const tbody = document.querySelector('#mg-unit-table tbody');
+  if(tbody){
+    const rows = Array.isArray(ANALYTICS_MG.units) ? ANALYTICS_MG.units : [];
+    const sumMax = rows.reduce((a,r)=>a+(Number(r.max)||0),0);
+    const sumScore = rows.reduce((a,r)=>a+(Number(r.score)||0),0);
+    const total = {
+      max: sumMax || (ANALYTICS_MG.unitTotal && ANALYTICS_MG.unitTotal.max),
+      score: sumScore || (ANALYTICS_MG.unitTotal && ANALYTICS_MG.unitTotal.score),
+      pct: sumMax ? Math.round(sumScore/sumMax*100) : (ANALYTICS_MG.unitTotal && ANALYTICS_MG.unitTotal.pct)
+    };
+    tbody.innerHTML = ANALYTICS_MG.units.map(_rowUnitMG).join('') +
+      `<tr><td colspan="2" class="code">TỔNG</td><td class="num">${total.max ?? '—'}</td><td class="num">${total.score ?? '—'}</td><td>${_pctBadgeMG(total.pct)}</td></tr>`;
+  }
+  const svg = document.getElementById('mg-unit-chart');
+  if(svg) svg.innerHTML = _barSvgMG(ANALYTICS_MG.units, {h:230,rowH:34});
+  const best = [...ANALYTICS_MG.units].sort((a,b)=>(b.pct||0)-(a.pct||0))[0];
+  const weak = [...ANALYTICS_MG.units].sort((a,b)=>(a.pct||0)-(b.pct||0))[0];
+  const note = document.getElementById('mg-unit-note');
+  if(note && best && weak){
+    note.innerHTML = `Điểm nổi bật nằm ở <b>${_escHtmlMG(best.label)}</b> (${Math.round(best.pct)}%); vùng cần củng cố trước là <b>${_escHtmlMG(weak.label)}</b> (${Math.round(weak.pct)}%).`;
+  }
+}
+function renderAbstractAnalyticsMG(){
+  const tbody = document.querySelector('#mg-abstract-table tbody');
+  if(tbody) tbody.innerHTML = ANALYTICS_MG.abstract.map(r=>_rowCompactMG(r.level, r.label, `${r.score}/${r.max}`, r.pct)).join('');
+  const svg = document.getElementById('mg-abstract-chart');
+  if(svg) svg.innerHTML = _barSvgMG(ANALYTICS_MG.abstract, {h:220,rowH:42});
+  const hi = document.getElementById('mg-abstract-highlight');
+  if(hi){
+    const rows = ANALYTICS_MG.abstract || [];
+    const best = [...rows].sort((a,b)=>(b.pct||0)-(a.pct||0))[0];
+    const base = rows[0];
+    const delta = best && base ? Math.round((best.pct||0) - (base.pct||0)) : null;
+    hi.innerHTML = best
+      ? `<p><b>Điểm nổi bật:</b> nhóm <b>${_escHtmlMG(best.level)}</b> đạt ${Math.round(best.pct)}%${delta!=null && delta!==0 ? `, ${delta>0?'cao hơn':'thấp hơn'} mức cụ thể ${Math.abs(delta)} điểm %` : ''}.</p>`
+      : '<p><b>Điểm nổi bật:</b> —</p>';
+  }
+}
+function renderChannelAnalyticsMG(){
+  const tbody = document.querySelector('#mg-channel-table tbody');
+  if(tbody) tbody.innerHTML = ANALYTICS_MG.channel.map(r=>`<tr><td>${_escHtmlMG(r.label)}</td><td class="num">${r.score}/${r.max}</td><td>${_pctBadgeMG(r.pct)}</td></tr>`).join('');
+  const svg = document.getElementById('mg-channel-chart');
+  if(svg){
+    const rows = ANALYTICS_MG.channel;
+    const w=520,h=220,left=154,barW=250,top=42,rowH=62;
+    let html = `<rect x="0" y="0" width="${w}" height="${h}" rx="12" fill="#fffaf0"/>`;
+    html += `<text x="16" y="24" font-size="12" font-weight="900" fill="#1f4f7a">So sánh hiệu quả tiếp nhận</text>`;
+    [30,50,65,85].forEach(t=>{
+      const x=left+barW*t/100;
+      html += `<line x1="${x}" y1="34" x2="${x}" y2="164" stroke="#ecdcb8" stroke-dasharray="3 3"/>`;
+      html += `<text x="${x}" y="184" text-anchor="middle" font-size="9" font-weight="800" fill="#a89070">${t}%</text>`;
+    });
+    rows.slice(0,2).forEach((d,i)=>{
+      const p=Math.max(0,Math.min(100,Number(d.pct)||0));
+      const y=top+i*rowH;
+      const label=i===0?'TRỰC QUAN':'NGHE-HIỂU';
+      html += `<text x="16" y="${y+16}" font-size="12" font-weight="900" fill="#3a2a14">${label}</text>`;
+      html += `<text x="16" y="${y+33}" font-size="9.5" font-weight="700" fill="#7b6244">${_escHtmlMG(d.score)}/${_escHtmlMG(d.max)} điểm</text>`;
+      html += `<rect x="${left}" y="${y}" width="${barW}" height="24" rx="12" fill="#f0e2bf"/>`;
+      html += `<rect x="${left}" y="${y}" width="${barW*p/100}" height="24" rx="12" fill="${_pctColorMG(p)}"/>`;
+      html += `<circle cx="${left+barW*p/100}" cy="${y+12}" r="16" fill="${_pctColorMG(p)}" stroke="#fff" stroke-width="3"/>`;
+      html += `<text x="${left+barW+22}" y="${y+17}" font-size="16" font-weight="900" fill="${_pctColorMG(p)}">${Math.round(p)}%</text>`;
+    });
+    svg.innerHTML = html;
+  }
+  const hi = document.getElementById('mg-channel-highlight');
+  if(hi){
+    const rows = ANALYTICS_MG.channel || [];
+    if(rows.length >= 2){
+      const gap = Math.round(Math.abs((rows[0].pct||0)-(rows[1].pct||0)));
+      const stronger = (rows[0].pct||0) >= (rows[1].pct||0) ? rows[0] : rows[1];
+      hi.innerHTML = `<p><b>Điểm nổi bật:</b> kênh <b>${_escHtmlMG(stronger.label)}</b> đạt ${Math.round(stronger.pct)}%, chênh ${gap} điểm % so với kênh còn lại.</p>`;
+    } else hi.innerHTML = '<p><b>Điểm nổi bật:</b> —</p>';
+  }
+}
+function renderBloomAnalyticsMG(){
+  const tbody = document.querySelector('#mg-bloom-table tbody');
+  if(tbody) tbody.innerHTML = ANALYTICS_MG.bloom.map(r=>`<tr><td>${_escHtmlMG(r.label)}</td><td class="num">${r.count ?? '—'}</td><td>${_pctBadgeMG(r.pct)}</td></tr>`).join('');
+  const svg = document.getElementById('mg-bloom-chart');
+  if(svg){
+    const tiers = ANALYTICS_MG.bloom;
+    const widths=[145,215,285], y=[24,92,160], h=52, cx=180;
+    let html = `<rect x="0" y="0" width="360" height="240" rx="12" fill="#fffaf0"/>`;
+    tiers.forEach((d,i)=>{
+      const p=Number(d.pct)||0, ww=widths[i]||220, x=cx-ww/2;
+      html += `<path d="M${x+18} ${y[i]} H${x+ww-18} L${x+ww} ${y[i]+h} H${x} Z" fill="${_pctColorMG(p)}" opacity=".88"/>`;
+      html += `<text x="${cx}" y="${y[i]+20}" text-anchor="middle" font-size="11" font-weight="900" fill="#fff">${_escHtmlMG(d.label.split('(')[0].trim())}</text>`;
+      html += `<text x="${cx}" y="${y[i]+40}" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">${Math.round(p)}%</text>`;
+    });
+    svg.innerHTML = html;
+  }
+  const hi = document.getElementById('mg-bloom-highlight');
+  if(hi){
+    const rows = ANALYTICS_MG.bloom || [];
+    const best = [...rows].sort((a,b)=>(b.pct||0)-(a.pct||0))[0];
+    const low = [...rows].sort((a,b)=>(a.pct||0)-(b.pct||0))[0];
+    hi.innerHTML = best && low
+      ? `<p><b>Điểm nổi bật:</b> mức <b>${_escHtmlMG(best.label)}</b> đạt ${Math.round(best.pct)}%; mức thấp nhất là <b>${_escHtmlMG(low.label)}</b> (${Math.round(low.pct)}%).</p>`
+      : '<p><b>Điểm nổi bật:</b> —</p>';
+  }
+}
+function renderAnalyticsMG(){
+  renderUnitAnalyticsMG();
+  renderAbstractAnalyticsMG();
+  renderChannelAnalyticsMG();
+  renderBloomAnalyticsMG();
+  const total = ANALYTICS_MG.unitTotal || {};
+  const allUnits = ANALYTICS_MG.units || [];
+  const best = [...allUnits].sort((a,b)=>(b.pct||0)-(a.pct||0))[0];
+  const weak = [...allUnits].sort((a,b)=>(a.pct||0)-(b.pct||0))[0];
+  const bloomBest = [...(ANALYTICS_MG.bloom||[])].sort((a,b)=>(b.pct||0)-(a.pct||0))[0];
+  const set = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('mg-kpi-total', total.pct!=null ? Math.round(total.pct)+'%' : '—');
+  set('mg-kpi-best', best?.unit || '—');
+  set('mg-kpi-focus', weak?.unit || '—');
+  const note = document.getElementById('mg-profile-note');
+  if(note){
+    note.innerHTML = bloomBest && best && weak
+      ? `Pattern hiện tại cho thấy <b>${_escHtmlMG(bloomBest.label)}</b> là vùng bật lên mạnh nhất, trong khi <b>${_escHtmlMG(weak.label)}</b> nên được luyện bằng hoạt động trực quan ngắn, lặp lại và ít áp lực.`
+      : '';
+  }
+}
+renderAnalyticsMG();
+
 /* ─── Donut: distribution of detail-skill levels ─── */
 /* Detail bars đã GỘP vào ability tables (CSS pseudo-element bar trong td cuối)
    → không cần render riêng. Stub renderDonut() để giữ tương thích với recomputeAllMG. */
@@ -1332,7 +1779,13 @@ const __GROUP_MAP = [
 ];
 const __GRADE_SCORE = {S:5, A:4, B:3, C:2, L:1};
 const __GRADE_NEXT = {S:'A',A:'B',B:'C',C:'L',L:'S'};
-const __GRADE_RADAR_PCT = {S:95,A:80,B:65,C:50,L:25};
+const __GRADE_PCT = {S:95,A:85,B:70,C:50,L:25};
+const __SKILL_KEYS_BY_GROUP_MG = [
+  ['attention','observation','memory'],
+  ['number','geometry','measurement','pattern','data'],
+  ['understanding','application','analysis','synthesis'],
+  ['fluency','flexibility','originality','precision'],
+];
 
 // Tên mức theo ngôn ngữ developmental (phù hợp tuổi mẫu giáo 3-5, mềm mại hơn)
 // Ngôn ngữ developmental phù hợp trẻ mẫu giáo 3-5 tuổi — growth-mindset
@@ -1341,6 +1794,7 @@ const __GRADE_RADAR_PCT = {S:95,A:80,B:65,C:50,L:25};
 const __GRADE_NAME = {S:'Vượt trội', A:'Rất tốt', B:'Tốt', C:'Đang phát triển', L:'Cần đồng hành'};
 
 function _abilityGrade(abilityEl){
+  if(!abilityEl) return 'C';
   // Đọc grade từ CSS class (gS/gA/gB/gC/gL) thay vì textContent (vì giờ text là tên dài như "Đạt"/"Cần cố gắng")
   const spans = abilityEl.querySelectorAll('tbody td:last-child span');
   if(!spans.length) return 'C';
@@ -1363,9 +1817,8 @@ function _setS1Card(card, grade){
   // New design: grade-circle + .pct + .lbl
   const circle = card.querySelector('.grade-circle');
   if(circle) circle.textContent = grade;
-  const PCT = {S:'95%',A:'85%',B:'70%',C:'50%',L:'25%'};
   const pctEl = card.querySelector('.meta .pct');
-  if(pctEl) pctEl.textContent = PCT[grade] || '50%';
+  if(pctEl) pctEl.textContent = (__GRADE_PCT[grade] || 50) + '%';
   const lEl = card.querySelector('.meta .lbl');
   if(lEl) lEl.textContent = __GRADE_NAME[grade] || grade;
   // Legacy fallback
@@ -1391,11 +1844,12 @@ function recomputeAllMG(){
   });
   // Update radar (lớn + mini) + donut
   if(typeof RADAR_DATA!=='undefined' && typeof renderRadar==='function'){
-    RADAR_DATA.child = [...abilities].map(ab=>__GRADE_RADAR_PCT[_abilityGrade(ab)] || 50);
+    RADAR_DATA.child = [...abilities].map(ab=>__GRADE_PCT[_abilityGrade(ab)] || 50);
     renderRadar();
     if(typeof renderMiniRadars==='function') renderMiniRadars();
   }
   if(typeof renderDonut==='function') renderDonut();
+  if(typeof renderAnalyticsMG==='function') renderAnalyticsMG();
 }
 
 // Click to cycle grade in ability tables — đọc grade từ class (text giờ là tên dài)
@@ -1408,6 +1862,7 @@ document.addEventListener('click', e=>{
   span.textContent = __GRADE_NAME[next] || next;
   span.className = 'g'+next;
   recomputeAllMG();
+  if(typeof scheduleSaveMG==='function') scheduleSaveMG();
 });
 
 // Run once on load
@@ -1423,7 +1878,7 @@ recomputeAllMG();
    ═══════════════════════════════════════════════════════════════ */
 function _analyzeProfileMG(){
   const abilities = document.querySelectorAll('.ability');
-  const groupGrades = __GROUP_MAP.map((g,i)=>({...g, grade: _abilityGrade(abilities[i])}));
+  const groupGrades = __GROUP_MAP.map(g=>({...g, grade: _abilityGrade(abilities[g.abilityIdx])}));
   const scores = groupGrades.map(g=>__GRADE_SCORE[g.grade]);
   const avgScore = scores.reduce((a,b)=>a+b,0)/scores.length;
   const maxScore = Math.max(...scores);
@@ -1453,7 +1908,7 @@ function _analyzeProfileMG(){
       if(!m) return;
       allSkills.push({
         name, grade:m[1], score:__GRADE_SCORE[m[1]],
-        groupIdx:abIdx, groupTitle:__GROUP_MAP[abIdx].title
+        groupIdx:abIdx, groupTitle:__GROUP_MAP[abIdx]?.title || ''
       });
     });
   });
@@ -1470,8 +1925,7 @@ function _analyzeProfileMG(){
 
 function autoCommentMG(){
   const A = _analyzeProfileMG();
-  const nameInputs = document.querySelectorAll('.info-field input.val');
-  const fullName = (nameInputs[0]?.value || 'Bé').trim() || 'Bé';
+  const fullName = (document.querySelector('[data-field="name"]')?.value || 'Bé').trim() || 'Bé';
 
   // Stage description PER PROFILE — không chỉ theo avgScore
   const stages = {
@@ -1587,7 +2041,58 @@ function fillCommentsMG(force){
   if(body){ body.innerHTML = autoCommentMG(); }
   const list = document.querySelector('.s6 .nx-list');
   if(list){ list.innerHTML = autoDirectionMG(); }
+  if(typeof scheduleSaveMG==='function') scheduleSaveMG();
   if(force) _showToastMG('✨ Đã sinh nhận xét tự động');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DEFENSIVE HELPERS — R1/R2/R4/R7 fixes
+   ═══════════════════════════════════════════════════════════════ */
+
+// R7: Có data user-typed không? (để biết có cần confirm trước destructive)
+function _hasUserDataMG(){
+  // Check info fields có giá trị khác default
+  const defaults = {name:'Phạm Hoàng Bách', class:'Trung tâm – Phố Huế', yob:'2021', test:'L3 Diagnostic Assessment'};
+  const fields = document.querySelectorAll('.page [data-field]');
+  for(const el of fields){
+    const v = (el.value || '').trim();
+    if(v && v !== defaults[el.dataset.field]) return true;
+  }
+  // Check có grade nào không phải 'C' default
+  const spans = document.querySelectorAll('.ability tbody td:last-child span');
+  for(const s of spans){ if(!s.className.includes('gC')) return true; }
+  // Check nx-body / nx-list đã user-edited (so với placeholder)
+  const body = document.querySelector('.s6 .nx-body');
+  if(body && !body.textContent.includes('Nhập điểm và bấm')) return true;
+  return false;
+}
+function _confirmDestructiveMG(action){
+  if(!_hasUserDataMG()) return true;
+  return confirm(`Báo cáo đang có dữ liệu chưa lưu. ${action} sẽ xoá hết và không thể hoàn tác.\n\nTiếp tục?`);
+}
+
+// R4: Sanitize HTML khi restore — strip script/style/event handlers
+// Lưu ý: trình duyệt vẫn xử lý 1 phần khi parseFromString, nhưng ta loại trừ vector phổ biến
+function _sanitizeHTMLMG(html){
+  if(typeof html !== 'string') return '';
+  const doc = new DOMParser().parseFromString('<div>'+html+'</div>', 'text/html');
+  const root = doc.body.firstElementChild;
+  if(!root) return '';
+  const BAD_TAGS = ['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','LINK','META','NOSCRIPT'];
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null);
+  const toRemove = [];
+  let n;
+  while((n = walker.nextNode())){
+    if(BAD_TAGS.includes(n.tagName)){ toRemove.push(n); continue; }
+    // Strip on* attributes + javascript: URLs
+    [...n.attributes].forEach(a=>{
+      const name = a.name.toLowerCase();
+      if(name.startsWith('on')) n.removeAttribute(a.name);
+      else if((name === 'href' || name === 'src') && /^\s*javascript:/i.test(a.value)) n.removeAttribute(a.name);
+    });
+  }
+  toRemove.forEach(el=>el.remove());
+  return root.innerHTML;
 }
 
 function _showToastMG(msg, color){
@@ -1597,6 +2102,117 @@ function _showToastMG(msg, color){
   document.body.appendChild(t);
   setTimeout(()=>t.remove(), 2500);
 }
+
+/* ─── Autosave localStorage cho mẫu giáo ─── */
+const SAVE_KEY_MG = 'wk-baocao-mg-v1';
+let saveTimerMG = null;
+let __wkRestoringMG = false;
+function _gradeFromSpanMG(span){
+  const m = String(span?.className || '').match(/g([SABCL])/);
+  return m ? m[1] : null;
+}
+function captureStateMG(){
+  const data = {v:1, fields:{}, grades:{}, editables:[]};
+  document.querySelectorAll('.page [data-field]').forEach(el=>{
+    data.fields[el.dataset.field] = el.value;
+  });
+  document.querySelectorAll('.page [data-skill]').forEach(span=>{
+    const g = _gradeFromSpanMG(span);
+    if(g) data.grades[span.dataset.skill] = g;
+  });
+  document.querySelectorAll('.page [contenteditable="true"]').forEach(el=>{
+    data.editables.push(el.innerHTML);
+  });
+  data.analytics = JSON.parse(JSON.stringify(ANALYTICS_MG));
+  return data;
+}
+function restoreStateMG(data){
+  if(!data || data.v !== 1) return false;
+  __wkRestoringMG = true;
+  try{
+    document.querySelectorAll('.page [data-field]').forEach(el=>{
+      if(data.fields && data.fields[el.dataset.field] != null) el.value = data.fields[el.dataset.field];
+    });
+    document.querySelectorAll('.page [data-skill]').forEach(span=>{
+      const key = span.dataset.skill;
+      const g = data.grades?.[key];
+      if(g && __GRADE_NAME[g]){
+        span.textContent = __GRADE_NAME[g];
+        span.className = 'g' + g;
+        span.dataset.skill = key;
+      }
+    });
+    const editables = document.querySelectorAll('.page [contenteditable="true"]');
+    if(Array.isArray(data.editables) && data.editables.length === editables.length){
+      // R4: sanitize HTML từ localStorage trước khi assign innerHTML
+      editables.forEach((el,i)=>{
+        if(data.editables[i] != null) el.innerHTML = _sanitizeHTMLMG(data.editables[i]);
+      });
+    } else if(data.editables){
+      console.warn('[restoreStateMG] contenteditable count mismatch, skipped editable restore');
+    }
+    if(data.analytics){
+      Object.assign(ANALYTICS_MG, data.analytics);
+      if(typeof renderAnalyticsMG === 'function') renderAnalyticsMG();
+    }
+    const sex = document.querySelector('[data-field="sex"]')?.value;
+    if(sex && typeof updateAvatar === 'function') updateAvatar(sex);
+    if(typeof recomputeAllMG === 'function') recomputeAllMG();
+    return true;
+  } finally {
+    __wkRestoringMG = false;
+  }
+}
+function scheduleSaveMG(){
+  if(__wkRestoringMG) return;
+  const ind = document.getElementById('save-ind-mg');
+  if(ind){ ind.textContent = '● Đang lưu…'; ind.dataset.state = 'saving'; }
+  clearTimeout(saveTimerMG);
+  saveTimerMG = setTimeout(saveNowMG, 350);
+}
+let __wkQuotaWarned = false;
+function saveNowMG(){
+  if(__wkRestoringMG) return;
+  const ind = document.getElementById('save-ind-mg');
+  try{
+    localStorage.setItem(SAVE_KEY_MG, JSON.stringify(captureStateMG()));
+    if(ind){ ind.textContent = '● Đã lưu'; ind.dataset.state = 'saved'; }
+    __wkQuotaWarned = false;
+  }catch(e){
+    console.warn('[saveNowMG]', e);
+    // R1: detect QuotaExceededError + báo user
+    const isQuota = e && (e.code === 22 || e.code === 1014 || e.name === 'QuotaExceededError' || /quota/i.test(e.message));
+    if(ind){ ind.textContent = '⚠ Không lưu được'; ind.dataset.state = 'error'; }
+    if(isQuota && !__wkQuotaWarned){
+      __wkQuotaWarned = true;
+      _showToastMG('Bộ nhớ trình duyệt đầy — báo cáo không thể tự lưu. Hãy bấm "Lưu .xlsx" để giữ data trước khi rời trang.', '#df5728');
+    }
+  }
+}
+function loadSavedMG(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY_MG);
+    if(!raw) return false;
+    const ok = restoreStateMG(JSON.parse(raw));
+    const ind = document.getElementById('save-ind-mg');
+    if(ok && ind){ ind.textContent = '● Đã khôi phục'; ind.dataset.state = 'saved'; }
+    return ok;
+  }catch(e){ console.warn('[loadSavedMG]', e); return false; }
+}
+document.addEventListener('input', e=>{
+  if(e.target.closest?.('.page') && e.target.closest?.('input, [contenteditable="true"]')) scheduleSaveMG();
+});
+// R2: Force-save khi user đóng tab/reload — chống mất data trong window 350ms debounce
+window.addEventListener('beforeunload', ()=>{
+  if(!__wkRestoringMG){ try{ clearTimeout(saveTimerMG); saveNowMG(); }catch(_){} }
+});
+// Cũng save khi tab mất focus (mobile background, alt-tab) — phòng case không fire beforeunload
+window.addEventListener('pagehide', ()=>{
+  if(!__wkRestoringMG){ try{ clearTimeout(saveTimerMG); saveNowMG(); }catch(_){} }
+});
+document.addEventListener('change', e=>{
+  if(e.target.closest?.('.page') && e.target.matches?.('select, input')) scheduleSaveMG();
+});
 
 /* ─── MOCK PROFILES — test nhanh nhận xét theo 4 mức ─── */
 // Mỗi profile fill đầy đủ: 6 info field + 16 grade cells (4 ability groups)
@@ -1623,16 +2239,58 @@ const __MOCK_MG = {
     grades:[['L','C','L'],['L','L','C','L','C'],['L','C','L','L'],['L','L','L','L']],
   },
 };
-// Áp dụng 6 info-field theo thứ tự DOM: Họ tên / Lớp / Giới tính / Ngày đánh giá / Độ tuổi / Giáo viên
+const __MOCK_ANALYTICS_PCTS_MG = {
+  excellent: {
+    units:[92,88,90,86,96], abstract:[90,91,94], channel:[89,82], bloom:[95,90,88],
+  },
+  good: {
+    units:[72,76,68,70,78], abstract:[72,74,76], channel:[76,65], bloom:[74,70,72],
+  },
+  average: {
+    units:[48,52,46,50,55], abstract:[52,50,54], channel:[56,42], bloom:[50,48,52],
+  },
+  weak: {
+    units:[28,34,25,30,38], abstract:[35,30,32], channel:[36,18], bloom:[30,27,34],
+  },
+};
+function _buildMockAnalyticsMG(key){
+  const p = __MOCK_ANALYTICS_PCTS_MG[key];
+  if(!p) return null;
+  const data = JSON.parse(JSON.stringify(DEFAULT_ANALYTICS_MG));
+  _setPctRowsMG(data.units, p.units);
+  const sumMax = data.units.reduce((a,r)=>a+(Number(r.max)||0),0);
+  const sumScore = data.units.reduce((a,r)=>a+(Number(r.score)||0),0);
+  data.unitTotal = {max:sumMax, score:sumScore, pct:sumMax ? Math.round(sumScore/sumMax*100) : 0};
+  _setPctRowsMG(data.abstract, p.abstract);
+  _setPctRowsMG(data.channel, p.channel);
+  _setPctRowsMG(data.bloom, p.bloom);
+  return data;
+}
+function _applyMockAnalyticsMG(key){
+  const data = _buildMockAnalyticsMG(key);
+  if(!data) return;
+  Object.assign(ANALYTICS_MG, data);
+  if(typeof renderAnalyticsMG === 'function') renderAnalyticsMG();
+}
+// Áp dụng info fields bằng data-field để không lệ thuộc thứ tự DOM.
 function _applyMG_InfoFields(data){
-  const fields = document.querySelectorAll('.info-field input.val, .info-field select.val');
-  // Map theo thứ tự HTML mới: 0=name, 1=class, 2=gender, 3=date, 4=yob (năm sinh), 5=test (bài test)
   const today = new Date();
   const dd=String(today.getDate()).padStart(2,'0'),mm=String(today.getMonth()+1).padStart(2,'0');
   const todayStr = `${dd}/${mm}/${today.getFullYear()}`;
-  const vals = [data.name, data.class, data.sex, data.date || todayStr, data.yob || data.age, data.test || data.teacher];
-  fields.forEach((f,i)=>{ if(vals[i]!=null && vals[i]!=='') f.value = vals[i]; });
-  if(data.sex && typeof updateAvatar==='function') updateAvatar(data.sex);
+  const vals = {
+    name:data.name,
+    class:data.class,
+    sex:data.sex,
+    date:data.date || todayStr,
+    yob:data.yob || data.age,
+    test:data.test || data.teacher,
+  };
+  document.querySelectorAll('.info-field .val[data-field]').forEach(f=>{
+    const v = vals[f.dataset.field];
+    if(v!=null && v!=='') f.value = v;
+  });
+  const sex = vals.sex || document.querySelector('[data-field="sex"]')?.value;
+  if(sex && typeof updateAvatar==='function') updateAvatar(sex);
 }
 // Convert % (0-100) → S/A/B/C/L theo NGƯỠNG MẦM NON Excel: S≥80, A 65-79, B 50-64, C 30-49, L<30
 function _pctToGradeMG(p){
@@ -1651,20 +2309,26 @@ function _applyMG_Grades(grades){
     const ab = abilities[i]; if(!ab) return;
     const spans = ab.querySelectorAll('tbody td:last-child span');
     rowGrades.forEach((g,j)=>{
-      if(spans[j] && __GRADE_NAME[g]){ spans[j].textContent = __GRADE_NAME[g]; spans[j].className = 'g'+g; }
+      const key = __SKILL_KEYS_BY_GROUP_MG[i]?.[j];
+      const span = key ? document.querySelector(`[data-skill="${key}"]`) : spans[j];
+      if(span && __GRADE_NAME[g]){ span.textContent = __GRADE_NAME[g]; span.className = 'g'+g; if(key) span.dataset.skill = key; }
     });
   });
 }
 function loadMockProfileMG(key){
+  // R7: Confirm nếu có data user-typed để tránh wipe vô tình
+  if(!_confirmDestructiveMG('Tải mock data')) return;
   if(!_beginLoadMG()) return;
   try{
     const data = __MOCK_MG[key]; if(!data) return;
     _cleanSlateMG();  // clean slate trước khi fill → tránh residue
     _applyMG_InfoFields(data);
     _applyMG_Grades(data.grades);
+    _applyMockAnalyticsMG(key);
     recomputeAllMG();
     fillCommentsMG(true);
     recomputeAllMG();   // refresh lần 2 sau khi comments fill
+    scheduleSaveMG();
     _showToastMG(`Đã load: ${data.name}`, '#f08526');
   } finally { _endLoadMG(); }
 }
@@ -1682,7 +2346,7 @@ const __SKILL_LOOKUP_MG = (function(){
     ['Sự trôi chảy','Tính linh hoạt','Tính độc đáo','Tính chính xác'],
   ];
   const map = {};
-  groups.forEach((g,ab)=>g.forEach((name,sk)=>{ map[_normMG(name)] = {ab,sk,name}; }));
+  groups.forEach((g,ab)=>g.forEach((name,sk)=>{ map[_normMG(name)] = {ab,sk,name,key:__SKILL_KEYS_BY_GROUP_MG[ab]?.[sk]}; }));
   // Aliases — Excel WonderKids dùng tên ngắn không có prefix "Năng lực" / "Sự" / "Tính"
   const aliases = [
     ['chú ý', 0, 0], ['quan sát', 0, 1], ['ghi nhớ', 0, 2],
@@ -1690,10 +2354,18 @@ const __SKILL_LOOKUP_MG = (function(){
     ['hình học', 1, 1], ['không gian', 1, 1],
     ['trôi chảy', 3, 0], ['linh hoạt', 3, 1], ['độc đáo', 3, 2], ['chính xác', 3, 3],
   ];
-  aliases.forEach(([n, ab, sk])=>{ map[_normMG(n)] = {ab, sk, name:groups[ab][sk]}; });
+  aliases.forEach(([n, ab, sk])=>{ map[_normMG(n)] = {ab, sk, name:groups[ab][sk], key:__SKILL_KEYS_BY_GROUP_MG[ab]?.[sk]}; });
   return map;
 })();
-function _normMG(s){ return String(s==null?'':s).toLowerCase().replace(/\s+/g,' ').trim(); }
+function _normMG(s){
+  return String(s==null?'':s)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/đ/g,'d')
+    .replace(/\s+/g,' ')
+    .trim();
+}
 function _parseGradeMG(v){
   // Chấp nhận:
   //  - Chữ cái S/A/B/C/L thuần
@@ -1746,20 +2418,86 @@ function parseCSV_MG(text){
   if(field!=='' || row.length){ row.push(field); rows.push(row); }
   return rows;
 }
+function _cellMG(row, idx){ return row && row[idx] != null ? String(row[idx]).trim() : ''; }
+function _arrMG(v){ return Array.isArray(v) ? v : [v]; }
+function _findHeaderAfterTitleMG(rows, title, startCol, firstHeader){
+  const titles = _arrMG(title).map(_normMG).filter(Boolean);
+  const headers = _arrMG(firstHeader).map(_normMG).filter(Boolean);
+  let titleIdx = -1;
+  for(let i=0;i<rows.length;i++){
+    if(rows[i]?.some(c=>{
+      const n = _normMG(c);
+      return titles.some(t=>n.includes(t));
+    })){ titleIdx = i; break; }
+  }
+  const from = titleIdx >= 0 ? titleIdx + 1 : 0;
+  for(let i=from;i<rows.length;i++){
+    const preferred = _normMG(_cellMG(rows[i], startCol));
+    if(headers.includes(preferred)) return {row:i, col:startCol};
+    for(let j=0;j<(rows[i]?.length||0);j++){
+      if(headers.includes(_normMG(rows[i][j]))) return {row:i, col:j};
+    }
+  }
+  return {row:-1, col:startCol};
+}
+function _readMetricRowsMG(rows, headerIdx, startCol, type){
+  const header = typeof headerIdx === 'object' && headerIdx ? headerIdx : {row:headerIdx, col:startCol};
+  if(header.row < 0) return [];
+  const col = Number.isFinite(Number(header.col)) ? Number(header.col) : startCol;
+  const out = [];
+  for(let i=header.row+1;i<rows.length;i++){
+    const first = _cellMG(rows[i], col);
+    if(!first) break;
+    const norm = _normMG(first);
+    if(norm.includes('so sanh') || norm.includes('danh gia theo') || norm.includes('phan loai')) break;
+    if(first === '—') continue;
+    if(type === 'unit'){
+      if(norm === 'tong'){
+        ANALYTICS_MG.unitTotal = {
+          max:_numMG(_cellMG(rows[i], col+1)),
+          score:_numMG(_cellMG(rows[i], col+4)),
+          pct:_numMG(_cellMG(rows[i], col+5)),
+        };
+        continue;
+      }
+      out.push({unit:first,label:_cellMG(rows[i],col+1),questions:_cellMG(rows[i],col+2),max:_numMG(_cellMG(rows[i],col+3)),score:_numMG(_cellMG(rows[i],col+4)),pct:_numMG(_cellMG(rows[i],col+5))});
+    } else if(type === 'abstract'){
+      out.push({level:first,label:_cellMG(rows[i],col+1),questions:_cellMG(rows[i],col+2),max:_numMG(_cellMG(rows[i],col+3)),score:_numMG(_cellMG(rows[i],col+4)),pct:_numMG(_cellMG(rows[i],col+5))});
+    } else if(type === 'channel'){
+      out.push({label:first,questions:_cellMG(rows[i],col+1),max:_numMG(_cellMG(rows[i],col+2)),score:_numMG(_cellMG(rows[i],col+3)),pct:_numMG(_cellMG(rows[i],col+4))});
+    } else if(type === 'bloom'){
+      out.push({label:first,count:_numMG(_cellMG(rows[i],col+1)),questions:_cellMG(rows[i],col+2),max:_numMG(_cellMG(rows[i],col+3)),score:_numMG(_cellMG(rows[i],col+4)),pct:_numMG(_cellMG(rows[i],col+5))});
+    }
+  }
+  return out.filter(r=>r.pct!=null);
+}
+function _applyAnalyticsRowsMG(rows){
+  const unit = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,['KẾT QUẢ ĐÁNH GIÁ THEO CÂU HỎI RIÊNG BIỆT','ĐÁNH GIÁ THEO ĐƠN VỊ RIÊNG BIỆT','ĐƠN VỊ RIÊNG BIỆT'],5,['ĐƠN VỊ','UNIT','NHÓM']), 5, 'unit');
+  const abs = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,['SO SÁNH THEO ĐỘ TRỪU TƯỢNG','ĐỘ TRỪU TƯỢNG','ABSTRACT'],5,['MỨC ĐỘ','LEVEL']), 5, 'abstract');
+  const channel = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,['SO SÁNH KÊNH XỬ LÝ','KÊNH XỬ LÝ THÔNG TIN','KÊNH TIẾP NHẬN','KÊNH XỬ LÝ'],5,['PHÂN LOẠI','KÊNH','LOẠI']), 5, 'channel');
+  const bloom = _readMetricRowsMG(rows, _findHeaderAfterTitleMG(rows,['SO SÁNH NĂNG LỰC THEO CẤP ĐỘ BLOOM','CẤP ĐỘ BLOOM','BLOOM'],5,['PHÂN LOẠI','CẤP ĐỘ','BLOOM']), 5, 'bloom');
+  let filled = 0;
+  if(unit.length){ ANALYTICS_MG.units = unit; filled += unit.length; }
+  if(abs.length){ ANALYTICS_MG.abstract = abs; filled += abs.length; }
+  if(channel.length){ ANALYTICS_MG.channel = channel; filled += channel.length; }
+  if(bloom.length){ ANALYTICS_MG.bloom = bloom; filled += bloom.length; }
+  if(filled && typeof renderAnalyticsMG === 'function') renderAnalyticsMG();
+  return filled;
+}
 // Đọc rows (2D array) → fill info fields + 16 grade cells
 // Hỗ trợ format WonderKids Excel: label/value có thể scattered (TÊN col 0,
 // value col 1; NĂM SINH col 3, value col 5) — không đứng cạnh nhau.
 function _applyParsedRowsMG(rows){
   let infoFilled = 0, gradesFilled = 0;
   const INFO_KEYS = {
-    'họ và tên':'name','họ tên':'name','tên':'name','name':'name',
-    'lớp':'class','trung tâm':'class','cơ sở':'class','class':'class',
-    'giới tính':'sex','gender':'sex',
-    'ngày đánh giá':'date','ngày':'date','date':'date',
-    'năm sinh':'yob','yob':'yob',
-    'bài test':'test','test':'test','assessment':'test','bài kiểm tra':'test',
-    'giáo viên':'teacher','gv':'teacher','teacher':'teacher',
-    'độ tuổi':'age','tuổi':'age','age':'age',
+    'ho va ten':'name','ho ten':'name','ten':'name','name':'name',
+    'lop':'class','trung tam':'class','co so':'class','class':'class',
+    'gioi tinh':'sex','gender':'sex',
+    'ngay danh gia':'date','ngay':'date','date':'date',
+    'nam sinh':'yob','yob':'yob',
+    'bai test':'test','test':'test','assessment':'test','bai kiem tra':'test',
+    'giao vien':'teacher','gv':'teacher','teacher':'teacher',
+    'do tuoi':'age','tuoi':'age','age':'age',
   };
   const info = {};
   // Sweep tất cả rows — KHÔNG chỉ check cell[0]&cell[1] mà QUÉT MỌI cell
@@ -1803,9 +2541,11 @@ function _applyParsedRowsMG(rows){
         if(g){
           const ab = abilities[hit.ab]; if(!ab) break;
           const spans = ab.querySelectorAll('tbody td:last-child span');
-          if(spans[hit.sk]){
-            spans[hit.sk].textContent = __GRADE_NAME[g];
-            spans[hit.sk].className = 'g'+g;
+          const span = hit.key ? document.querySelector(`[data-skill="${hit.key}"]`) : spans[hit.sk];
+          if(span){
+            span.textContent = __GRADE_NAME[g];
+            span.className = 'g'+g;
+            if(hit.key) span.dataset.skill = hit.key;
             gradesFilled++;
             filledSkills.add(id);
           }
@@ -1831,6 +2571,8 @@ async function _waitXlsxMG(maxMs=6000){
 async function importExcelMG(ev){
   const f = ev.target?.files?.[0];
   if(!f){ return; }
+  // R7: Confirm nếu có data đã chỉnh sửa (trừ snapshot-restore fallback bên dưới)
+  if(!_confirmDestructiveMG('Nhập file '+f.name)){ ev.target.value=''; return; }
   if(!_beginLoadMG()){ if(ev?.target) ev.target.value=''; return; }
   const name = f.name.toLowerCase();
   const isCSV = name.endsWith('.csv') || f.type==='text/csv';
@@ -1850,15 +2592,19 @@ async function importExcelMG(ev){
       const ws = wb.Sheets[wb.SheetNames[0]];
       rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
     }
+    const snapshot = typeof captureStateMG === 'function' ? captureStateMG() : null;
     // Clean slate trước khi fill → tránh residue từ data trước
     _cleanSlateMG();
     const {infoFilled, gradesFilled} = _applyParsedRowsMG(rows);
+    const analyticsFilled = _applyAnalyticsRowsMG(rows);
     recomputeAllMG();
-    fillCommentsMG(true);
-    if(gradesFilled === 0 && infoFilled === 0){
+    if(gradesFilled === 0 && infoFilled === 0 && analyticsFilled === 0){
+      if(snapshot && typeof restoreStateMG === 'function') restoreStateMG(snapshot);
       _showToastMG('Không nhận diện được dữ liệu trong file. Xem "Mẫu CSV" để biết format.', '#d83c2d');
     } else {
-      _showToastMG(`Đã nhập: ${infoFilled} thông tin, ${gradesFilled}/16 năng lực`, '#5fb74f');
+      fillCommentsMG(true);
+      scheduleSaveMG();
+      _showToastMG(`Đã nhập: ${infoFilled} thông tin, ${gradesFilled}/16 năng lực, ${analyticsFilled} dòng phân tích`, '#5fb74f');
     }
   }catch(err){
     console.error('[importExcelMG]', err);
@@ -1971,7 +2717,7 @@ function _endLoadMG(){
    ─────────────────────────────────────────────────────────────────────────── */
 function _cleanSlateMG(){
   // 1) Reset info fields về rỗng (giữ select gender)
-  document.querySelectorAll('.info-field input.val').forEach(inp=>{ inp.value=''; });
+  document.querySelectorAll('.info-field input.val[data-field]').forEach(inp=>{ inp.value=''; });
   // 2) Reset gender select về Nam + avatar tương ứng
   const sexSel = document.getElementById('gender-select');
   if(sexSel){ sexSel.value='Nam'; if(typeof updateAvatar==='function') updateAvatar('Nam'); }
@@ -1989,6 +2735,8 @@ function _cleanSlateMG(){
   if(body) body.innerHTML = '<p>Nhập điểm và bấm "🪄 Tự động nhận xét" để sinh nhận xét.</p>';
   const list = document.querySelector('.s6 .nx-list');
   if(list) list.innerHTML = '<li>Nhập điểm và bấm "🪄 Tự động nhận xét" để sinh định hướng.</li>';
+  Object.assign(ANALYTICS_MG, JSON.parse(JSON.stringify(DEFAULT_ANALYTICS_MG)));
+  if(typeof renderAnalyticsMG === 'function') renderAnalyticsMG();
   // 7) Recompute mọi thứ
   if(typeof recomputeAllMG === 'function') recomputeAllMG();
 }
@@ -1996,6 +2744,7 @@ function _cleanSlateMG(){
 function resetFormMG(){
   if(!confirm('Xóa toàn bộ data đã nhập và reset về mặc định?')) return;
   _cleanSlateMG();
+  scheduleSaveMG();
   _showToastMG('Đã reset form', '#3ea1d3');
 }
 
@@ -2005,6 +2754,8 @@ function forceRefreshMG(){
   url.searchParams.set('_v', Date.now());
   location.replace(url.toString());
 }
+loadSavedMG();
+recomputeAllMG();
 </script>
 </body>
 </html>

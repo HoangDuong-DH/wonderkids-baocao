@@ -1959,87 +1959,87 @@ recomputeAllMG();
    3-5 bullet items mỗi side, sát data của bé.
    ═══════════════════════════════════════════════════════════════ */
 const __ACTIVITY_BANK_MG = {
-  // NHÓM 1: Tư duy cơ bản
+  // NHÓM 1: Tư duy cơ bản — hoạt động gần gũi hằng ngày
   attention: {
-    lop:'Trò chơi <b>"Đèn xanh đèn đỏ"</b> rèn tập trung 5-10 phút theo hiệu lệnh giáo viên.',
-    nha:'Đọc sách tranh 10 phút/ngày, hỏi bé <i>"con thấy gì trong tranh?"</i> để tập chú ý chi tiết.',
+    lop:'Cho bé <b>tô màu trong khung 5-10 phút</b>, không nhắc nhở để bé tự giữ tập trung.',
+    nha:'Khi đọc sách / xem TV cùng bé, hỏi 1-2 câu chi tiết: <i>"lúc nãy con thỏ làm gì?"</i> để rèn chú ý.',
   },
   observation: {
-    lop:'Trò <b>"Bé thám tử"</b> — quan sát tranh 30 giây rồi đậy lại, hỏi chi tiết bé nhớ được.',
-    nha:'Đi siêu thị: bé tìm <b>3 đồ vật cùng màu</b> hoặc cùng hình dạng.',
+    lop:'Đưa bé xem 1 bức tranh trong <b>30 giây rồi cất đi</b>, hỏi <i>"trong tranh có những gì?"</i>',
+    nha:'Đi siêu thị / công viên: rủ bé tìm <b>3 đồ vật cùng màu</b> hoặc cùng hình dạng.',
   },
   memory: {
-    lop:'Trò <b>"Ghép đôi trí nhớ"</b> — lật thẻ úp tìm cặp giống nhau.',
-    nha:'Kể chuyện trước khi ngủ, hôm sau hỏi bé về <b>tên nhân vật và tình tiết</b>.',
+    lop:'Đặt <b>4-5 đồ vật trên bàn</b>, cho bé nhìn 10 giây rồi che lại — hỏi bé nhớ được gì.',
+    nha:'Kể chuyện trước khi ngủ, hôm sau hỏi bé về <b>tên nhân vật và tình tiết</b> trong truyện.',
   },
   // NHÓM 2: Tư duy toán học
   number: {
-    lop:'Đếm đồ chơi trong rổ, so sánh <b>"nhiều hơn / ít hơn"</b> qua trò chơi cụ thể.',
-    nha:'Đếm bánh kẹo trước giờ ăn — bé chia đều cho mọi người trong nhà.',
+    lop:'<b>Đếm đồ vật trong lớp</b>: bút chì, viên kẹo, bạn nhỏ — so sánh "rổ nào nhiều hơn?"',
+    nha:'Đếm bánh kẹo / trái cây trước giờ ăn — bé <b>chia đều cho mọi người</b> trong nhà.',
   },
   geometry: {
-    lop:'Ghép <b>hình khối Lego / puzzle hình học</b> đơn giản, gọi tên hình tròn / vuông / tam giác.',
-    nha:'Sắp xếp đồ trong nhà — dùng từ <i>"trên / dưới / cạnh / trong"</i> khi nói chuyện hàng ngày.',
+    lop:'Cho bé <b>chơi xếp hình (puzzle)</b>, gọi tên hình tròn, vuông, tam giác trong lớp.',
+    nha:'Trong sinh hoạt, dùng từ <i>"trên / dưới / cạnh / trong"</i> — vd: <i>"sách đặt cạnh hộp"</i>.',
   },
   measurement: {
-    lop:'So sánh chiều cao tháp xếp hình giữa các bạn, đo bằng <b>gang tay hoặc bút chì</b>.',
-    nha:'Đánh dấu chiều cao bé trên tường mỗi tháng, đo bàn chân khi mua giày.',
+    lop:'Đo bàn / ghế bằng <b>gang tay hoặc cây bút chì</b>, so sánh "dài hơn / ngắn hơn".',
+    nha:'<b>Đánh dấu chiều cao bé trên tường mỗi tháng</b>, đo bàn chân khi mua giày dép.',
   },
   pattern: {
-    lop:'Trò <b>"Tiếp tục quy luật"</b> — bé hoàn thành dãy hình/màu xen kẽ (vd: đỏ-xanh-đỏ-...).',
-    nha:'Cùng bé sắp xếp bút màu theo quy luật, hoặc vẽ hình lặp trên giấy.',
+    lop:'Cho bé <b>tô màu theo quy luật</b>: đỏ-xanh-đỏ-xanh..., rồi đoán màu tiếp theo.',
+    nha:'Cùng bé sắp xếp bút / cốc / muỗng theo thứ tự lặp lại, hoặc vẽ hình lặp trên giấy.',
   },
   data: {
-    lop:'Phân loại đồ chơi theo <b>nhiều thuộc tính</b> (màu, hình, kích thước, công dụng).',
-    nha:'Cùng bé phân loại đồ trong tủ lạnh: rau / trái cây / sữa / nước.',
+    lop:'<b>Phân loại đồ chơi</b> trong lớp theo nhiều cách (màu, hình, kích thước, công dụng).',
+    nha:'Cùng bé phân loại đồ trong tủ lạnh: <b>rau / trái cây / sữa / nước</b>.',
   },
   // NHÓM 3: Tư duy logic
   understanding: {
-    lop:'Đọc <b>tranh truyện 4 ô</b>, bé sắp xếp đúng thứ tự câu chuyện.',
-    nha:'Xem phim hoạt hình ngắn rồi hỏi <i>"vì sao nhân vật làm vậy?"</i>',
+    lop:'<b>Kể 1 câu chuyện ngắn</b> rồi yêu cầu bé kể lại theo đúng thứ tự sự việc.',
+    nha:'Xem phim hoạt hình ngắn rồi hỏi bé <i>"vì sao nhân vật làm vậy?"</i> — luyện tư duy nhân quả.',
   },
   application: {
-    lop:'Bé dùng đồ chơi <b>xây "ngôi nhà"</b> theo mô tả bằng lời của giáo viên.',
-    nha:'Hướng dẫn bé tự mặc áo, gấp quần áo — <b>ứng dụng từng bước</b> theo trình tự.',
+    lop:'Cho bé <b>làm theo hướng dẫn 2-3 bước</b>: "lấy bút đỏ, đặt lên bàn, vẽ vòng tròn".',
+    nha:'Hướng dẫn bé <b>tự mặc áo, gấp quần áo</b> theo từng bước — ứng dụng kỹ năng vào việc thật.',
   },
   analysis: {
-    lop:'So sánh 2 con vật / 2 bức tranh: <b>giống / khác chỗ nào?</b>',
-    nha:'Phân tích đồ ăn cùng bé: cái nào ngọt, cái nào mặn, cái nào chua — kích thích phân biệt thuộc tính.',
+    lop:'So sánh <b>2 con vật / 2 bức tranh</b>: chúng giống nhau và khác nhau chỗ nào?',
+    nha:'Cùng bé phân loại vị: cái nào <b>ngọt / mặn / chua / đắng</b> — bé sờ, ngửi, nếm và nhận biết.',
   },
   synthesis: {
-    lop:'Bé tự <b>tạo câu chuyện</b> từ 3 đồ vật ngẫu nhiên giáo viên đưa.',
-    nha:'Cùng bé nấu món đơn giản — bé tự chọn 2-3 nguyên liệu kết hợp.',
+    lop:'Cho bé <b>3 đồ chơi bất kỳ</b>, yêu cầu kể 1 câu chuyện ngắn liên kết chúng lại.',
+    nha:'Cùng bé nấu món đơn giản — bé <b>tự chọn 2-3 nguyên liệu</b> để kết hợp.',
   },
   // NHÓM 4: Tư duy sáng tạo
   fluency: {
-    lop:'Trò <b>"Còn cách nào khác?"</b> — bé liệt kê nhiều giải pháp cho 1 vấn đề.',
-    nha:'Đặt 1 câu hỏi mở mỗi tối: <i>"Nếu là siêu nhân con sẽ làm gì?"</i>',
+    lop:'Hỏi bé <i>"ngoài cái cốc, còn dùng đồ gì để uống nước?"</i> — khuyến khích bé nói nhiều ý.',
+    nha:'Đặt 1 câu hỏi mở mỗi tối: <i>"nếu mai con là người lớn, con sẽ làm gì?"</i>',
   },
   flexibility: {
-    lop:'Vẽ tranh bằng <b>nhiều dụng cụ khác nhau</b> (bút, ngón tay, lá cây, bông gòn).',
-    nha:'Đổi cách chơi 1 đồ chơi quen — Lego không phải để xây, dùng làm "chén ăn cơm tưởng tượng".',
+    lop:'Cho bé <b>vẽ tranh bằng nhiều dụng cụ</b>: bút, ngón tay, lá cây, bông gòn — phá khuôn.',
+    nha:'Chơi 1 đồ vật theo nhiều cách: <b>hộp giấy thành tàu / mũ / chuồng thú</b> — kích thích trí tưởng tượng.',
   },
   originality: {
-    lop:'Bé <b>tạo nhân vật tưởng tượng</b> (máy móc, sinh vật mới) và đặt tên + vai trò.',
-    nha:'Cho bé tự thiết kế bữa ăn lạ: <i>"kem chấm muối", "sốt mì với chuối"</i> — khuyến khích phá khuôn.',
+    lop:'Cho bé <b>vẽ tự do 1 con vật do bé tưởng tượng</b> và đặt tên, kể về con vật đó.',
+    nha:'Khuyến khích bé sáng tạo ngược truyền thống: <i>"thử pha sữa với chuối", "kem chấm muối"</i>.',
   },
   precision: {
-    lop:'Tô màu trong khung, ghép tranh chi tiết nhỏ — rèn sự tỉ mỉ.',
-    nha:'Cùng bé gấp <b>origami đơn giản</b> — chú ý từng nếp gấp.',
+    lop:'<b>Tô màu trong khung không lan ra ngoài viền</b>, ghép tranh chi tiết nhỏ — rèn tỉ mỉ.',
+    nha:'Cho bé <b>xâu hạt theo màu sắc</b>, hoặc gấp khăn giấy thành hình theo mẫu.',
   },
 };
 
-// General activities — chung mọi profile, để pad đủ 5 items mỗi side
+// General activities — gợi ý chung gần gũi cho mọi profile, pad đủ 5 items
 const __ACTIVITY_GENERAL_MG = {
   lop:[
-    'Khuyến khích bé <b>giải thích "vì sao con chọn câu này?"</b> sau mỗi bài tập.',
-    'Tạo môi trường chơi an toàn, <b>không so sánh</b> bé với bạn khác.',
-    'Dùng hoạt động trực quan (hình ảnh, đồ vật thật) thay vì giải thích bằng lời dài.',
+    'Sau mỗi bài tập, hỏi bé <i>"vì sao con chọn câu này?"</i> để bé tập giải thích.',
+    '<b>Khen quá trình</b> chứ không khen kết quả — vd: <i>"con nghĩ rất kỹ đấy"</i> thay vì "giỏi quá".',
+    'Dùng <b>đồ vật thật và hình ảnh</b> thay vì giải thích bằng lời dài — bé tiếp thu trực quan tốt hơn.',
   ],
   nha:[
     'Dành <b>15-20 phút mỗi ngày</b> để chơi cùng bé — chất lượng quan trọng hơn thời lượng.',
-    'Ưu tiên <b>động viên quá trình suy nghĩ</b>, hạn chế khen "giỏi quá" — thay bằng "con thử nghĩ rất kỹ đấy".',
-    'Đọc sách tranh cùng bé mỗi tối — hỏi 1-2 câu mở thay vì kể hết.',
+    '<b>Đọc sách tranh cùng bé</b> mỗi tối — hỏi 1-2 câu mở thay vì kể hết: <i>"con đoán xem tiếp theo gì xảy ra?"</i>',
+    'Không so sánh bé với anh chị / bạn bè — <b>mỗi bé có nhịp phát triển riêng</b>.',
   ],
 };
 

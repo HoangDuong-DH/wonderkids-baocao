@@ -1773,7 +1773,8 @@ function renderAnalyticsMG(){
     note.innerHTML = (typeof _smartNoteMG === 'function') ? _smartNoteMG() : '';
   }
 }
-renderAnalyticsMG();
+// NOTE: Không gọi renderAnalyticsMG() ngay tại đây — sẽ TDZ với __GROUP_MAP
+// (declared phía dưới). recomputeAllMG() ở cuối script sẽ gọi renderAnalyticsMG.
 
 /* ─── Donut: distribution of detail-skill levels ─── */
 /* Detail bars đã GỘP vào ability tables (CSS pseudo-element bar trong td cuối)

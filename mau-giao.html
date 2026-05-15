@@ -134,6 +134,18 @@ body{
 .save-pill[data-state="error"]{color:#df5728;background:#fbdcc1;border-color:rgba(223,87,40,.3)}
 @keyframes save-pulse{0%,100%{opacity:.7}50%{opacity:1}}
 
+/* Build version badge — bottom-right, để verify cross-machine sync */
+#build-info-mg{
+  position:fixed;bottom:6px;right:10px;z-index:60;
+  font:500 10px/1 var(--font-body);color:#a89070;
+  background:rgba(255,255,255,.75);padding:4px 8px;border-radius:6px;
+  border:1px solid rgba(243,129,31,.12);
+  pointer-events:auto;user-select:text;letter-spacing:.02em;
+  transition:opacity .2s ease,color .2s ease;
+}
+#build-info-mg:hover{color:var(--orange-deep);opacity:1}
+@media print{#build-info-mg{display:none !important}}
+
 /* ── VISUAL POLISH ── */
 /* Subtle page-load fade-in cho .page + sections */
 .page{animation:wkFadeIn .35s ease-out}
@@ -692,12 +704,18 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
 .kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
 .kpi{
   background:#fff8e6;border:1px solid var(--hair-soft);border-radius:10px;
-  padding:8px;text-align:center;min-width:0;
+  padding:10px 8px;text-align:center;min-width:0;
+  display:flex;flex-direction:column;justify-content:center;align-items:stretch;
+  /* Dynamic safety: nếu content quá dài, ellipsis chứ không phá layout */
+  overflow:hidden;
 }
 .kpi small{display:block;font:700 8.5px/1.2 var(--font-body);color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em}
-.kpi b{display:block;font:800 24px/1 var(--font-display);color:var(--orange-deep);margin-top:4px}
+.kpi b{display:block;font:800 24px/1.05 var(--font-display);color:var(--orange-deep);margin-top:4px;
+  word-break:keep-all;overflow-wrap:anywhere}
 .kpi .kpi-sub{display:block;font:600 10px/1.3 var(--font-body);color:var(--ink-soft);
-  margin-top:5px;min-height:13px;word-break:keep-all;overflow-wrap:break-word}
+  margin-top:5px;min-height:13px;word-break:keep-all;overflow-wrap:anywhere;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  text-overflow:ellipsis;line-clamp:2}
 /* Tint nền theo loại KPI để mắt phân biệt nhanh */
 .kpi.kpi-strong{background:linear-gradient(135deg,#e8f6e2 0%,#d1edc6 100%);border-color:rgba(95,183,79,.35)}
 .kpi.kpi-strong b{color:#3a9b3a}
@@ -864,17 +882,24 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
   .nx-body{font-size:11.5px !important;line-height:1.55}
 
   /* ─────── Analytics panels: giữ table + chart cùng row, không cắt ─────── */
-  .insight-panel{padding:14px !important}
+  .insight-panel{padding:14px !important;margin-bottom:10px !important}
   .insight-panel h3{font-size:13px !important;margin-bottom:10px !important}
-  .insight-split{gap:12px !important}
+  .insight-split{gap:12px !important;grid-template-columns:1fr 1fr !important}
+  .metric-panel .insight-split{grid-template-columns:1fr 1fr !important}
+  .channel-panel .insight-split{grid-template-columns:1fr 1fr !important}
   .insight-table{font-size:10px !important}
   .insight-table th,.insight-table td{padding:5px 7px !important}
   .insight-chart{min-height:0 !important}
-  .insight-chart svg{max-height:200px !important}
+  .insight-chart svg{max-height:200px !important;width:100% !important;height:auto !important}
   .kpi b{font-size:20px !important}
-  .kpi .kpi-sub{font-size:9px !important}
+  .kpi .kpi-sub{font-size:9px !important;-webkit-line-clamp:3 !important;line-clamp:3 !important}
   /* Tránh hover effect khi in (đen text trên nền colored) */
   .insight-table tbody tr:hover td{background:transparent !important}
+  .insight-table tbody tr:hover td.code{background:#eef6fb !important}
+  /* Cho phép chia trang giữa các analytics panel (nhưng KHÔNG giữa panel) */
+  .insight-grid,.s2-full,.s2{break-inside:auto;page-break-inside:auto}
+  /* Section .detail-section có thể span 2 pages nếu cần — không force avoid-page */
+  .detail-section{break-inside:auto;page-break-inside:auto}
 
   /* ─────── Footer ─────── */
   .foot-bar{padding:10px 24px !important;font-size:11px !important}
@@ -921,7 +946,7 @@ body.drag-over-mg #drop-overlay-mg{display:flex}
     Nhập CSV/Excel
     <span id="xlsx-ind-mg" style="font-size:10px;color:var(--ink-mute);font-weight:500">⌛</span>
   </label>
-  <span id="save-ind-mg" class="save-pill" title="Autosave trên máy này — data giữ kể cả khi đóng tab">● Chưa lưu</span>
+  <span id="save-ind-mg" class="save-pill" title="Autosave CHỈ trên máy này (localStorage). Để chia sẻ báo cáo: bấm Lưu .xlsx và gửi file qua email/Drive — XLSX là source of truth cho đồng nghiệp.">● Chưa lưu</span>
   <button onclick="downloadSampleCSV_MG()" title="Tải file CSV mẫu để biết format" style="font:600 12.5px/1 Be Vietnam Pro,sans-serif">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
     Mẫu CSV
@@ -2805,6 +2830,20 @@ function forceRefreshMG(){
   url.searchParams.set('_v', Date.now());
   location.replace(url.toString());
 }
+
+/* ─── BUILD VERSION BADGE — verify deploy sync giữa nhiều máy ─── */
+// document.lastModified auto-update mỗi lần GitHub Pages deploy.
+// User có thể compare badge giữa 2 máy → nếu khác = 1 máy cache cũ.
+const __BUILD_VERSION_MG = (document.lastModified || 'unknown').replace(/[:/]/g,'-');
+(function showBuildBadgeMG(){
+  if(document.getElementById('build-info-mg')) return;
+  const el = document.createElement('div');
+  el.id = 'build-info-mg';
+  el.title = 'Build version — đồng nghiệp dùng cùng version mới có UI giống nhau. Nếu khác nhau giữa 2 máy = 1 máy đang dùng bản cache cũ, bấm Cập nhật.';
+  el.textContent = 'build ' + __BUILD_VERSION_MG;
+  document.body.appendChild(el);
+})();
+
 loadSavedMG();
 recomputeAllMG();
 </script>

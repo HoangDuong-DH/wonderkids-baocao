@@ -1,0 +1,888 @@
+{
+  "criteria": [
+    {
+      "cau": 1,
+      "ma": "1.1",
+      "label": "Tính khép kín",
+      "weight": 2.0,
+      "ability": "Quan sát"
+    },
+    {
+      "cau": 1,
+      "ma": "1.2",
+      "label": "Số cạnh ≥ 4",
+      "weight": 2.0,
+      "ability": "Quan sát"
+    },
+    {
+      "cau": 1,
+      "ma": "1.3",
+      "label": "Đúng 6 cạnh",
+      "weight": 2.0,
+      "ability": "Chính xác"
+    },
+    {
+      "cau": 1,
+      "ma": "1.4",
+      "label": "Tỷ lệ ngang > dọc",
+      "weight": 1.0,
+      "ability": "Chính xác"
+    },
+    {
+      "cau": 1,
+      "ma": "1.5",
+      "label": "Nét vẽ thẳng",
+      "weight": 1.0,
+      "ability": "Kiên nhẫn/Quan sát"
+    },
+    {
+      "cau": 1,
+      "ma": "1.6",
+      "label": "Hoàn thành ≤60s",
+      "weight": 1.0,
+      "ability": "Chú ý"
+    },
+    {
+      "cau": 1,
+      "ma": "1.7",
+      "label": "Kích thước vừa khung",
+      "weight": 1.0,
+      "ability": "Hình học KG"
+    },
+    {
+      "cau": 2,
+      "ma": "2.1",
+      "label": "Hiểu quy luật chẵn/lẻ",
+      "weight": 3.0,
+      "ability": "Số & tính toán"
+    },
+    {
+      "cau": 2,
+      "ma": "2.2",
+      "label": "Nhận diện số trong tròn/vuông",
+      "weight": 2.0,
+      "ability": "Chú ý"
+    },
+    {
+      "cau": 2,
+      "ma": "2.3",
+      "label": "Nét nối sạch sẽ",
+      "weight": 2.0,
+      "ability": "Chú ý"
+    },
+    {
+      "cau": 2,
+      "ma": "2.4",
+      "label": "Số cặp nối đúng",
+      "weight": 3.0,
+      "ability": "Số & tính toán"
+    },
+    {
+      "cau": 3,
+      "ma": "3.1",
+      "label": "Hiểu yêu cầu 'chọn 1 dãy'",
+      "weight": 3.0,
+      "ability": "Chú ý"
+    },
+    {
+      "cau": 3,
+      "ma": "3.2",
+      "label": "Ghi nhớ chuỗi yếu tố",
+      "weight": 4.0,
+      "ability": "Ghi nhớ"
+    },
+    {
+      "cau": 3,
+      "ma": "3.3",
+      "label": "Khoanh trong dãy chứa đúng đáp án",
+      "weight": 2.0,
+      "ability": "Ghi nhớ"
+    },
+    {
+      "cau": 3,
+      "ma": "3.4",
+      "label": "Tập trung trong khi nghe",
+      "weight": 1.0,
+      "ability": "Chú ý"
+    },
+    {
+      "cau": 4,
+      "ma": "4.1",
+      "label": "Phân loại người tuyết MŨ → khu MŨ",
+      "weight": 2.5,
+      "ability": "Phân tích"
+    },
+    {
+      "cau": 4,
+      "ma": "4.2",
+      "label": "Phân loại người tuyết TAY → khu TAY",
+      "weight": 2.5,
+      "ability": "Phân tích"
+    },
+    {
+      "cau": 4,
+      "ma": "4.3",
+      "label": "Xử lý vùng GIAO mũ+tay",
+      "weight": 2.0,
+      "ability": "Tổng hợp"
+    },
+    {
+      "cau": 4,
+      "ma": "4.4",
+      "label": "Đường nối sạch sẽ",
+      "weight": 2.0,
+      "ability": "Dữ liệu"
+    },
+    {
+      "cau": 4,
+      "ma": "4.5",
+      "label": "Giải thích tiêu chí khi GV hỏi",
+      "weight": 1.0,
+      "ability": "Hiểu biết"
+    },
+    {
+      "cau": 5,
+      "ma": "5.1",
+      "label": "Tạo 2 nhóm rõ ràng",
+      "weight": 3.0,
+      "ability": "Tổng hợp"
+    },
+    {
+      "cau": 5,
+      "ma": "5.2",
+      "label": "Tiêu chí phân loại có nghĩa",
+      "weight": 3.0,
+      "ability": "Tổng hợp"
+    },
+    {
+      "cau": 5,
+      "ma": "5.3",
+      "label": "Số vật phân đúng nhóm",
+      "weight": 3.0,
+      "ability": "Dữ liệu"
+    },
+    {
+      "cau": 5,
+      "ma": "5.4",
+      "label": "Giải thích tiêu chí",
+      "weight": 1.0,
+      "ability": "Hiểu biết"
+    },
+    {
+      "cau": 6,
+      "ma": "6.1",
+      "label": "Hiểu chủ đề cháy/cứu hỏa",
+      "weight": 2.0,
+      "ability": "Hiểu biết"
+    },
+    {
+      "cau": 6,
+      "ma": "6.2",
+      "label": "Xác định tranh 1 (bắt đầu)",
+      "weight": 2.0,
+      "ability": "Tổng hợp"
+    },
+    {
+      "cau": 6,
+      "ma": "6.3",
+      "label": "Xác định tranh 4 (kết thúc)",
+      "weight": 2.0,
+      "ability": "Tổng hợp"
+    },
+    {
+      "cau": 6,
+      "ma": "6.4",
+      "label": "Thứ tự 2-3 ở giữa",
+      "weight": 2.0,
+      "ability": "Tổng hợp"
+    },
+    {
+      "cau": 6,
+      "ma": "6.5",
+      "label": "Viết số rõ ràng",
+      "weight": 2.0,
+      "ability": "Hiểu biết"
+    },
+    {
+      "cau": 7,
+      "ma": "7.1",
+      "label": "Đặt KEM ở ngăn cuối",
+      "weight": 2.5,
+      "ability": "Hình học KG"
+    },
+    {
+      "cau": 7,
+      "ma": "7.2",
+      "label": "Đặt CHAI NƯỚC TRÊN sữa chua",
+      "weight": 2.5,
+      "ability": "Hình học KG"
+    },
+    {
+      "cau": 7,
+      "ma": "7.3",
+      "label": "Đặt TÁO DƯỚI sữa chua",
+      "weight": 2.0,
+      "ability": "Hình học KG"
+    },
+    {
+      "cau": 7,
+      "ma": "7.4",
+      "label": "Đặt SỮA CHUA ở giữa",
+      "weight": 2.0,
+      "ability": "Ứng dụng"
+    },
+    {
+      "cau": 7,
+      "ma": "7.5",
+      "label": "Hiểu khái niệm trên/dưới",
+      "weight": 1.0,
+      "ability": "Ứng dụng"
+    },
+    {
+      "cau": 8,
+      "ma": "8.1",
+      "label": "Hiểu yêu cầu phép cộng",
+      "weight": 2.0,
+      "ability": "Số & tính toán"
+    },
+    {
+      "cau": 8,
+      "ma": "8.2",
+      "label": "Số cặp đúng tổng = 6",
+      "weight": 4.0,
+      "ability": "Số & tính toán"
+    },
+    {
+      "cau": 8,
+      "ma": "8.3",
+      "label": "Đếm hình trên thẻ hình",
+      "weight": 2.0,
+      "ability": "Ứng dụng"
+    },
+    {
+      "cau": 8,
+      "ma": "8.4",
+      "label": "Có dấu vết thử-sai",
+      "weight": 2.0,
+      "ability": "Ứng dụng"
+    },
+    {
+      "cau": 9,
+      "ma": "9.1",
+      "label": "Khoanh đúng thẻ đáp án",
+      "weight": 5.0,
+      "ability": "Hình học KG"
+    },
+    {
+      "cau": 9,
+      "ma": "9.2",
+      "label": "Có suy luận hình học",
+      "weight": 3.0,
+      "ability": "Hình học KG"
+    },
+    {
+      "cau": 9,
+      "ma": "9.3",
+      "label": "Loại trừ thẻ không phù hợp",
+      "weight": 2.0,
+      "ability": "Hình học KG"
+    },
+    {
+      "cau": 10,
+      "ma": "10.1",
+      "label": "Hiểu yêu cầu (tròn=cao, tam=thấp)",
+      "weight": 2.0,
+      "ability": "Quan sát"
+    },
+    {
+      "cau": 10,
+      "ma": "10.2",
+      "label": "So đúng cao hơn ví dụ",
+      "weight": 3.0,
+      "ability": "Đo lường"
+    },
+    {
+      "cau": 10,
+      "ma": "10.3",
+      "label": "So đúng thấp hơn ví dụ",
+      "weight": 3.0,
+      "ability": "Đo lường"
+    },
+    {
+      "cau": 10,
+      "ma": "10.4",
+      "label": "Vẽ ký hiệu đúng (tròn/tam)",
+      "weight": 2.0,
+      "ability": "Quan sát"
+    },
+    {
+      "cau": 11,
+      "ma": "11.1",
+      "label": "Dãy 1 (áo-quần)",
+      "weight": 2.0,
+      "ability": "Kiểu mẫu"
+    },
+    {
+      "cau": 11,
+      "ma": "11.2",
+      "label": "Dãy 2 (nồi-ấm)",
+      "weight": 2.0,
+      "ability": "Kiểu mẫu"
+    },
+    {
+      "cau": 11,
+      "ma": "11.3",
+      "label": "Dãy 3 (máy hút bụi-quạt)",
+      "weight": 2.0,
+      "ability": "Kiểu mẫu"
+    },
+    {
+      "cau": 11,
+      "ma": "11.4",
+      "label": "Dãy 4 (nho-cherry)",
+      "weight": 2.0,
+      "ability": "Kiểu mẫu"
+    },
+    {
+      "cau": 11,
+      "ma": "11.5",
+      "label": "Dãy 5 (cà chua-bắp cải)",
+      "weight": 2.0,
+      "ability": "Kiểu mẫu"
+    },
+    {
+      "cau": 12,
+      "ma": "12.1",
+      "label": "Đếm donut đúng",
+      "weight": 1.5,
+      "ability": "Số & tính toán"
+    },
+    {
+      "cau": 12,
+      "ma": "12.2",
+      "label": "Đếm muffin đúng",
+      "weight": 1.5,
+      "ability": "Số & tính toán"
+    },
+    {
+      "cau": 12,
+      "ma": "12.3",
+      "label": "Đếm bánh mì dài đúng",
+      "weight": 1.5,
+      "ability": "Số & tính toán"
+    },
+    {
+      "cau": 12,
+      "ma": "12.4",
+      "label": "Đếm bretzel đúng",
+      "weight": 1.5,
+      "ability": "Số & tính toán"
+    },
+    {
+      "cau": 12,
+      "ma": "12.5",
+      "label": "Vẽ biểu đồ tương ứng số đếm",
+      "weight": 2.0,
+      "ability": "Dữ liệu"
+    },
+    {
+      "cau": 12,
+      "ma": "12.6",
+      "label": "Tam giác vào loại nhiều nhất",
+      "weight": 2.0,
+      "ability": "Dữ liệu"
+    },
+    {
+      "cau": 13,
+      "ma": "13.1",
+      "label": "TRÔI CHẢY: Số ô vẽ thành hình có nghĩa",
+      "weight": 8.0,
+      "ability": "Trôi chảy"
+    },
+    {
+      "cau": 13,
+      "ma": "13.2",
+      "label": "LINH HOẠT: Số nhóm chủ đề khác nhau",
+      "weight": 8.0,
+      "ability": "Linh hoạt"
+    },
+    {
+      "cau": 13,
+      "ma": "13.3",
+      "label": "ĐỘC ĐÁO: Số ý ngoài DS phổ biến",
+      "weight": 8.0,
+      "ability": "Độc đáo"
+    },
+    {
+      "cau": 14,
+      "ma": "14.1",
+      "label": "TRÔI CHẢY: Số ô vẽ thành hình",
+      "weight": 8.0,
+      "ability": "Trôi chảy"
+    },
+    {
+      "cau": 14,
+      "ma": "14.2",
+      "label": "LINH HOẠT: Số nhóm chủ đề",
+      "weight": 6.0,
+      "ability": "Linh hoạt"
+    },
+    {
+      "cau": 14,
+      "ma": "14.3",
+      "label": "ĐỘC ĐÁO: Ý lạ ngoài DS phổ biến",
+      "weight": 6.0,
+      "ability": "Độc đáo"
+    },
+    {
+      "cau": 14,
+      "ma": "14.4",
+      "label": "CHÍNH XÁC: Chi tiết bổ sung",
+      "weight": 6.0,
+      "ability": "Chính xác"
+    }
+  ],
+  "descriptions": {
+    "1.1": {
+      "5": "Hình khép kín hoàn toàn, start-end trùng nhau",
+      "4": "Khép kín nhưng hơi hở (<2mm)",
+      "3": "Khép kín nhưng đường nét chồng lên nhau",
+      "2": "Có ý khép kín, hở 3-5mm",
+      "0": "Hình hở rõ hoặc đường rời rạc"
+    },
+    "1.2": {
+      "5": "Đếm được rõ ràng 6 cạnh",
+      "4": "5 cạnh phân biệt rõ",
+      "3": "4 cạnh phân biệt rõ",
+      "2": "3 cạnh + có nỗ lực thêm cạnh",
+      "0": "≤3 cạnh hoặc hình tròn/oval"
+    },
+    "1.3": {
+      "5": "Đúng 6 cạnh, mỗi cạnh rõ ràng",
+      "4": "6 cạnh nhưng 1-2 cạnh hơi cong",
+      "3": "5 hoặc 7 cạnh (lệch 1)",
+      "2": "4 hoặc 8 cạnh (lệch 2)",
+      "0": "Sai số cạnh nhiều hoặc không đếm được"
+    },
+    "1.4": {
+      "5": "Ngang gấp 1.5-2x dọc (giống mẫu)",
+      "4": "Ngang > dọc rõ ràng",
+      "3": "Ngang ≈ dọc (vuông)",
+      "2": "Dọc > ngang ít",
+      "0": "Dọc > ngang nhiều (xoay 90°)"
+    },
+    "1.5": {
+      "5": "Nét thẳng, đều, không lượn",
+      "4": "Thẳng nhưng có run nhẹ",
+      "3": "50% cạnh thẳng, 50% cong",
+      "2": "Đa số cong/lượn",
+      "0": "Nét lượn sóng hoàn toàn"
+    },
+    "1.6": {
+      "5": "Hoàn thành dưới 30 giây",
+      "4": "30-60 giây",
+      "3": "60-90 giây",
+      "2": "90-120 giây có gián đoạn",
+      "0": "Bỏ giữa chừng hoặc >2 phút"
+    },
+    "1.7": {
+      "5": "Hình chiếm 50-80% khung trống",
+      "4": "Hình chiếm 30-50% hoặc 80-90%",
+      "3": "Quá nhỏ (<30%) hoặc quá lớn (>90%)",
+      "2": "Tràn ra ngoài khung 1 phần",
+      "0": "Tràn ra ngoài khung hoàn toàn"
+    },
+    "2.1": {
+      "5": "Nối được 8-10 cặp đúng, có quy luật",
+      "4": "Nối 6-7 cặp đúng",
+      "3": "Nối 4-5 cặp đúng",
+      "2": "Nối 2-3 cặp đúng",
+      "0": "Nối ngẫu nhiên, không quy luật"
+    },
+    "2.2": {
+      "5": "Phân biệt 100% số trong tròn vs vuông",
+      "4": "Phân biệt 80-99%",
+      "3": "Phân biệt 50-79%",
+      "2": "Phân biệt 25-49%",
+      "0": "Không phân biệt được"
+    },
+    "2.3": {
+      "5": "Nét rõ, không chéo, dễ đọc",
+      "4": "Có 1-2 nét chéo nhưng đọc được",
+      "3": "Nhiều nét chéo, đọc khó",
+      "2": "Lộn xộn, khó xác định cặp",
+      "0": "Không xác định được cặp"
+    },
+    "2.4": {
+      "5": "9-10 cặp đúng",
+      "4": "7-8 cặp đúng",
+      "3": "4-6 cặp đúng",
+      "2": "1-3 cặp đúng",
+      "0": "0 cặp đúng"
+    },
+    "3.1": {
+      "5": "Chỉ khoanh 1 dãy ① ② ③",
+      "4": "Khoanh 1 dãy + sửa nhẹ",
+      "3": "Khoanh 2 dãy",
+      "2": "Khoanh tràn 3 dãy",
+      "0": "Không khoanh hoặc khoanh ngẫu nhiên"
+    },
+    "3.2": {
+      "5": "Khoanh đủ 7 yếu tố đã đọc",
+      "4": "Khoanh 5-6 yếu tố đúng",
+      "3": "Khoanh 3-4 yếu tố đúng",
+      "2": "Khoanh 1-2 yếu tố đúng",
+      "0": "Không có yếu tố nào đúng"
+    },
+    "3.3": {
+      "5": "Khoanh đúng dãy đáp án (đầy đủ 7)",
+      "4": "Khoanh dãy đáp án nhưng thiếu 1-2",
+      "3": "Khoanh dãy sai nhưng có nhiều yếu tố đúng",
+      "2": "Khoanh dãy sai, ít yếu tố đúng",
+      "0": "Khoanh dãy không liên quan"
+    },
+    "3.4": {
+      "5": "Mắt nhìn cô, im lặng nghe hết",
+      "4": "Tập trung 80%, mất tập trung 1-2 lần",
+      "3": "Tập trung 50%",
+      "2": "Tập trung ≤30%, làm việc khác",
+      "0": "Không tập trung, không nghe được"
+    },
+    "4.1": {
+      "5": "Cả 2 người tuyết có mũ → khu MŨ đúng",
+      "4": "1/2 đúng",
+      "3": "Hiểu khái niệm mũ nhưng nối nhầm",
+      "2": "Có nối nhưng sai",
+      "0": "Không nối"
+    },
+    "4.2": {
+      "5": "Người tuyết có tay → khu TAY đúng",
+      "4": "Có nối đúng nhưng đường lệch",
+      "3": "Hiểu khái niệm nhưng nối nhầm khu",
+      "2": "Có nối nhưng sai",
+      "0": "Không nối"
+    },
+    "4.3": {
+      "5": "Người tuyết mũ+tay → vùng GIAO đúng",
+      "4": "Đặt vào 1 trong 2 khu (chấp nhận)",
+      "3": "Đặt sai khu nhưng có suy nghĩ",
+      "2": "Bỏ qua người tuyết này",
+      "0": "Đặt hoàn toàn sai"
+    },
+    "4.4": {
+      "5": "Đường nối thẳng, không chéo",
+      "4": "1-2 đường chéo nhẹ",
+      "3": "Đường chéo nhiều nhưng đọc được",
+      "2": "Lộn xộn khó đọc",
+      "0": "Không xác định được"
+    },
+    "4.5": {
+      "5": "Giải thích rõ tiêu chí phân loại",
+      "4": "Giải thích được nhưng dùng từ chưa chính xác",
+      "3": "Chỉ tay được nhưng không nói được",
+      "2": "Trả lời 'không biết' nhưng có dấu hiệu hiểu",
+      "0": "Không trả lời được hoặc không liên quan"
+    },
+    "5.1": {
+      "5": "2 nhóm rõ với 3 vật mỗi nhóm",
+      "4": "2 nhóm với 2-4 vật mỗi nhóm",
+      "3": "2 nhóm nhưng tỷ lệ lệch (1 vs 5)",
+      "2": "Có ý phân nhóm nhưng chưa rõ",
+      "0": "Không phân nhóm"
+    },
+    "5.2": {
+      "5": "Hải sản vs Rau củ (chuẩn) hoặc tiêu chí khác có nghĩa",
+      "4": "Tiêu chí có nghĩa nhưng 1-2 vật sai",
+      "3": "Có tiêu chí nhưng không nhất quán",
+      "2": "Tiêu chí mơ hồ (vd theo màu)",
+      "0": "Không có tiêu chí"
+    },
+    "5.3": {
+      "5": "6/6 vật đúng nhóm",
+      "4": "4-5/6 đúng",
+      "3": "3/6 đúng",
+      "2": "1-2/6 đúng",
+      "0": "0/6 đúng"
+    },
+    "5.4": {
+      "5": "Giải thích rõ và chính xác",
+      "4": "Giải thích được nhưng dùng từ chưa chính xác",
+      "3": "Chỉ tay được, nói chưa rõ",
+      "2": "Nói 1 từ liên quan",
+      "0": "Không trả lời được"
+    },
+    "6.1": {
+      "5": "Kể được câu chuyện cứu hỏa",
+      "4": "Nhận biết chủ đề + chi tiết",
+      "3": "Nhận biết chủ đề chung",
+      "2": "Nhận biết 'có xe, có khói'",
+      "0": "Không nhận biết được"
+    },
+    "6.2": {
+      "5": "Xác định đúng tranh bắt đầu",
+      "4": "Xác định gần đúng (sai 1 vị trí)",
+      "3": "Xác định 1 tranh trong nhóm 'sớm'",
+      "2": "Đoán nhưng có lý",
+      "0": "Sai hoàn toàn"
+    },
+    "6.3": {
+      "5": "Xác định đúng tranh kết thúc",
+      "4": "Xác định gần đúng (sai 1)",
+      "3": "Xác định 1 tranh trong nhóm 'muộn'",
+      "2": "Đoán có lý",
+      "0": "Sai hoàn toàn"
+    },
+    "6.4": {
+      "5": "Đúng cả 2 tranh giữa",
+      "4": "Đúng 1 tranh giữa",
+      "3": "Đảo 2 tranh giữa cho nhau",
+      "2": "Có ý xếp nhưng sai vị trí",
+      "0": "Không xếp"
+    },
+    "6.5": {
+      "5": "Viết số 1-4 đẹp, dễ đọc",
+      "4": "Đọc được nhưng nét chưa đẹp",
+      "3": "Một số đảo ngược (3 ↔ Ɛ)",
+      "2": "Vẽ vạch/ký hiệu thay số",
+      "0": "Không viết được"
+    },
+    "7.1": {
+      "5": "Kem ở ngăn 4 (cuối) đúng",
+      "4": "Kem ở ngăn 3",
+      "3": "Kem ở ngăn 2",
+      "2": "Kem ở ngăn 1 (sai hoàn toàn)",
+      "0": "Không đặt kem"
+    },
+    "7.2": {
+      "5": "Chai ở ngăn 1 (trên cùng)",
+      "4": "Chai ở ngăn 2",
+      "3": "Chai ở ngăn 3",
+      "2": "Chai ở ngăn 4",
+      "0": "Không đặt chai"
+    },
+    "7.3": {
+      "5": "Táo ở ngăn 3 (dưới sữa chua)",
+      "4": "Táo ở ngăn 2 (đảo với sữa chua)",
+      "3": "Táo ở ngăn 1",
+      "2": "Táo ở ngăn 4",
+      "0": "Không đặt"
+    },
+    "7.4": {
+      "5": "Sữa chua ở ngăn 2 đúng",
+      "4": "Sữa chua ở ngăn 3",
+      "3": "Sữa chua ở ngăn 1",
+      "2": "Sữa chua ở ngăn 4",
+      "0": "Không đặt"
+    },
+    "7.5": {
+      "5": "Hiểu rõ qua giải thích 'cái này trên cái này'",
+      "4": "Hiểu nhưng diễn đạt chưa rõ",
+      "3": "Chỉ tay được",
+      "2": "Hiểu mơ hồ",
+      "0": "Không hiểu"
+    },
+    "8.1": {
+      "5": "Hiểu rõ 'cộng 2 thẻ = 6'",
+      "4": "Hiểu nhưng cần GV nhắc lại",
+      "3": "Hiểu 'tìm 2 thẻ' nhưng quên đích",
+      "2": "Hiểu mơ hồ",
+      "0": "Không hiểu"
+    },
+    "8.2": {
+      "5": "Tìm được ≥3 cặp đúng",
+      "4": "Tìm được 2 cặp đúng",
+      "3": "Tìm được 1 cặp đúng",
+      "2": "Tìm cặp gần đúng (tổng 5 hoặc 7)",
+      "0": "Không tìm được cặp nào"
+    },
+    "8.3": {
+      "5": "Đếm chính xác mọi thẻ hình",
+      "4": "Đếm đúng 80% thẻ",
+      "3": "Đếm đúng 50% thẻ",
+      "2": "Có đếm nhưng sai nhiều",
+      "0": "Không đếm"
+    },
+    "8.4": {
+      "5": "Thử nhiều cặp, có tẩy/sửa",
+      "4": "Thử 2-3 cặp",
+      "3": "Thử 1 cặp",
+      "2": "Có ý thử nhưng không sửa",
+      "0": "Không thử"
+    },
+    "9.1": {
+      "5": "Khoanh đúng thẻ duy nhất phù hợp",
+      "4": "Khoanh thẻ gần đúng (cung tương tự)",
+      "3": "Khoanh 2 thẻ, 1 đúng",
+      "2": "Khoanh thẻ có cung tròn nhưng không khớp",
+      "0": "Khoanh thẻ thẳng/không liên quan"
+    },
+    "9.2": {
+      "5": "Có ướm thử hoặc xoay đầu nhìn không gian",
+      "4": "Có nhìn kỹ ví dụ trước khi chọn",
+      "3": "Nhìn lướt qua các thẻ",
+      "2": "Chọn nhanh không cân nhắc",
+      "0": "Chọn ngẫu nhiên"
+    },
+    "9.3": {
+      "5": "Không chọn thẻ thẳng/vô lý",
+      "4": "Chọn ít hơn 2 thẻ sai",
+      "3": "Phân vân giữa 2-3 thẻ",
+      "2": "Khoanh nhiều thẻ",
+      "0": "Khoanh tất cả thẻ"
+    },
+    "10.1": {
+      "5": "Hiểu rõ và phân biệt 2 ký hiệu",
+      "4": "Hiểu nhưng cần nhắc lại 1 lần",
+      "3": "Hiểu khái niệm cao/thấp nhưng quên ký hiệu",
+      "2": "Hiểu mơ hồ, dùng cùng 1 ký hiệu cho cả 2",
+      "0": "Không hiểu yêu cầu"
+    },
+    "10.2": {
+      "5": "2/2 chồng cao hơn đều vẽ tròn",
+      "4": "1/2 chồng cao đúng",
+      "3": "Có ý nhưng vẽ ký hiệu sai",
+      "2": "Vẽ nhưng không đúng chồng nào",
+      "0": "Không phân biệt được cao/thấp"
+    },
+    "10.3": {
+      "5": "2/2 chồng thấp hơn đều vẽ tam giác",
+      "4": "1/2 chồng thấp đúng",
+      "3": "Có ý nhưng vẽ ký hiệu sai",
+      "2": "Vẽ nhưng không đúng chồng nào",
+      "0": "Không phân biệt được"
+    },
+    "10.4": {
+      "5": "Vẽ rõ tròn và tam giác phân biệt",
+      "4": "Vẽ đúng nhưng nét chưa đẹp",
+      "3": "Vẽ vòng quanh chồng cỏ thay vì ký hiệu",
+      "2": "Vẽ vạch/dấu khác",
+      "0": "Không vẽ ký hiệu"
+    },
+    "11.1": {
+      "5": "Khoanh quần đúng",
+      "4": "Khoanh quần nhưng chần chừ",
+      "3": "Khoanh sai nhưng cùng nhóm",
+      "2": "Khoanh ngẫu nhiên",
+      "0": "Không khoanh"
+    },
+    "11.2": {
+      "5": "Khoanh ấm đúng",
+      "4": "Khoanh ấm sau khi cân nhắc",
+      "3": "Khoanh sai nhưng cùng nhóm",
+      "2": "Khoanh ngẫu nhiên",
+      "0": "Không khoanh"
+    },
+    "11.3": {
+      "5": "Khoanh quạt đúng",
+      "4": "Khoanh quạt sau khi cân nhắc",
+      "3": "Khoanh sai nhưng cùng nhóm",
+      "2": "Khoanh ngẫu nhiên",
+      "0": "Không khoanh"
+    },
+    "11.4": {
+      "5": "Khoanh cherry đúng",
+      "4": "Khoanh cherry sau khi cân nhắc",
+      "3": "Khoanh sai nhưng cùng nhóm",
+      "2": "Khoanh ngẫu nhiên",
+      "0": "Không khoanh"
+    },
+    "11.5": {
+      "5": "Khoanh bắp cải đúng",
+      "4": "Khoanh bắp cải sau khi cân nhắc",
+      "3": "Khoanh sai nhưng cùng nhóm",
+      "2": "Khoanh ngẫu nhiên",
+      "0": "Không khoanh"
+    },
+    "12.1": {
+      "5": "Đếm chính xác",
+      "4": "Sai số ±1",
+      "3": "Sai số ±2",
+      "2": "Sai số ±3 nhưng có đếm",
+      "0": "Không đếm hoặc sai >3"
+    },
+    "12.2": {
+      "5": "Đếm chính xác",
+      "4": "Sai số ±1",
+      "3": "Sai số ±2",
+      "2": "Sai số ±3 nhưng có đếm",
+      "0": "Không đếm"
+    },
+    "12.3": {
+      "5": "Đếm chính xác",
+      "4": "Sai số ±1",
+      "3": "Sai số ±2",
+      "2": "Sai số ±3 nhưng có đếm",
+      "0": "Không đếm"
+    },
+    "12.4": {
+      "5": "Đếm chính xác",
+      "4": "Sai số ±1",
+      "3": "Sai số ±2",
+      "2": "Sai số ±3 nhưng có đếm",
+      "0": "Không đếm"
+    },
+    "12.5": {
+      "5": "Cả 4 cột vẽ đúng số tròn = số bánh",
+      "4": "3/4 cột đúng",
+      "3": "2/4 cột đúng",
+      "2": "1/4 cột đúng",
+      "0": "Không vẽ hoặc sai hoàn toàn"
+    },
+    "12.6": {
+      "5": "Tam giác đúng loại nhiều nhất",
+      "4": "Tam giác vào loại thứ 2",
+      "3": "Tam giác vào loại thứ 3",
+      "2": "Tam giác vào loại ít nhất",
+      "0": "Không vẽ tam giác"
+    },
+    "13.1": {
+      "5": "Vẽ thêm hình ở 6/6 ô",
+      "4": "Vẽ ở 4-5/6 ô",
+      "3": "Vẽ ở 2-3/6 ô",
+      "2": "Vẽ ở 1/6 ô",
+      "0": "Không vẽ"
+    },
+    "13.2": {
+      "5": "≥4 nhóm chủ đề khác nhau",
+      "4": "3 nhóm chủ đề",
+      "3": "2 nhóm chủ đề",
+      "2": "1 nhóm chủ đề rõ",
+      "0": "Không nhóm rõ ràng"
+    },
+    "13.3": {
+      "5": "≥4 ý không trong DS phổ biến",
+      "4": "3 ý độc đáo",
+      "3": "2 ý độc đáo",
+      "2": "1 ý độc đáo",
+      "0": "Toàn ý phổ biến (rắn, sâu, lò xo...)"
+    },
+    "14.1": {
+      "5": "Vẽ ở 6/6 ô",
+      "4": "Vẽ ở 4-5/6 ô",
+      "3": "Vẽ ở 2-3/6 ô",
+      "2": "Vẽ ở 1/6 ô",
+      "0": "Không vẽ"
+    },
+    "14.2": {
+      "5": "≥4 nhóm chủ đề",
+      "4": "3 nhóm",
+      "3": "2 nhóm",
+      "2": "1 nhóm",
+      "0": "Không nhóm rõ"
+    },
+    "14.3": {
+      "5": "≥3 ý không trong DS phổ biến",
+      "4": "2 ý độc đáo",
+      "3": "1 ý độc đáo",
+      "2": "Có ý nhưng chỉ phổ biến biến thể",
+      "0": "Toàn ý phổ biến (cột nhà, cửa sổ...)"
+    },
+    "14.4": {
+      "5": "Trung bình ≥4 chi tiết/hình",
+      "4": "Trung bình 3 chi tiết",
+      "3": "Trung bình 1-2 chi tiết",
+      "2": "Có chi tiết nhưng rất ít",
+      "0": "Không có chi tiết bổ sung"
+    }
+  }
+}
